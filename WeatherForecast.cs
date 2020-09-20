@@ -1,6 +1,6 @@
 using System;
 
-namespace tazkr_dotnet
+namespace Tazkr
 {
     public class WeatherForecast
     {
