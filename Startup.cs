@@ -86,7 +86,7 @@ namespace Tazkr
 
             app.UseAuthentication();
             app.UseIdentityServer();
-            app.UseAuthorization();
+            // app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
