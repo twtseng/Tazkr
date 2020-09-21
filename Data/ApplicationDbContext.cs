@@ -17,5 +17,8 @@ namespace Tazkr.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+
+        public DbSet<Board> Boards { get; set; }
+        public DbSet<Column> Columns { get; set; }
     }
 }

@@ -8,5 +8,6 @@ namespace Tazkr.Models
 {
     public class ApplicationUser : IdentityUser
     {
+
     }
 }
