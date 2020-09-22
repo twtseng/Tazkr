@@ -8,7 +8,7 @@ namespace Tazkr.Models
         public int Id { get; set; }
 
         [Required]
-        public Board Board { get; set; }
+        public Column Column { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]

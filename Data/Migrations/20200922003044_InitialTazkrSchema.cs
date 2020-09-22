@@ -102,7 +102,7 @@ namespace Tazkr.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BoardId = table.Column<int>(nullable: false),
+                    ColumnId = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: false),
                     Desc = table.Column<string>(nullable: false),
                     Archived = table.Column<bool>(nullable: false),
@@ -122,9 +122,9 @@ namespace Tazkr.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TaskHourlyHistory_Boards_BoardId",
-                        column: x => x.BoardId,
-                        principalTable: "Boards",
+                        name: "FK_TaskHourlyHistory_Columns_ColumnId",
+                        column: x => x.ColumnId,
+                        principalTable: "Columns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -141,7 +141,7 @@ namespace Tazkr.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BoardId = table.Column<int>(nullable: false),
+                    ColumnId = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: false),
                     Desc = table.Column<string>(nullable: false),
                     Archived = table.Column<bool>(nullable: false),
@@ -160,9 +160,9 @@ namespace Tazkr.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Tasks_Boards_BoardId",
-                        column: x => x.BoardId,
-                        principalTable: "Boards",
+                        name: "FK_Tasks_Columns_ColumnId",
+                        column: x => x.ColumnId,
+                        principalTable: "Columns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -204,9 +204,9 @@ namespace Tazkr.Data.Migrations
                 column: "AssignedToId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskHourlyHistory_BoardId",
+                name: "IX_TaskHourlyHistory_ColumnId",
                 table: "TaskHourlyHistory",
-                column: "BoardId");
+                column: "ColumnId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskHourlyHistory_UpdatedById",
@@ -219,9 +219,9 @@ namespace Tazkr.Data.Migrations
                 column: "AssignedToId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_BoardId",
+                name: "IX_Tasks_ColumnId",
                 table: "Tasks",
-                column: "BoardId");
+                column: "ColumnId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_UpdatedById",
@@ -316,13 +316,13 @@ namespace Tazkr.Data.Migrations
                 table: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Columns");
-
-            migrationBuilder.DropTable(
                 name: "TaskHourlyHistory");
 
             migrationBuilder.DropTable(
                 name: "Tasks");
+
+            migrationBuilder.DropTable(
+                name: "Columns");
 
             migrationBuilder.DropTable(
                 name: "Boards");

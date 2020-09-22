@@ -393,7 +393,7 @@ namespace Tazkr.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BoardId")
+                    b.Property<int>("ColumnId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateTimeUtc")
@@ -418,7 +418,7 @@ namespace Tazkr.Data.Migrations
 
                     b.HasIndex("AssignedToId");
 
-                    b.HasIndex("BoardId");
+                    b.HasIndex("ColumnId");
 
                     b.HasIndex("UpdatedById");
 
@@ -439,7 +439,7 @@ namespace Tazkr.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BoardId")
+                    b.Property<int>("ColumnId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateTimeUtc")
@@ -467,7 +467,7 @@ namespace Tazkr.Data.Migrations
 
                     b.HasIndex("AssignedToId");
 
-                    b.HasIndex("BoardId");
+                    b.HasIndex("ColumnId");
 
                     b.HasIndex("UpdatedById");
 
@@ -570,9 +570,9 @@ namespace Tazkr.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Tazkr.Models.Board", "Board")
+                    b.HasOne("Tazkr.Models.Column", "Column")
                         .WithMany()
-                        .HasForeignKey("BoardId")
+                        .HasForeignKey("ColumnId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -591,9 +591,9 @@ namespace Tazkr.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Tazkr.Models.Board", "Board")
+                    b.HasOne("Tazkr.Models.Column", "Column")
                         .WithMany()
-                        .HasForeignKey("BoardId")
+                        .HasForeignKey("ColumnId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
