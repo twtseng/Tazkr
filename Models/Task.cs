@@ -13,6 +13,14 @@ namespace Tazkr.Models
         public string Title { get; set; }
         [Required]
         public string Desc { get; set; }
+        [Required]
+        public bool Archived { get; set; }
+        [Required]
+        public ApplicationUser UpdatedBy { get; set; }
+        [Required]
+        public DateTime CreateTimeUtc { get; set; }   
+        [Required]
+        public DateTime UpdateTimeUtc { get; set; }        
         #nullable enable
         [Required]
         public ApplicationUser? AssignedTo { get; set; }
