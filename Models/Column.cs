@@ -1,20 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tazkr.Models
 {
     public class Column
     {
-        public int Id { get; set; }
-        [Required]
+        [Key]
+        public int ColumnId { get; set; }
         public string Title { get; set; }
-        [Required]
-        public bool Archived { get; set; }
-        [Required]
-        public ApplicationUser UpdatedBy { get; set; }
-        [Required]
-        public DateTime CreateTimeUtc { get; set; }   
-        [Required]
-        public DateTime UpdateTimeUtc { get; set; }  
+        public int BoardId { get; set; }
+        public Board Board { get; set; }
+        public List<Card> Cards { get; set; }
     }
 }

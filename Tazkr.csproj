@@ -7,11 +7,12 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <UserSecretsId>ff80a45b-6e08-4e7d-9b99-d654085d1c2f</UserSecretsId>
+    <UserSecretsId>7ba4f4dc-865f-4646-a8e3-408d78dd948a</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.6" />

@@ -50,6 +50,12 @@ namespace Tazkr
                     options.ClientId = googleAuthNSection["ClientId"];
                     options.ClientSecret = googleAuthNSection["ClientSecret"];
                 });
+            services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
+            {
+                microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ClientId"];
+                microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:ClientSecret"];
+            });   
+            
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
@@ -99,10 +105,10 @@ namespace Tazkr
             {
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
+                // if (env.IsDevelopment())
+                // {
+                //     spa.UseReactDevelopmentServer(npmScript: "start");
+                // }
             });
         }
     }

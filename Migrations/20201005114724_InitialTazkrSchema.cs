@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Tazkr.Data.Migrations
+namespace Tazkr.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class InitialTazkrSchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -186,6 +186,92 @@ namespace Tazkr.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Boards",
+                columns: table => new
+                {
+                    BoardId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(nullable: true),
+                    CreatedById = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Boards", x => x.BoardId);
+                    table.ForeignKey(
+                        name: "FK_Boards_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BoardUsers",
+                columns: table => new
+                {
+                    ApplicationUserId = table.Column<string>(nullable: false),
+                    BoardId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BoardUsers", x => new { x.ApplicationUserId, x.BoardId });
+                    table.ForeignKey(
+                        name: "FK_BoardUsers_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BoardUsers_Boards_BoardId",
+                        column: x => x.BoardId,
+                        principalTable: "Boards",
+                        principalColumn: "BoardId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Columns",
+                columns: table => new
+                {
+                    ColumnId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(nullable: true),
+                    BoardId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Columns", x => x.ColumnId);
+                    table.ForeignKey(
+                        name: "FK_Columns_Boards_BoardId",
+                        column: x => x.BoardId,
+                        principalTable: "Boards",
+                        principalColumn: "BoardId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cards",
+                columns: table => new
+                {
+                    CardId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Pri_Level = table.Column<int>(nullable: false),
+                    ColumnId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cards", x => x.CardId);
+                    table.ForeignKey(
+                        name: "FK_Cards_Columns_ColumnId",
+                        column: x => x.ColumnId,
+                        principalTable: "Columns",
+                        principalColumn: "ColumnId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -224,6 +310,26 @@ namespace Tazkr.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Boards_CreatedById",
+                table: "Boards",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BoardUsers_BoardId",
+                table: "BoardUsers",
+                column: "BoardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cards_ColumnId",
+                table: "Cards",
+                column: "ColumnId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Columns_BoardId",
+                table: "Columns",
+                column: "BoardId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_DeviceCode",
@@ -265,6 +371,12 @@ namespace Tazkr.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "BoardUsers");
+
+            migrationBuilder.DropTable(
+                name: "Cards");
+
+            migrationBuilder.DropTable(
                 name: "DeviceCodes");
 
             migrationBuilder.DropTable(
@@ -272,6 +384,12 @@ namespace Tazkr.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Columns");
+
+            migrationBuilder.DropTable(
+                name: "Boards");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

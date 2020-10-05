@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tazkr.Data;
 
-namespace Tazkr.Data.Migrations
+namespace Tazkr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -244,9 +244,6 @@ namespace Tazkr.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BoardId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -293,8 +290,6 @@ namespace Tazkr.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BoardId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -308,170 +303,83 @@ namespace Tazkr.Data.Migrations
 
             modelBuilder.Entity("Tazkr.Models.Board", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("BoardId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Archived")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CreateTimeUtc")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("CreatedById")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdateTimeUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedById")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
+                    b.HasKey("BoardId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
 
                     b.ToTable("Boards");
                 });
 
-            modelBuilder.Entity("Tazkr.Models.Column", b =>
+            modelBuilder.Entity("Tazkr.Models.BoardUser", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Archived")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("BoardId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateTimeUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdateTimeUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedById")
-                        .IsRequired()
+                    b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.Property<int>("BoardId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplicationUserId", "BoardId");
 
                     b.HasIndex("BoardId");
 
-                    b.HasIndex("UpdatedById");
+                    b.ToTable("BoardUsers");
+                });
+
+            modelBuilder.Entity("Tazkr.Models.Card", b =>
+                {
+                    b.Property<int>("CardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ColumnId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Pri_Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CardId");
+
+                    b.HasIndex("ColumnId");
+
+                    b.ToTable("Cards");
+                });
+
+            modelBuilder.Entity("Tazkr.Models.Column", b =>
+                {
+                    b.Property<int>("ColumnId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BoardId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ColumnId");
+
+                    b.HasIndex("BoardId");
 
                     b.ToTable("Columns");
-                });
-
-            modelBuilder.Entity("Tazkr.Models.Task", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Archived")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("AssignedToId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ColumnId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateTimeUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Desc")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdateTimeUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedById")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedToId");
-
-                    b.HasIndex("ColumnId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("Tasks");
-                });
-
-            modelBuilder.Entity("Tazkr.Models.TaskHourlyHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Archived")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("AssignedToId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ColumnId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateTimeUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Desc")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdateHourUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdateTimeUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedById")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedToId");
-
-                    b.HasIndex("ColumnId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("TaskHourlyHistory");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -479,7 +387,7 @@ namespace Tazkr.Data.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -488,7 +396,7 @@ namespace Tazkr.Data.Migrations
                     b.HasOne("Tazkr.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -497,7 +405,7 @@ namespace Tazkr.Data.Migrations
                     b.HasOne("Tazkr.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -506,13 +414,13 @@ namespace Tazkr.Data.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Tazkr.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -521,86 +429,47 @@ namespace Tazkr.Data.Migrations
                     b.HasOne("Tazkr.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Tazkr.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("Tazkr.Models.Board", null)
-                        .WithMany("ActiveUsers")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Tazkr.Models.Board", b =>
                 {
                     b.HasOne("Tazkr.Models.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany("BoardsCreated")
+                        .HasForeignKey("CreatedById");
+                });
+
+            modelBuilder.Entity("Tazkr.Models.BoardUser", b =>
+                {
+                    b.HasOne("Tazkr.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("Boards")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Tazkr.Models.ApplicationUser", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("Tazkr.Models.Board", "Board")
+                        .WithMany("BoardUsers")
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Tazkr.Models.Card", b =>
+                {
+                    b.HasOne("Tazkr.Models.Column", "Column")
+                        .WithMany("Cards")
+                        .HasForeignKey("ColumnId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Tazkr.Models.Column", b =>
                 {
-                    b.HasOne("Tazkr.Models.Board", null)
-                        .WithMany("Columns")
+                    b.HasOne("Tazkr.Models.Board", "Board")
+                        .WithMany()
                         .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tazkr.Models.ApplicationUser", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Tazkr.Models.Task", b =>
-                {
-                    b.HasOne("Tazkr.Models.ApplicationUser", "AssignedTo")
-                        .WithMany()
-                        .HasForeignKey("AssignedToId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tazkr.Models.Column", "Column")
-                        .WithMany()
-                        .HasForeignKey("ColumnId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tazkr.Models.ApplicationUser", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Tazkr.Models.TaskHourlyHistory", b =>
-                {
-                    b.HasOne("Tazkr.Models.ApplicationUser", "AssignedTo")
-                        .WithMany()
-                        .HasForeignKey("AssignedToId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tazkr.Models.Column", "Column")
-                        .WithMany()
-                        .HasForeignKey("ColumnId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tazkr.Models.ApplicationUser", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

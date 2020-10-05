@@ -8,6 +8,7 @@ namespace Tazkr.Models
 {
     public class ApplicationUser : IdentityUser
     {
-
+        public List<Board> BoardsCreated { get; set; }
+        public List<BoardUser> Boards { get; set; }
     }
 }

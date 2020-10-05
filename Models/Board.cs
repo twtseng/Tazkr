@@ -1,26 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tazkr.Models
 {
     public class Board
     {
-        public int Id { get; set; }
-        [Required]
+        [Key]
+        public int BoardId { get; set; }
         public string Title { get; set; }
-        [Required]
-        public bool Archived { get; set; }
-        [Required]
-        public ApplicationUser CreatedBy { get; set;}
-        [Required]
-        public ApplicationUser UpdatedBy { get; set; }
-        [Required]
-        public DateTime CreateTimeUtc { get; set; }   
-        [Required]
-        public DateTime UpdateTimeUtc { get; set; }  
-        public ICollection<ApplicationUser> ActiveUsers { get; set; }
-        public ICollection<Column> Columns { get; set; }
+
+        [InverseProperty("BoardsCreated")]
+        public ApplicationUser CreatedBy { get; set; }
+        public List<BoardUser> BoardUsers { get; set; }
 
     }
 }

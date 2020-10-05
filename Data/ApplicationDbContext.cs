@@ -12,27 +12,22 @@ namespace Tazkr.Data
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
+        public DbSet<Board> Boards { get; set; }
+        public DbSet<BoardUser> BoardUsers { get; set; }
+        public DbSet<Column> Columns { get; set; }
+        public DbSet<Card> Cards { get; set; }
+
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
+
         }
-
-        public DbSet<Board> Boards { get; set; }
-        public DbSet<Column> Columns { get; set; }
-        public DbSet<Tazkr.Models.Task> Tasks { get; set; }
-        public DbSet<Tazkr.Models.TaskHourlyHistory> TaskHourlyHistory { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Prevent deletion if objects exist with foreign key
-            foreach(var foreignKey in modelBuilder.Model.GetEntityTypes().
-            SelectMany(e => e.GetForeignKeys()))
-            {
-                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
-            }
+            modelBuilder.Entity<BoardUser>()
+                .HasKey(boardUser => new { boardUser.ApplicationUserId, boardUser.BoardId });
         }
     }
 }
