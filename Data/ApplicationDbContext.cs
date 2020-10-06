@@ -16,12 +16,16 @@ namespace Tazkr.Data
         public DbSet<BoardUser> BoardUsers { get; set; }
         public DbSet<Column> Columns { get; set; }
         public DbSet<Card> Cards { get; set; }
+        /// <summary>
+        /// cache to lookup Users by their user Id.
+        /// </summary>
+        private Dictionary<string, ApplicationUser> _userCache;  
 
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
-
+            _userCache = new Dictionary<string, ApplicationUser>();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,5 +33,7 @@ namespace Tazkr.Data
             modelBuilder.Entity<BoardUser>()
                 .HasKey(boardUser => new { boardUser.ApplicationUserId, boardUser.BoardId });
         }
+
+
     }
 }

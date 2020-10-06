@@ -1,0 +1,66 @@
+[
+    {
+        "boardId": 1,
+        "title": "CreateBoard test 10/5/2020 6:50:33 AM",
+        "createdById": "451f74ef-e67a-41a7-b436-ef3a4bd853da",
+        "createdBy": {
+            "boardsCreated": [
+                {
+                    "boardId": 2,
+                    "title": "CreateBoard test 10/5/2020 6:50:36 AM",
+                    "createdById": "451f74ef-e67a-41a7-b436-ef3a4bd853da",
+                    "boardUsers": null
+                }
+            ],
+            "boards": null,
+            "id": "451f74ef-e67a-41a7-b436-ef3a4bd853da",
+            "userName": "tomtseng-microsoft@hotmail.com",
+            "normalizedUserName": "TOMTSENG-MICROSOFT@HOTMAIL.COM",
+            "email": "tomtseng-microsoft@hotmail.com",
+            "normalizedEmail": "TOMTSENG-MICROSOFT@HOTMAIL.COM",
+            "emailConfirmed": true,
+            "passwordHash": null,
+            "securityStamp": "QMSAETCB7XACRL2KKON3HIOROKHEVCUN",
+            "concurrencyStamp": "c143d6b9-b547-480e-9e63-61701aaaec04",
+            "phoneNumber": null,
+            "phoneNumberConfirmed": false,
+            "twoFactorEnabled": false,
+            "lockoutEnd": null,
+            "lockoutEnabled": true,
+            "accessFailedCount": 0
+        },
+        "boardUsers": null
+    },
+    {
+        "boardId": 2,
+        "title": "CreateBoard test 10/5/2020 6:50:36 AM",
+        "createdById": "451f74ef-e67a-41a7-b436-ef3a4bd853da",
+        "createdBy": {
+            "boardsCreated": [
+                {
+                    "boardId": 1,
+                    "title": "CreateBoard test 10/5/2020 6:50:33 AM",
+                    "createdById": "451f74ef-e67a-41a7-b436-ef3a4bd853da",
+                    "boardUsers": null
+                }
+            ],
+            "boards": null,
+            "id": "451f74ef-e67a-41a7-b436-ef3a4bd853da",
+            "userName": "tomtseng-microsoft@hotmail.com",
+            "normalizedUserName": "TOMTSENG-MICROSOFT@HOTMAIL.COM",
+            "email": "tomtseng-microsoft@hotmail.com",
+            "normalizedEmail": "TOMTSENG-MICROSOFT@HOTMAIL.COM",
+            "emailConfirmed": true,
+            "passwordHash": null,
+            "securityStamp": "QMSAETCB7XACRL2KKON3HIOROKHEVCUN",
+            "concurrencyStamp": "c143d6b9-b547-480e-9e63-61701aaaec04",
+            "phoneNumber": null,
+            "phoneNumberConfirmed": false,
+            "twoFactorEnabled": false,
+            "lockoutEnd": null,
+            "lockoutEnabled": true,
+            "accessFailedCount": 0
+        },
+        "boardUsers": null
+    }
+]
