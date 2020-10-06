@@ -9,13 +9,14 @@ import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 import AppContext from './components/AppContext';
+import { SignalRHub } from './components/SignalRHub';
 
 import './custom.css'
-const signalR = "";
+const signalRHub = new SignalRHub();
 export default () => {
  
   return (
-    <AppContext.Provider value={{signalR}}>
+    <AppContext.Provider value={{signalRHub}}>
       <Layout>
         <AuthorizeRoute exact path='/' component={Home} />
         <AuthorizeRoute path='/home2' component={Home2} />

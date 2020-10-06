@@ -1,49 +1,17 @@
 import React, { Component } from 'react';
 import { Button, Table, Form } from 'react-bootstrap';
 import authService from './api-authorization/AuthorizeService';
-import * as signalR from '@microsoft/signalr';
+// import { SignalRHub } from './SignalRHub';
 
-class SignalRHub {
-  constructor () {
-    this.authToken = null;
-    this.methodDict = {};
-    this.hub = null;
-    this.connectionState = "";
-  }
-  addMethod(methodName, handler) {
-    this.methodDict[methodName] = handler;
-  }
-  restartHub() {
-    this.hub = new signalR.HubConnectionBuilder()
-    .withUrl(`/hub`)
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
-
-    for(let methodName in this.methodDict) {
-      console.log(`SignalRHub registering method "${methodName}: ${this.methodDict[methodName]}`);
-      this.hub.on(methodName, this.methodDict[methodName]);
-    }
-
-    this.hub.start();
-  }
-  startHub(authToken) {
-    this.authToken = authToken;
-    this.restartHub();
-  }
-  send(methodName, payload) {
-    this.hub.invoke(methodName, this.authToken, payload)
-    .then(() => console.log(`${methodName} succeeded`))
-    .catch(err => { console.log(`${methodName} failed, ${err}. Attempting reconnect`);  this.restartHub();})
-  }
-}
-
-const signalRHub = new SignalRHub();
+// const signalRHub = new SignalRHub();
+import AppContext from './AppContext';
 
 const Home = () => {
 
 
   const [boards, setBoards] = React.useState([]);
   const [boardTitle, setBoardTitle] = React.useState("");
+  const { signalRHub } = React.useContext(AppContext);
 
   const RefreshBoards = (boardsJson) => {
     console.log(boardsJson);
@@ -77,7 +45,7 @@ const Home = () => {
   }
   return (
       <div>
-        <h1>Boards with SignalR in a class</h1>
+        <h1>Boards with SignalR in a class in AppContext</h1>
         <Button onClick={getAuthToken}>Get Auth Token</Button>
         <Form>
           <Form.Group controlId="formBasicEmail">
