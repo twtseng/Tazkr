@@ -1,69 +1,49 @@
 import React, { Component } from 'react';
 import { Button, Table, Form } from 'react-bootstrap';
 import authService from './api-authorization/AuthorizeService';
-import * as signalR from '@microsoft/signalr';
+import AppContext from './AppContext';
 
 const Home = () => {
 
 
   const [boards, setBoards] = React.useState([]);
-  const [authToken, setAuthToken] = React.useState("");
   const [boardTitle, setBoardTitle] = React.useState("");
+  const { signalRHub } = React.useContext(AppContext);
 
   const RefreshBoards = (boardsJson) => {
     console.log(boardsJson);
     setBoards(JSON.parse(boardsJson));
   }
-  const [signalRHub, setSignalRHub] = React.useState([]);
-  React.useEffect(() => {
-      authService.getAccessToken()
-      .then((token) => {
-          setAuthToken(token);
-          const hub = new signalR.HubConnectionBuilder()
-          .withUrl("/hub")
-          .configureLogging(signalR.LogLevel.Information)  
-          .build();
-
-          hub.on("RefreshBoards", RefreshBoards);
-
-          // Starts the SignalR connection
-          hub.start();
-          setSignalRHub(hub);
-      });
-  },[]);
+ 
   const getAuthToken = async () => {
-    if (authToken === "") {
-      console.log("Getting auth token because it is equal to space");
+      console.log("Getting auth token");
       const token = await authService.getAccessToken();
-      setAuthToken(token);
-    } else {
-      console.log(`NOT Getting auth token because it is equal to ${authToken}`);
-    }
+      await signalRHub.startHub(token);
+      console.log("Got auth token");
   }
-  const ConnectSignalR = async () => {
-    const token = await authService.getAccessToken();
-    signalRHub.Connect(token);
-  }
+
   const getBoards = async () => {
-    signalRHub.invoke("GetBoards", authToken,"")
-    .then(() => console.log("getBoards succeeded"))
-    .catch(err => console.log(`getBoards failed, ${err}`))
+    signalRHub.send("GetBoards");
   }
 
   const addBoardWithHub = async () => {
-    signalRHub.invoke("CreateBoard", authToken,boardTitle)
-    .then(() => console.log("CreateBoard succeeded"))
-    .catch(err => console.log(`CreateBoard failed, ${err}`));
+    signalRHub.send("CreateBoard",boardTitle);
   }
 
   const deleteBoardWithHub = async (boardId) => {
-    signalRHub.invoke("DeleteBoard", authToken,boardId)
-    .then(() => console.log("deleteBoardWithHub succeeded"))
-    .catch(err => console.log(`deleteBoardWithHub failed, ${err}`));
+    signalRHub.send("DeleteBoard",boardId);
   }
+  React.useEffect(() => {
+    authService.getAccessToken()
+    .then((token) => {
+        signalRHub.addMethod("RefreshBoards", RefreshBoards);
+        signalRHub.startHub(token)
+        .then(() => getBoards())
+    });
+},[]);
   return (
       <div>
-        <h1>Boards with SignalR embedded on page</h1>
+        <h1>Boards with SignalR in a class in AppContext</h1>
         <Button onClick={getAuthToken}>Get Auth Token</Button>
         <Form>
           <Form.Group controlId="formBasicEmail">

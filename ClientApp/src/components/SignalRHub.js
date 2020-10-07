@@ -6,6 +6,7 @@ export class SignalRHub {
       this.hub = null;
       this.connectionState = "";
     }
+    // Add a client method and associated handler
     addMethod(methodName, handler) {
       this.methodDict[methodName] = handler;
     }
@@ -20,13 +21,13 @@ export class SignalRHub {
         this.hub.on(methodName, this.methodDict[methodName]);
       }
   
-      this.hub.start();
+      return this.hub.start();
     }
     startHub(authToken) {
       this.authToken = authToken;
-      this.restartHub();
+      return this.restartHub();
     }
-    send(methodName, payload) {
+    send(methodName, payload="") {
       this.hub.invoke(methodName, this.authToken, payload)
       .then(() => console.log(`${methodName} succeeded`))
       .catch(err => { console.log(`${methodName} failed, ${err}. Attempting reconnect`);  this.restartHub();})
