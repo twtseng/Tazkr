@@ -10,7 +10,7 @@ const Home = () => {
   const [boardTitle, setBoardTitle] = React.useState("");
   const { signalRHub } = React.useContext(AppContext);
 
-  const RefreshBoards = (boardsJson) => {
+  const RefreshBoardsWithContents = (boardsJson) => {
     console.log(boardsJson);
     setBoards(JSON.parse(boardsJson));
   }
@@ -23,7 +23,7 @@ const Home = () => {
   }
 
   const getBoards = async () => {
-    signalRHub.send("GetBoards")
+    signalRHub.send("GetBoardsWithContents")
     .then(() => console.log(`getBoards succeeded`))
     .catch(err => { console.log(`getBoards failed, ${err}. Attempting reconnect`);  signalRHub.restartHub();})
   }
@@ -62,7 +62,7 @@ const Home = () => {
   React.useEffect(() => {
     authService.getAccessToken()
     .then((token) => {
-        signalRHub.addMethod("RefreshBoards", RefreshBoards);
+        signalRHub.addMethod("RefreshBoardsWithContents", RefreshBoardsWithContents);
         signalRHub.startHub(token)
         .then(() => getBoards())
     });

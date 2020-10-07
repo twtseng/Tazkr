@@ -32,9 +32,18 @@ namespace Tazkr.Controllers
             ApplicationUser appUser = _dbContext.Users.Find(keyValues:token.Subject); 
             return appUser;       
         }
-        public async Task GetBoards(string accessToken, string unusedField)
+        public async Task GetBoards(string accessToken)
         {
             _logger.LogInformation($"=== SignalRHub.GetBoards ===");
+            ApplicationUser appUser = this.GetUserFromAccessToken(accessToken);
+            var boardData = _dbContext.Boards
+            .Include(board => board.CreatedBy)
+            .Select(x => new { x.Title, x.BoardId, CreatedBy = x.CreatedBy.UserName});
+            await Clients.Caller.SendAsync("RefreshBoards", JsonConvert.SerializeObject(boardData));
+        }
+        public async Task GetBoardsWithContents(string accessToken)
+        {
+            _logger.LogInformation($"=== SignalRHub.GetBoardsWithContents ===");
             ApplicationUser appUser = this.GetUserFromAccessToken(accessToken);
             var boardData = _dbContext.Boards
             .Include(board => board.CreatedBy)
@@ -49,7 +58,7 @@ namespace Tazkr.Controllers
                         Cards = col.Cards.Select(card => new { card.CardId, card.Title })
                     })  
                 });
-            await Clients.Caller.SendAsync("RefreshBoards", JsonConvert.SerializeObject(boardData));
+            await Clients.Caller.SendAsync("RefreshBoardsWithContents", JsonConvert.SerializeObject(boardData));
         }
         public async Task CreateBoard(string accessToken, string boardTitle)
         {
@@ -60,7 +69,7 @@ namespace Tazkr.Controllers
             board.Title = boardTitle;
             _dbContext.Boards.Add(board);
             _dbContext.SaveChanges();
-            await this.GetBoards(accessToken, "");
+            await this.GetBoards(accessToken);
         }
         
         public async Task DeleteBoard(string accessToken, int boardId)
@@ -70,7 +79,17 @@ namespace Tazkr.Controllers
             Board board = _dbContext.Boards.Find(boardId);
             _dbContext.Boards.Remove(board);
             _dbContext.SaveChanges();
-            await this.GetBoards(accessToken, "");
+            await this.GetBoards(accessToken);
+        }
+        public async Task RenameBoard(string accessToken, int boardId, string newName)
+        {
+            _logger.LogInformation($"=== SignalRHub.RenameBoard(boardId={boardId}, newName={newName}) ===");
+            ApplicationUser appUser = this.GetUserFromAccessToken(accessToken);
+            Board board = _dbContext.Boards.Find(boardId);
+            board.Title = newName;
+            _dbContext.Boards.Update(board);
+            _dbContext.SaveChanges();
+            await this.GetBoards(accessToken);
         }
         public async Task AddColumnToBoard(string accessToken, int boardId)
         {
@@ -81,7 +100,7 @@ namespace Tazkr.Controllers
             column.BoardId = boardId;
             _dbContext.Columns.Add(column);
             _dbContext.SaveChanges();
-            await this.GetBoards(accessToken, "");
+            await this.GetBoards(accessToken);
         }
         public async Task DeleteColumn(string accessToken, int columnId)
         {
@@ -90,7 +109,7 @@ namespace Tazkr.Controllers
             Column column = _dbContext.Columns.Find(columnId);
             _dbContext.Columns.Remove(column);
             _dbContext.SaveChanges();
-            await this.GetBoards(accessToken, "");
+            await this.GetBoards(accessToken);
         }
         public async Task AddCardToColumn(string accessToken, int columnId)
         {
@@ -101,7 +120,7 @@ namespace Tazkr.Controllers
             card.ColumnId = columnId;
             _dbContext.Cards.Add(card);
             _dbContext.SaveChanges();
-            await this.GetBoards(accessToken, "");
+            await this.GetBoards(accessToken);
         }
         public async Task DeleteCard(string accessToken, int cardId)
         {
@@ -110,7 +129,7 @@ namespace Tazkr.Controllers
             Card card = _dbContext.Cards.Find(cardId);
             _dbContext.Cards.Remove(card);
             _dbContext.SaveChanges();
-            await this.GetBoards(accessToken, "");
+            await this.GetBoards(accessToken);
         }
     }
 }
