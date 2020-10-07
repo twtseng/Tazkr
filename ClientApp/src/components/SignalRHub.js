@@ -28,8 +28,6 @@ export class SignalRHub {
       return this.restartHub();
     }
     send(methodName, payload="") {
-      this.hub.invoke(methodName, this.authToken, payload)
-      .then(() => console.log(`${methodName} succeeded`))
-      .catch(err => { console.log(`${methodName} failed, ${err}. Attempting reconnect`);  this.restartHub();})
+      return this.hub.invoke(methodName, this.authToken, payload);
     }
   }

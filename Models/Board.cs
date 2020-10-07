@@ -15,6 +15,7 @@ namespace Tazkr.Models
         [InverseProperty("BoardsCreated")]
         public ApplicationUser CreatedBy { get; set; }
         public List<BoardUser> BoardUsers { get; set; }
+        public List<Column> Columns { get; set; }
 
     }
 }

@@ -467,7 +467,7 @@ namespace Tazkr.Migrations
             modelBuilder.Entity("Tazkr.Models.Column", b =>
                 {
                     b.HasOne("Tazkr.Models.Board", "Board")
-                        .WithMany()
+                        .WithMany("Columns")
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

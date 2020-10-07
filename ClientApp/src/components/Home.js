@@ -23,15 +23,41 @@ const Home = () => {
   }
 
   const getBoards = async () => {
-    signalRHub.send("GetBoards");
+    signalRHub.send("GetBoards")
+    .then(() => console.log(`getBoards succeeded`))
+    .catch(err => { console.log(`getBoards failed, ${err}. Attempting reconnect`);  signalRHub.restartHub();})
   }
 
   const addBoardWithHub = async () => {
-    signalRHub.send("CreateBoard",boardTitle);
+    signalRHub.send("CreateBoard",boardTitle)
+    .then(() => console.log(`addBoardWithHub succeeded`))
+    .catch(err => { console.log(`addBoardWithHub failed, ${err}. Attempting reconnect`);  signalRHub.restartHub();})
   }
 
   const deleteBoardWithHub = async (boardId) => {
-    signalRHub.send("DeleteBoard",boardId);
+    signalRHub.send("DeleteBoard",boardId)
+    .then(() => console.log(`deleteBoardWithHub succeeded`))
+    .catch(err => { console.log(`deleteBoardWithHub failed, ${err}. Attempting reconnect`);  signalRHub.restartHub();})
+  }
+  const addColumnToBoard = async (boardId) => {
+    signalRHub.send("AddColumnToBoard",boardId)
+    .then(() => console.log(`AddColumnToBoard succeeded`))
+    .catch(err => { console.log(`AddColumnToBoard failed, ${err}. Attempting reconnect`);  signalRHub.restartHub();})
+  }
+  const deleteColumnWithHub = async (columnId) => {
+    signalRHub.send("DeleteColumn",columnId)
+    .then(() => console.log(`deleteColumnWithHub succeeded`))
+    .catch(err => { console.log(`deleteColumnWithHub failed, ${err}. Attempting reconnect`);  signalRHub.restartHub();})
+  }
+  const addCardToColumn = async (columnId) => {
+    signalRHub.send("AddCardToColumn",columnId)
+    .then(() => console.log(`addCardToColumn succeeded`))
+    .catch(err => { console.log(`addCardToColumn failed, ${err}. Attempting reconnect`);  signalRHub.restartHub();})
+  }
+  const deleteCard = async (cardId) => {
+    signalRHub.send("DeleteCard",cardId)
+    .then(() => console.log(`deleteCard succeeded`))
+    .catch(err => { console.log(`deleteCard failed, ${err}. Attempting reconnect`);  signalRHub.restartHub();})
   }
   React.useEffect(() => {
     authService.getAccessToken()
@@ -61,6 +87,7 @@ const Home = () => {
             <tr>
               <th>Title</th>
               <th>BoardId</th>
+              <th>Columns</th>
               <th>CreatedBy</th>
               <th>Action</th>
             </tr>
@@ -71,8 +98,32 @@ const Home = () => {
               <tr key={x.BoardId}>
                 <td>{x.Title}</td>
                 <td>{x.BoardId}</td>
+                <td>
+                  <ul>
+                  {
+                    x.Columns.map(col => (
+                      <li key={col.ColumnId}>{col.Title}
+                        <Button onClick={() => deleteColumnWithHub(col.ColumnId)}>Delete</Button>
+                        <Button onClick={() => addCardToColumn(col.ColumnId)}>Add Card</Button>
+                        <ul>
+                          {
+                            col.Cards.map(card => (
+                              <li key={card.CardId}>{card.Title}
+                              <Button onClick={() => deleteCard(card.CardId)}>Delete Card</Button>
+                              </li>
+                            ))
+                          }
+                        </ul>
+                      </li>
+                    ))
+                  }
+                  </ul>
+                </td>
                 <td>{x.CreatedBy}</td>
-                <td><Button onClick={() => deleteBoardWithHub(x.BoardId)}>Delete</Button></td>
+                <td>
+                  <Button onClick={() => deleteBoardWithHub(x.BoardId)}>Delete</Button>
+                  <Button onClick={() => addColumnToBoard(x.BoardId)}>Add Column</Button>
+                </td>
               </tr>
             ))
           }

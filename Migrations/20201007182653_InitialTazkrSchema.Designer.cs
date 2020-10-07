@@ -10,7 +10,7 @@ using Tazkr.Data;
 namespace Tazkr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201005114724_InitialTazkrSchema")]
+    [Migration("20201007182653_InitialTazkrSchema")]
     partial class InitialTazkrSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -469,7 +469,7 @@ namespace Tazkr.Migrations
             modelBuilder.Entity("Tazkr.Models.Column", b =>
                 {
                     b.HasOne("Tazkr.Models.Board", "Board")
-                        .WithMany()
+                        .WithMany("Columns")
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
