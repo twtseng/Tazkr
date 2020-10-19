@@ -31,7 +31,7 @@ namespace Tazkr
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()
@@ -71,6 +71,9 @@ namespace Tazkr
             });
 
             services.AddSignalR().AddJsonProtocol(options => { options.PayloadSerializerOptions.PropertyNamingPolicy = null; });
+
+            // SignalR data manager
+            services.AddSingleton(new AppDataManager());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
