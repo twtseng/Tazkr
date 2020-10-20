@@ -8,6 +8,7 @@ import AppContext from './components/AppContext';
 import { SignalRHub } from './components/SignalRHub';
 import Home from './components/Home';
 import BoardsView from './components/views/BoardsView';
+import BoardView from './components/views/BoardView';
 
 import './custom.css'
 const signalRHub = new SignalRHub();
@@ -18,6 +19,7 @@ export default () => {
       <Layout>
         <AuthorizeRoute exact path='/' component={Home} />
         <AuthorizeRoute exact path='/boards' component={BoardsView} />
+        <AuthorizeRoute exact path='/board/:hubGroupId' component={BoardView} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>
     </AppContext.Provider>

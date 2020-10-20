@@ -1,19 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Jumbotron, Button, Card, Form } from 'react-bootstrap'
 import authService from '../api-authorization/AuthorizeService';
 import AppContext from '../AppContext';
+import { useParams } from "react-router-dom";
 
-const BoardsView = () => {
+const BoardView = () => {
+  const { hubGroupId } = useParams();
 
-
-  const [boards, setBoards] = React.useState([]);
-  const [boardTitle, setBoardTitle] = React.useState("");
+  const [board, setBoard] = React.useState([]);
+  const [columnTitle, setColumnTitle] = React.useState("");
   const { signalRHub } = React.useContext(AppContext);
 
-  const RefreshBoards = (boardsJson) => {
-    console.log(boardsJson);
-    setBoards(JSON.parse(boardsJson));
+  const RefreshBoard = (boardJson) => {
+    console.log(boardJson);
+    setBoard(JSON.parse(boardJson));
   }
  
   const getAuthToken = async () => {
@@ -23,20 +23,20 @@ const BoardsView = () => {
       console.log("Got auth token");
   }
 
-  const getBoards = async () => {
-    signalRHub.callAction("", JSON.stringify({ Method: "GetBoards", Param1: "" }))
+  const getBoard = async () => {
+    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "GetBoard", Param1: "" }))
   }
-  const createBoard = async () => {
-    signalRHub.callAction("", JSON.stringify({ Method: "CreateBoard", Param1: boardTitle }))
+  const createColumn = async () => {
+    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "CreateColumn", Param1: columnTitle }))
   }
 
 
   React.useEffect(() => {
     authService.getAccessToken()
     .then((token) => {
-        signalRHub.addMethod("RefreshBoards", RefreshBoards);
+        signalRHub.addMethod("BoardJson", RefreshBoard);
         signalRHub.startHub(token)
-        .then(() => getBoards())
+        .then(() => getBoard())
     });
 },[]);
 
@@ -44,26 +44,25 @@ const BoardsView = () => {
       <Jumbotron className="d-flex flex-column">
         <Form>
           <Form.Group controlId="formBasicEmail" className="d-flex">
-            <Button onClick={createBoard} className="col-2">Add Board</Button>
-            <Form.Control className="ml-3 col-3" name="title" type="text" placeholder="Enter board title" value={boardTitle} onChange={e => setBoardTitle(e.target.value)} />
+            <Button onClick={createColumn} className="col-2">Add Column</Button>
+            <Form.Control className="ml-3 col-3" name="title" type="text" placeholder="Enter column title" value={columnTitle} onChange={e => setColumnTitle(e.target.value)} />
           </Form.Group>
         </Form>
-        <h1>Boards</h1>
+        <h1>Board {board.Name} Id: {board.BoardId} HubGroup: {board.HubGroupId}</h1>
         <div className="d-flex flex-wrap">
-          {boards.map(x => 
+          {/* {board.map(x => 
             <Card  className='col-3 m-4' key={x.HubGroupId}>
               <Card.Body>
                 <Card.Title>{x.Title}</Card.Title>
                 <Card.Text><small>BoardId: {x.BoardId}</small></Card.Text>
                 <Card.Text><small>CreatedBy: {x.CreatedBy}</small></Card.Text>
                 <Card.Text><small>HubGroupId: {x.HubGroupId}</small></Card.Text>
-                <Link to={`/board/${x.HubGroupId}`}>Go to board</Link>
               </Card.Body>
             </Card>
-          )}
+          )} */}
         </div>
       </Jumbotron>
   );
 }
 
-export default BoardsView;
+export default BoardView;

@@ -9,6 +9,10 @@ namespace Tazkr.Models
     {
         [Key]
         public int ColumnId { get; set; }
+        /// <summary>
+        /// Order that this column appears on the board
+        /// </summary>
+        public int Index { get; set; }
         public string Title { get; set; }
         public int BoardId { get; set; }
         public Board Board { get; set; }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using Tazkr.Controllers;
 
 namespace Tazkr.Models
@@ -25,9 +27,13 @@ namespace Tazkr.Models
         public ApplicationUser CreatedBy { get; set; }
         public List<BoardUser> BoardUsers { get; set; }
         public List<Column> Columns { get; set; }
-        public string GetBoardJson()
+        public async Task<string> GetBoardJson(SignalRHub signalRHub)
         {
-            return JsonConvert.SerializeObject(this);
+            Board board = await signalRHub.DbContext.Boards.Include(x => x.BoardUsers).Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefaultAsync();
+            return JsonConvert.SerializeObject(board, Formatting.None,new JsonSerializerSettings()
+                        { 
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        });
         }
 
         public override async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
@@ -36,13 +42,15 @@ namespace Tazkr.Models
             {
                 case "RefreshBoard":
                     signalRHub.Logger.LogInformation($"Board.RefreshBoard");
-                    await this.JoinGroup(signalRHub, appUser);
-                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", this.GetBoardJson());
+                    string refreshBoardJson = await this.GetBoardJson(signalRHub);
+                    signalRHub.Logger.LogInformation($"Board.RefreshBoard json={refreshBoardJson}");
+                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", refreshBoardJson);
                     break;
                 case "GetBoard":
                     signalRHub.Logger.LogInformation($"Board.GetBoard");
-                    await this.JoinGroup(signalRHub, appUser);
-                    await signalRHub.Clients.Caller.SendAsync("BoardJson", this.GetBoardJson());
+                    string getBoardJson = await this.GetBoardJson(signalRHub);
+                    signalRHub.Logger.LogInformation($"Board.GetBoard json={getBoardJson}");
+                    await signalRHub.Clients.Caller.SendAsync("BoardJson", getBoardJson);
                     break;        
                 default:
                     signalRHub.Logger.LogInformation($"Board UNKNOWN METHOD({hubPayload.Method})");

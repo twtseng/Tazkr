@@ -20,6 +20,10 @@ namespace Tazkr.Models
         {
             this.HubGroups = new List<HubGroup>();
         }
+        public void RefreshHubGroups(SignalRHub signalRHub)
+        {
+            this.HubGroups = signalRHub.DbContext.Boards.Select(x => (HubGroup) x).ToList();
+        }
         public string GetHubGroupsJson()
         {
             return JsonConvert.SerializeObject(
@@ -51,11 +55,13 @@ namespace Tazkr.Models
         public async Task GetHubGroups(SignalRHub signalRHub)
         {
             signalRHub.Logger.LogInformation($"AppDataManager.GetHubGroups");
+            this.RefreshHubGroups(signalRHub);
             await signalRHub.Clients.Caller.SendAsync("HubGroups", this.GetHubGroupsJson());
         }
         public async Task GetBoards(SignalRHub signalRHub)
         {
             signalRHub.Logger.LogInformation($"AppDataManager.GetBoards");
+            this.RefreshHubGroups(signalRHub);
             var boardData = signalRHub.DbContext.Boards
             .Include(board => board.CreatedBy)
             .Select(x => new { x.Title, x.BoardId, CreatedBy = x.CreatedBy.UserName, x.HubGroupId});
@@ -69,6 +75,7 @@ namespace Tazkr.Models
             board.Title = boardTitle;
             signalRHub.DbContext.Boards.Add(board);
             signalRHub.DbContext.SaveChanges();
+            this.RefreshHubGroups(signalRHub);
         }
         public async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {

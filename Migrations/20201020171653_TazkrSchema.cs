@@ -190,6 +190,7 @@ namespace Tazkr.Migrations
                 {
                     ColumnId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Index = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     BoardId = table.Column<int>(nullable: false)
                 },
@@ -234,6 +235,7 @@ namespace Tazkr.Migrations
                 {
                     CardId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Index = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Pri_Level = table.Column<int>(nullable: false),

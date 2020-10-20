@@ -357,6 +357,9 @@ namespace Tazkr.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
                     b.Property<int>("Pri_Level")
                         .HasColumnType("int");
 
@@ -378,6 +381,9 @@ namespace Tazkr.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("BoardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Index")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
