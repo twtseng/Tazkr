@@ -12,3 +12,11 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+.btn:hover {
+  background-color:  #0d4b8a;
+}
+
+.card:hover {
+  background-color: lightgrey;
+}

@@ -15,27 +15,28 @@ namespace Tazkr.Models
     /// </summary>
     public abstract class HubGroup
     {
-        public Dictionary<string, ApplicationUser> ApplicationUsers { get; private set; }
+        public List<ApplicationUser> ApplicationUsers { get; set; }
         public HubGroup()
         {
             this.HubGroupId = System.Guid.NewGuid().ToString();
-            this.ApplicationUsers = new Dictionary<string, ApplicationUser>();
+            this.ApplicationUsers = new List<ApplicationUser>();
         }
         public string HubGroupId { get; protected set; }
 
         public virtual async Task JoinGroup(SignalRHub signalRHub, ApplicationUser appUser)
         {
-            if (!this.ApplicationUsers.ContainsKey(appUser.Id))
+            if (!this.ApplicationUsers.Exists(x => x.Id == appUser.Id))
             {
-                this.ApplicationUsers[appUser.Id] = appUser;
+                this.ApplicationUsers.Add(appUser);
                 await signalRHub.Groups.AddToGroupAsync(signalRHub.Context.ConnectionId, this.HubGroupId);
             }
         }
         public virtual async Task UnjoinGroup(SignalRHub signalRHub, ApplicationUser appUser)
         {
-            if (this.ApplicationUsers.ContainsKey(appUser.Id))
+            ApplicationUser userToRemove = this.ApplicationUsers.FirstOrDefault(x => x.Id == appUser.Id);
+            if (userToRemove != null)
             {
-                this.ApplicationUsers.Remove(appUser.Id);
+                this.ApplicationUsers.Remove(userToRemove);
                 await signalRHub.Groups.RemoveFromGroupAsync(signalRHub.Context.ConnectionId, this.HubGroupId);
             }
         }
@@ -43,6 +44,6 @@ namespace Tazkr.Models
         /// <summary>
         /// True if a game/chat can accept more participants
         /// </summary>
-        public abstract bool CanJoin();
+
     }
 }

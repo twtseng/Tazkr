@@ -26,10 +26,49 @@ namespace Tazkr.Models
                 this.HubGroups.Select(x => new { 
                     x.HubGroupId, 
                     ClassName=x.GetType().Name, 
-                    CanJoin = x.CanJoin(), 
-                    NumUsers=x.ApplicationUsers.Keys.Count,
-                    Players = x.ApplicationUsers.Values.Select(x => x.UserName).ToList()
+                    NumUsers=x.ApplicationUsers.Count,
+                    Players = x.ApplicationUsers.Select(x => x.UserName).ToList()
                     }));
+        }
+        public async Task JoinGroup(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.JoinGroup ({hubGroupId})");
+            HubGroup groupToJoin = this.HubGroups.Where(x => x.HubGroupId == hubGroupId).FirstOrDefault();
+            if (groupToJoin != null)
+            {
+                await groupToJoin.JoinGroup(signalRHub, appUser);
+            }
+        }
+        public async Task UnjoinGroup(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.UnjoinGroup ({hubGroupId})");
+            HubGroup groupToUnjoin = this.HubGroups.Where(x => x.HubGroupId == hubGroupId).FirstOrDefault();
+            if (groupToUnjoin != null)
+            {
+                await groupToUnjoin.UnjoinGroup(signalRHub, appUser);
+            }
+        }
+        public async Task GetHubGroups(SignalRHub signalRHub)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.GetHubGroups");
+            await signalRHub.Clients.Caller.SendAsync("HubGroups", this.GetHubGroupsJson());
+        }
+        public async Task GetBoards(SignalRHub signalRHub)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.GetBoards");
+            var boardData = signalRHub.DbContext.Boards
+            .Include(board => board.CreatedBy)
+            .Select(x => new { x.Title, x.BoardId, CreatedBy = x.CreatedBy.UserName, x.HubGroupId});
+            await signalRHub.Clients.Caller.SendAsync("RefreshBoards", JsonConvert.SerializeObject(boardData));  
+        }
+        public void CreateBoard(SignalRHub signalRHub, ApplicationUser appUser, string boardTitle)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.CreateBoard");
+            Board board = new Board();
+            board.CreatedById = appUser.Id;
+            board.Title = boardTitle;
+            signalRHub.DbContext.Boards.Add(board);
+            signalRHub.DbContext.SaveChanges();
         }
         public async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
@@ -38,57 +77,20 @@ namespace Tazkr.Models
             {
                 switch (hubPayload.Method) {
                     case "JoinGroup":
-                        signalRHub.Logger.LogInformation($"AppDataManager.JoinGroup ({hubPayload.Param1})");
-                        HubGroup groupToJoin = this.HubGroups.Where(x => x.HubGroupId == hubPayload.Param1).FirstOrDefault();
-                        if (groupToJoin != null)
-                        {
-                            await groupToJoin.JoinGroup(signalRHub, appUser);
-                        }
+                        await this.JoinGroup(signalRHub, appUser, hubPayload.Param1);
                         break;
                     case "UnjoinGroup":
-                        signalRHub.Logger.LogInformation($"AppDataManager.UnjoinGroup ({hubPayload.Param1})");
-                        HubGroup groupToUnjoin = this.HubGroups.Where(x => x.HubGroupId == hubPayload.Param1).FirstOrDefault();
-                        if (groupToUnjoin != null)
-                        {
-                            await groupToUnjoin.UnjoinGroup(signalRHub, appUser);
-                        }
+                        await this.UnjoinGroup(signalRHub, appUser, hubPayload.Param1);
                         break;
                     case "GetHubGroups":
-                        signalRHub.Logger.LogInformation($"AppDataManager.GetHubGroups ({hubPayload.Param1})");
-                        await signalRHub.Clients.Caller.SendAsync("HubGroups", this.GetHubGroupsJson());
+                        await this.GetHubGroups(signalRHub);
                         break;
                     case "GetBoards":
-                        signalRHub.Logger.LogInformation($"AppDataManager.GetBoards");
-                        var boardData = signalRHub.DbContext.Boards
-                        .Include(board => board.CreatedBy)
-                        .Select(x => new { x.Title, x.BoardId, CreatedBy = x.CreatedBy.UserName});
-                        await signalRHub.Clients.Caller.SendAsync("RefreshBoards", JsonConvert.SerializeObject(boardData));  
-                        break;
-                    case "GetBoardsWithContents":
-                        signalRHub.Logger.LogInformation($"=== AppDataManager.GetBoardsWithContents ===");
-                        var boardDataWithContents = signalRHub.DbContext.Boards
-                        .Include(board => board.CreatedBy)
-                        .Include(board => board.Columns)
-                        .ThenInclude(column => column.Cards)
-                        .Select(x => new 
-                            { x.Title, x.BoardId, CreatedBy = x.CreatedBy.UserName,
-                                Columns = x.Columns.Select(col => new 
-                                {
-                                    col.ColumnId,
-                                    col.Title,
-                                    Cards = col.Cards.Select(card => new { card.CardId, card.Title })
-                                })  
-                            });
-                        await signalRHub.Clients.Caller.SendAsync("RefreshBoardsWithContents", JsonConvert.SerializeObject(boardDataWithContents));
+                        await this.GetBoards(signalRHub);
                         break;
                     case "CreateBoard":
-                        signalRHub.Logger.LogInformation($"AppDataManager.CreateBoard");
-                        Board board = new Board();
-                        board.CreatedById = appUser.Id;
-                        board.Title = hubPayload.Param1;
-                        signalRHub.DbContext.Boards.Add(board);
-                        signalRHub.DbContext.SaveChanges();
-                        await this.CallAction(signalRHub, appUser, "", new HubPayload() { Method="GetBoardsWithContents" }); 
+                        this.CreateBoard(signalRHub, appUser, hubPayload.Param1);
+                        await this.GetBoards(signalRHub);
                         break;
                 }
             }

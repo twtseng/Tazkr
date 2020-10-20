@@ -244,6 +244,9 @@ namespace Tazkr.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BoardId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -290,6 +293,8 @@ namespace Tazkr.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BoardId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -310,6 +315,9 @@ namespace Tazkr.Migrations
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("HubGroupId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -431,6 +439,13 @@ namespace Tazkr.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Tazkr.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("Tazkr.Models.Board", null)
+                        .WithMany("ApplicationUsers")
+                        .HasForeignKey("BoardId");
                 });
 
             modelBuilder.Entity("Tazkr.Models.Board", b =>
