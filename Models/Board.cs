@@ -29,29 +29,40 @@ namespace Tazkr.Models
         public List<Column> Columns { get; set; }
         public async Task<string> GetBoardJson(SignalRHub signalRHub)
         {
-            Board board = await signalRHub.DbContext.Boards.Include(x => x.BoardUsers).Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefaultAsync();
-            return JsonConvert.SerializeObject(board, Formatting.None,new JsonSerializerSettings()
-                        { 
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        });
+            Board board = await signalRHub.DbContext.Boards.Include(x => x.BoardUsers).Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefaultAsync(x => x.BoardId == this.BoardId);
+            return JsonConvert.SerializeObject(board, Formatting.None,new JsonSerializerSettings(){ReferenceLoopHandling = ReferenceLoopHandling.Ignore});
         }
-
+        public async Task AddColumn(SignalRHub signalRHub, string columnTitle)
+        {
+            signalRHub.Logger.LogInformation($"Board.AddColumn columnTitle={columnTitle}");
+            Column column = new Column();
+            column.BoardId = this.BoardId;
+            column.Title = columnTitle;
+            signalRHub.DbContext.Columns.Add(column);
+            await signalRHub.DbContext.SaveChangesAsync();
+        }
         public override async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
             switch (hubPayload.Method)
             {
                 case "RefreshBoard":
                     signalRHub.Logger.LogInformation($"Board.RefreshBoard");
-                    string refreshBoardJson = await this.GetBoardJson(signalRHub);
-                    signalRHub.Logger.LogInformation($"Board.RefreshBoard json={refreshBoardJson}");
-                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", refreshBoardJson);
+                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;
                 case "GetBoard":
                     signalRHub.Logger.LogInformation($"Board.GetBoard");
-                    string getBoardJson = await this.GetBoardJson(signalRHub);
-                    signalRHub.Logger.LogInformation($"Board.GetBoard json={getBoardJson}");
-                    await signalRHub.Clients.Caller.SendAsync("BoardJson", getBoardJson);
-                    break;        
+                    await signalRHub.Clients.Caller.SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
+                    break;
+                case "AddColumn":
+                    signalRHub.Logger.LogInformation($"Board.AddColumn({ hubPayload.Param1})");
+                    await this.AddColumn(signalRHub, hubPayload.Param1);
+                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
+                    break;
+                case "JoinBoard":
+                    signalRHub.Logger.LogInformation($"Board.JoinBoard({appUser.Email})");
+                    await base.JoinGroup(signalRHub, appUser);
+                    // TODO: Add this user to BoardUsers?
+                    break;              
                 default:
                     signalRHub.Logger.LogInformation($"Board UNKNOWN METHOD({hubPayload.Method})");
                     break;
