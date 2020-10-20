@@ -41,6 +41,15 @@ namespace Tazkr.Models
             signalRHub.DbContext.Columns.Add(column);
             await signalRHub.DbContext.SaveChangesAsync();
         }
+        public async Task AddCardToColumn(SignalRHub signalRHub, int columnId)
+        {
+            signalRHub.Logger.LogInformation($"Board.AddCardToColumn columnId={columnId}");
+            Card card = new Card();
+            card.ColumnId = columnId;
+            card.Title = "New Task";
+            signalRHub.DbContext.Cards.Add(card);
+            await signalRHub.DbContext.SaveChangesAsync();
+        }
         public override async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
             switch (hubPayload.Method)
@@ -58,6 +67,11 @@ namespace Tazkr.Models
                     await this.AddColumn(signalRHub, hubPayload.Param1);
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;
+                case "AddCardToColumn":
+                    signalRHub.Logger.LogInformation($"Board.AddCardToColumn({ hubPayload.Param1})");
+                    await this.AddCardToColumn(signalRHub, int.Parse(hubPayload.Param1));
+                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
+                    break;    
                 case "JoinBoard":
                     signalRHub.Logger.LogInformation($"Board.JoinBoard({appUser.Email})");
                     await base.JoinGroup(signalRHub, appUser);

@@ -31,7 +31,9 @@ const BoardView = () => {
   const addColumn = async () => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "AddColumn", Param1: columnTitle }))
   }
-
+  const addCardToColumn = async (columnId) => {
+    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "AddCardToColumn", Param1: columnId }))
+  }
 
   React.useEffect(() => {
     authService.getAccessToken()
@@ -53,12 +55,18 @@ const BoardView = () => {
         </Form>
         <h1>Board {board.Name} Id: {board.BoardId} HubGroup: {board.HubGroupId}</h1>
         <div className="d-flex flex-wrap">
-          {board.Columns.map(x => 
-            <Card  className='col-3 m-4' key={x.ColumnId}>
+          {board.Columns.map(col => 
+            <Card className='col-3 m-4' key={col.ColumnId}>
               <Card.Body>
-                <Card.Title>{x.Title}</Card.Title>
-                <Card.Text><small>ColumnId: {x.ColumnId}</small></Card.Text>
-                <Card.Text><small>Title: {x.Title}</small></Card.Text>
+                <Card.Title>{col.Title}</Card.Title>
+                <Card.Text><small>ColumnId: {col.ColumnId}</small></Card.Text>
+                <Card.Text><small>Title: {col.Title}</small></Card.Text>
+                <Button onClick={() => addCardToColumn(col.ColumnId)}>Add task</Button>
+                {col.Cards.map(t =>
+                  <Card key={t.CardId}>
+                    <Card.Title>{t.Title}</Card.Title>
+                  </Card>
+                )}
               </Card.Body>
             </Card>
           )}
