@@ -1,5 +1,14 @@
 import React from 'react'
 import { Button, Card, Form } from 'react-bootstrap'
+import {Droppable} from 'react-beautiful-dnd'
+import styled from 'styled-components'
+
+const TaskList = styled.div`
+    padding: 8px;
+    flex-grow: 1;
+    background-color: ${props => (props.isDraggingOver ? 'teal' : 'white')};
+    min-height: 100px;
+`;
 
 const BoardColumn = (props) => {
     const [columnTitle, setColumnTitle] = React.useState(props.Title)
@@ -30,9 +39,17 @@ const BoardColumn = (props) => {
                     />
                 <Card.Text><small>ColumnId: {props.ColumnId} Index:{props.Index}</small></Card.Text>
                 <Button onClick={() => props.addCardToColumn(props.ColumnId)}><small>Add task</small></Button>
-                <div className="TaskList">
-                    { props.children }
-                </div>
+                <Droppable droppableId={`column_${props.ColumnId}`} >
+                    { (provided, snapshot) => (
+                        <TaskList
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            isDraggingOver={snapshot.isDraggingOver}
+                        >
+                            { props.children }
+                        </TaskList>
+                    )}
+                </Droppable>
             </Card.Body>
         </Card>
     )

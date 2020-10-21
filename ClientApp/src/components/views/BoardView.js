@@ -5,6 +5,7 @@ import AppContext from '../AppContext';
 import { useParams } from "react-router-dom";
 import TaskCard from './TaskCard';
 import BoardColumn from './BoardColumn';
+import {DragDropContext} from 'react-beautiful-dnd';
 
 const BoardView = () => {
   const { hubGroupId } = useParams();
@@ -52,9 +53,13 @@ const BoardView = () => {
         .then(() => joinBoard())
         .then(() => getBoard())
     });
-},[]);
+  },[]);
 
+  const onDragEnd = result => {
+
+  }
   return (
+    <DragDropContext onDragEnd={onDragEnd}>
       <Jumbotron className="d-flex flex-column">
         <h1>{board.Title} Board</h1>
         <Form>
@@ -73,6 +78,7 @@ const BoardView = () => {
           )}
         </div>
       </Jumbotron>
+    </DragDropContext>  
   );
 }
 
