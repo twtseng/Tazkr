@@ -55,8 +55,69 @@ const BoardView = () => {
     });
   },[]);
 
+  const findCardById = (inputBoard, cardId) => {
+    for (let colIndex = 0; colIndex < inputBoard.Columns.length; ++colIndex) {
+        const column = inputBoard.Columns[colIndex];
+        for (let cardIndex = 0; cardIndex < column.Cards.length; ++cardIndex) {
+            if (column.Cards[cardIndex].CardId === cardId) {
+                return column.Cards[cardIndex];
+            }
+        }
+    }
+    return null;
+  }
+  const findColumnById = (inputBoard, columnId) => {
+      for (let colIndex = 0; colIndex < inputBoard.Columns.length; ++colIndex) {
+          if (inputBoard.Columns[colIndex].ColumnId === columnId) {
+              return inputBoard.Columns[colIndex];
+          }
+      }
+      return null;
+  }
   const onDragEnd = result => {
+    const { destination, source, draggableId } = result;
+    // Exit if No destination
+    if (!destination) {
+        return;
+    }
+    // Exit if Dropping on same place
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+        return;
+    }
+    const startColumn = findColumnById(board, source.droppableId);
+    const finishColumn = findColumnById(board, destination.droppableId);
+    const card = findCardById(board, draggableId);
+    alert(`Moving ${JSON.stringify(card)} from ${JSON.stringify(startColumn)} to ${JSON.stringify(finishColumn)}`)
 
+    if (source.droppableId === destination.droppableId) {
+        // Reordering task on same column
+        const newBoard = {...board}  
+        const newCards = [...startColumn.Cards];
+        newCards.splice(source.index, 1);
+        newCards.splice(destination.index, 0, card);
+        const updateColumn = findColumnById(newBoard, destination.droppableId);
+        updateColumn.tasks = newCards;
+        setBoard(newBoard);
+        // const columnTaskDictionary = {};
+        // columnTaskDictionary[source.droppableId] = newTasks.map(task => task._id);
+        // socket.emit('setTasksForColumns',{columnTaskDictionary:columnTaskDictionary});
+    } else { 
+        // Moving task to new column
+        const newBoard = {...board} 
+        const startColumnCards = [...startColumn.Cards];
+        startColumnCards.splice(source.index, 1);
+        const newStartColumn = findColumnById(newBoard, source.droppableId);
+        newStartColumn.Cards = startColumnCards;
+        const finishColumnCards = [...finishColumn.Cards];
+        finishColumnCards.splice(destination.index, 0, card);
+        const newFinishColumn = findColumnById(newBoard, destination.droppableId);
+        newFinishColumn.Cards = finishColumnCards;
+        setBoard(newBoard);
+        // const columnTaskDictionary = {};
+        // columnTaskDictionary[source.droppableId] = startColumnTasks.map(task => task._id);
+        // columnTaskDictionary[destination.droppableId] = finishColumnTasks.map(task => task._id);
+        // socket.emit('setTasksForColumns',{columnTaskDictionary:columnTaskDictionary});
+    }    
   }
   return (
     <DragDropContext onDragEnd={onDragEnd}>
