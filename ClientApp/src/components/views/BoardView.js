@@ -4,6 +4,7 @@ import authService from '../api-authorization/AuthorizeService';
 import AppContext from '../AppContext';
 import { useParams } from "react-router-dom";
 import TaskCard from './TaskCard';
+import BoardColumn from './BoardColumn';
 
 const BoardView = () => {
   const { hubGroupId } = useParams();
@@ -30,13 +31,17 @@ const BoardView = () => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "GetBoard", Param1: "" }))
   }
   const addColumn = async () => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "AddColumn", Param1: columnTitle }))
+    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "AddColumn", Param1: columnTitle }));
+    setColumnTitle("");
   }
   const addCardToColumn = async (columnId) => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "AddCardToColumn", Param1: columnId }))
   }
   const renameCard = async (cardId, newTitle) => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameCard", Param1: cardId, Param2: newTitle}))
+  }
+  const renameColumn = async (columnId, newTitle) => {
+    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameColumn", Param1: columnId, Param2: newTitle}))
   }
 
   React.useEffect(() => {
@@ -60,16 +65,11 @@ const BoardView = () => {
         </Form>
         <div className="d-flex flex-wrap">
           {board.Columns.sort((a,b) => { return a.Index - b.Index }).map(col => 
-            <Card className='col-3 m-4' key={col.ColumnId}>
-              <Card.Body>
-                <Card.Title>{col.Title}</Card.Title>
-                <Card.Text>Index:{col.Index}</Card.Text>
-                <Button onClick={() => addCardToColumn(col.ColumnId)}><small>Add task</small></Button>
+            <BoardColumn key={col.ColumnId} Title={col.Title} Index={col.Index} ColumnId={col.ColumnId} addCardToColumn={addCardToColumn} renameColumn={renameColumn}>
                 {col.Cards.sort((a,b) => { return a.Index - b.Index }).map(t =>
                   <TaskCard key={t.CardId} Title={t.Title} CardId={t.CardId} Index={t.Index} renameCard={renameCard}/>
                 )}
-              </Card.Body>
-            </Card>
+            </BoardColumn>
           )}
         </div>
       </Jumbotron>

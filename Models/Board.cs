@@ -68,6 +68,14 @@ namespace Tazkr.Models
             signalRHub.DbContext.Cards.Update(card);
             await signalRHub.DbContext.SaveChangesAsync();
         }
+        public async Task RenameColumn(SignalRHub signalRHub, int columnId, string newName)
+        {
+            signalRHub.Logger.LogInformation($"Board.RenameColumn columnId={columnId}, newName={newName}");
+            Column column = signalRHub.DbContext.Columns.Find(columnId);
+            column.Title = newName;
+            signalRHub.DbContext.Columns.Update(column);
+            await signalRHub.DbContext.SaveChangesAsync();
+        }
         public override async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
             switch (hubPayload.Method)
@@ -86,21 +94,21 @@ namespace Tazkr.Models
                     await signalRHub.Clients.Caller.SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;
                 case "AddColumn":
-                    signalRHub.Logger.LogInformation($"Board.AddColumn({ hubPayload.Param1})");
                     await this.AddColumn(signalRHub, hubPayload.Param1);
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;
                 case "AddCardToColumn":
-                    signalRHub.Logger.LogInformation($"Board.AddCardToColumn({ hubPayload.Param1})");
                     await this.AddCardToColumn(signalRHub, int.Parse(hubPayload.Param1));
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;
                 case "RenameCard":
-                    signalRHub.Logger.LogInformation($"Board.RenameCard({ hubPayload.Param1})");
                     await this.RenameCard(signalRHub, int.Parse(hubPayload.Param1), hubPayload.Param2);
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;      
-                              
+                case "RenameColumn":
+                    await this.RenameColumn(signalRHub, int.Parse(hubPayload.Param1), hubPayload.Param2);
+                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
+                    break;              
                 default:
                     signalRHub.Logger.LogInformation($"Board UNKNOWN METHOD({hubPayload.Method})");
                     break;

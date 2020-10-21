@@ -26,8 +26,9 @@ const TaskCard = (props) => {
                 readOnly={titleReadOnly}
                 onClick={() => setTitleReadOnly(false)}
                 onMouseLeave={() => { if (!titleReadOnly) {updateCardTitle();}}}
+                size="sm"
                 />
-                <Card.Text>Index: {props.Index}</Card.Text>
+                <Card.Text><small>Index: {props.Index}</small></Card.Text>
             </Card.Body>
         </Card>
     )
