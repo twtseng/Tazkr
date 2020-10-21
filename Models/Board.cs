@@ -38,6 +38,11 @@ namespace Tazkr.Models
             Column column = new Column();
             column.BoardId = this.BoardId;
             column.Title = columnTitle;
+
+            // Set index to the next highest index for this Board, or 0 if this is the first column
+            List<Column> columns = signalRHub.DbContext.Boards.Include(x => x.Columns).FirstOrDefault(x => x.BoardId == this.BoardId).Columns.ToList();
+            column.Index = columns.Count > 0 ? columns.Max(col => col.Index) + 1 : 0;
+
             signalRHub.DbContext.Columns.Add(column);
             await signalRHub.DbContext.SaveChangesAsync();
         }
@@ -47,6 +52,11 @@ namespace Tazkr.Models
             Card card = new Card();
             card.ColumnId = columnId;
             card.Title = "New Task";
+
+            // Set index to the next highest index for this Column, or 0 if this is the first card
+            List<Card> cards = signalRHub.DbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.ColumnId == columnId).Cards.ToList();
+            card.Index = cards.Count > 0 ? cards.Max(col => col.Index) + 1 : 0;
+
             signalRHub.DbContext.Cards.Add(card);
             await signalRHub.DbContext.SaveChangesAsync();
         }

@@ -51,23 +51,22 @@ const BoardView = () => {
 
   return (
       <Jumbotron className="d-flex flex-column">
+        <h1>{board.Title} Board</h1>
         <Form>
           <Form.Group controlId="formBasicEmail" className="d-flex">
             <Button onClick={addColumn} className="col-2"><small>Add Column</small></Button>
             <Form.Control className="ml-3 col-3" name="title" type="text" placeholder="Enter column title" value={columnTitle} onChange={e => setColumnTitle(e.target.value)} />
           </Form.Group>
         </Form>
-        <h1>Board {board.Name} Id: {board.BoardId} HubGroup: {board.HubGroupId}</h1>
         <div className="d-flex flex-wrap">
-          {board.Columns.map(col => 
+          {board.Columns.sort((a,b) => { return a.Index - b.Index }).map(col => 
             <Card className='col-3 m-4' key={col.ColumnId}>
               <Card.Body>
                 <Card.Title>{col.Title}</Card.Title>
-                <Card.Text><small>ColumnId: {col.ColumnId}</small></Card.Text>
-                <Card.Text><small>Title: {col.Title}</small></Card.Text>
+                <Card.Text>Index:{col.Index}</Card.Text>
                 <Button onClick={() => addCardToColumn(col.ColumnId)}><small>Add task</small></Button>
-                {col.Cards.map(t =>
-                  <TaskCard key={t.CardId} Title={t.Title} CardId={t.CardId} renameCard={renameCard}/>
+                {col.Cards.sort((a,b) => { return a.Index - b.Index }).map(t =>
+                  <TaskCard key={t.CardId} Title={t.Title} CardId={t.CardId} Index={t.Index} renameCard={renameCard}/>
                 )}
               </Card.Body>
             </Card>

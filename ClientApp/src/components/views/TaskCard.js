@@ -25,7 +25,9 @@ const TaskCard = (props) => {
                 onKeyPress={handleKeyPress}
                 readOnly={titleReadOnly}
                 onClick={() => setTitleReadOnly(false)}
+                onMouseLeave={() => { if (!titleReadOnly) {updateCardTitle();}}}
                 />
+                <Card.Text>Index: {props.Index}</Card.Text>
             </Card.Body>
         </Card>
     )
