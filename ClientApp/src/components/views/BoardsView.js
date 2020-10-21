@@ -27,7 +27,8 @@ const BoardsView = () => {
     signalRHub.callAction("", JSON.stringify({ Method: "GetBoards", Param1: "" }))
   }
   const createBoard = async () => {
-    signalRHub.callAction("", JSON.stringify({ Method: "CreateBoard", Param1: boardTitle }))
+    signalRHub.callAction("", JSON.stringify({ Method: "CreateBoard", Param1: boardTitle }));
+    setBoardTitle("");
   }
 
 

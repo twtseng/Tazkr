@@ -244,8 +244,8 @@ namespace Tazkr.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BoardId")
-                        .HasColumnType("int");
+                    b.Property<string>("BoardId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -308,10 +308,8 @@ namespace Tazkr.Migrations
 
             modelBuilder.Entity("Tazkr.Models.Board", b =>
                 {
-                    b.Property<int>("BoardId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("BoardId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
@@ -337,22 +335,23 @@ namespace Tazkr.Migrations
                     b.Property<int>("BoardId")
                         .HasColumnType("int");
 
+                    b.Property<string>("BoardId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ApplicationUserId", "BoardId");
 
-                    b.HasIndex("BoardId");
+                    b.HasIndex("BoardId1");
 
                     b.ToTable("BoardUsers");
                 });
 
             modelBuilder.Entity("Tazkr.Models.Card", b =>
                 {
-                    b.Property<int>("CardId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("CardId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ColumnId")
-                        .HasColumnType("int");
+                    b.Property<string>("ColumnId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -375,13 +374,11 @@ namespace Tazkr.Migrations
 
             modelBuilder.Entity("Tazkr.Models.Column", b =>
                 {
-                    b.Property<int>("ColumnId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("ColumnId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BoardId")
-                        .HasColumnType("int");
+                    b.Property<string>("BoardId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Index")
                         .HasColumnType("int");
@@ -471,27 +468,21 @@ namespace Tazkr.Migrations
 
                     b.HasOne("Tazkr.Models.Board", "Board")
                         .WithMany("BoardUsers")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BoardId1");
                 });
 
             modelBuilder.Entity("Tazkr.Models.Card", b =>
                 {
                     b.HasOne("Tazkr.Models.Column", "Column")
                         .WithMany("Cards")
-                        .HasForeignKey("ColumnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ColumnId");
                 });
 
             modelBuilder.Entity("Tazkr.Models.Column", b =>
                 {
                     b.HasOne("Tazkr.Models.Board", "Board")
                         .WithMany("Columns")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BoardId");
                 });
 #pragma warning restore 612, 618
         }

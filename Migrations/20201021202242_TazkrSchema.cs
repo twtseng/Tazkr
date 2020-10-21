@@ -141,8 +141,7 @@ namespace Tazkr.Migrations
                 name: "Boards",
                 columns: table => new
                 {
-                    BoardId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BoardId = table.Column<string>(nullable: false),
                     HubGroupId = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     CreatedById = table.Column<string>(nullable: true)
@@ -171,7 +170,7 @@ namespace Tazkr.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    BoardId = table.Column<int>(nullable: true)
+                    BoardId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -188,11 +187,10 @@ namespace Tazkr.Migrations
                 name: "Columns",
                 columns: table => new
                 {
-                    ColumnId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ColumnId = table.Column<string>(nullable: false),
                     Index = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
-                    BoardId = table.Column<int>(nullable: false)
+                    BoardId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -202,7 +200,7 @@ namespace Tazkr.Migrations
                         column: x => x.BoardId,
                         principalTable: "Boards",
                         principalColumn: "BoardId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -210,7 +208,8 @@ namespace Tazkr.Migrations
                 columns: table => new
                 {
                     ApplicationUserId = table.Column<string>(nullable: false),
-                    BoardId = table.Column<int>(nullable: false)
+                    BoardId = table.Column<int>(nullable: false),
+                    BoardId1 = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -222,24 +221,23 @@ namespace Tazkr.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BoardUsers_Boards_BoardId",
-                        column: x => x.BoardId,
+                        name: "FK_BoardUsers_Boards_BoardId1",
+                        column: x => x.BoardId1,
                         principalTable: "Boards",
                         principalColumn: "BoardId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Cards",
                 columns: table => new
                 {
-                    CardId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CardId = table.Column<string>(nullable: false),
                     Index = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Pri_Level = table.Column<int>(nullable: false),
-                    ColumnId = table.Column<int>(nullable: false)
+                    ColumnId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -249,7 +247,7 @@ namespace Tazkr.Migrations
                         column: x => x.ColumnId,
                         principalTable: "Columns",
                         principalColumn: "ColumnId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -302,9 +300,9 @@ namespace Tazkr.Migrations
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BoardUsers_BoardId",
+                name: "IX_BoardUsers_BoardId1",
                 table: "BoardUsers",
-                column: "BoardId");
+                column: "BoardId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cards_ColumnId",

@@ -39,7 +39,7 @@ const BoardColumn = (props) => {
                     />
                 <Card.Text><small>ColumnId: {props.ColumnId} Index:{props.Index}</small></Card.Text>
                 <Button onClick={() => props.addCardToColumn(props.ColumnId)}><small>Add task</small></Button>
-                <Droppable droppableId={`column_${props.ColumnId}`} >
+                <Droppable droppableId={props.ColumnId} >
                     { (provided, snapshot) => (
                         <TaskList
                             ref={provided.innerRef}

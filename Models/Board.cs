@@ -16,10 +16,11 @@ namespace Tazkr.Models
     {
         public Board() : base()
         {
-            
+            this.BoardId = this.HubGroupId;
         }
         [Key]
-        public int BoardId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string BoardId { get; set; }
         public string Title { get; set; }
 
         public string CreatedById { get; set; }
@@ -46,7 +47,7 @@ namespace Tazkr.Models
             signalRHub.DbContext.Columns.Add(column);
             await signalRHub.DbContext.SaveChangesAsync();
         }
-        public async Task AddCardToColumn(SignalRHub signalRHub, int columnId)
+        public async Task AddCardToColumn(SignalRHub signalRHub, string columnId)
         {
             signalRHub.Logger.LogInformation($"Board.AddCardToColumn columnId={columnId}");
             Card card = new Card();
@@ -60,7 +61,7 @@ namespace Tazkr.Models
             signalRHub.DbContext.Cards.Add(card);
             await signalRHub.DbContext.SaveChangesAsync();
         }
-        public async Task RenameCard(SignalRHub signalRHub, int cardId, string newName)
+        public async Task RenameCard(SignalRHub signalRHub, string cardId, string newName)
         {
             signalRHub.Logger.LogInformation($"Board.RenameCard cardId={cardId}, newName={newName}");
             Card card = signalRHub.DbContext.Cards.Find(cardId);
@@ -68,7 +69,7 @@ namespace Tazkr.Models
             signalRHub.DbContext.Cards.Update(card);
             await signalRHub.DbContext.SaveChangesAsync();
         }
-        public async Task RenameColumn(SignalRHub signalRHub, int columnId, string newName)
+        public async Task RenameColumn(SignalRHub signalRHub, string columnId, string newName)
         {
             signalRHub.Logger.LogInformation($"Board.RenameColumn columnId={columnId}, newName={newName}");
             Column column = signalRHub.DbContext.Columns.Find(columnId);
@@ -98,15 +99,15 @@ namespace Tazkr.Models
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;
                 case "AddCardToColumn":
-                    await this.AddCardToColumn(signalRHub, int.Parse(hubPayload.Param1));
+                    await this.AddCardToColumn(signalRHub, hubPayload.Param1);
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;
                 case "RenameCard":
-                    await this.RenameCard(signalRHub, int.Parse(hubPayload.Param1), hubPayload.Param2);
+                    await this.RenameCard(signalRHub, hubPayload.Param1, hubPayload.Param2);
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;      
                 case "RenameColumn":
-                    await this.RenameColumn(signalRHub, int.Parse(hubPayload.Param1), hubPayload.Param2);
+                    await this.RenameColumn(signalRHub, hubPayload.Param1, hubPayload.Param2);
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
                     break;              
                 default:

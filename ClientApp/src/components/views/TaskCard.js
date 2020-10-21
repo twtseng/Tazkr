@@ -24,7 +24,7 @@ const TaskCard = (props) => {
         }
     }
     return (
-        <Draggable draggableId={`card_${props.CardId}`} index={props.Index}>
+        <Draggable draggableId={props.CardId} index={props.Index}>
         {(provided, snapshot) => (
             <Container
                 {...provided.draggableProps}

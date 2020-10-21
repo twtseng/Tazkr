@@ -7,14 +7,19 @@ namespace Tazkr.Models
 {
     public class Column
     {
+        public Column()
+        {
+            this.ColumnId = System.Guid.NewGuid().ToString();
+        }
         [Key]
-        public int ColumnId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string ColumnId { get; set; }
         /// <summary>
         /// Order that this column appears on the board
         /// </summary>
         public int Index { get; set; }
         public string Title { get; set; }
-        public int BoardId { get; set; }
+        public string BoardId { get; set; }
         public Board Board { get; set; }
         public List<Card> Cards { get; set; }
     }
