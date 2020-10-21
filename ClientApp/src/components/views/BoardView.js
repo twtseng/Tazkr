@@ -3,6 +3,7 @@ import { Jumbotron, Button, Card, Form } from 'react-bootstrap'
 import authService from '../api-authorization/AuthorizeService';
 import AppContext from '../AppContext';
 import { useParams } from "react-router-dom";
+import TaskCard from './TaskCard';
 
 const BoardView = () => {
   const { hubGroupId } = useParams();
@@ -34,6 +35,9 @@ const BoardView = () => {
   const addCardToColumn = async (columnId) => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "AddCardToColumn", Param1: columnId }))
   }
+  const renameCard = async (cardId, newTitle) => {
+    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameCard", Param1: cardId, Param2: newTitle}))
+  }
 
   React.useEffect(() => {
     authService.getAccessToken()
@@ -49,7 +53,7 @@ const BoardView = () => {
       <Jumbotron className="d-flex flex-column">
         <Form>
           <Form.Group controlId="formBasicEmail" className="d-flex">
-            <Button onClick={addColumn} className="col-2">Add Column</Button>
+            <Button onClick={addColumn} className="col-2"><small>Add Column</small></Button>
             <Form.Control className="ml-3 col-3" name="title" type="text" placeholder="Enter column title" value={columnTitle} onChange={e => setColumnTitle(e.target.value)} />
           </Form.Group>
         </Form>
@@ -61,11 +65,9 @@ const BoardView = () => {
                 <Card.Title>{col.Title}</Card.Title>
                 <Card.Text><small>ColumnId: {col.ColumnId}</small></Card.Text>
                 <Card.Text><small>Title: {col.Title}</small></Card.Text>
-                <Button onClick={() => addCardToColumn(col.ColumnId)}>Add task</Button>
+                <Button onClick={() => addCardToColumn(col.ColumnId)}><small>Add task</small></Button>
                 {col.Cards.map(t =>
-                  <Card key={t.CardId}>
-                    <Card.Title>{t.Title}</Card.Title>
-                  </Card>
+                  <TaskCard key={t.CardId} Title={t.Title} CardId={t.CardId} renameCard={renameCard}/>
                 )}
               </Card.Body>
             </Card>
