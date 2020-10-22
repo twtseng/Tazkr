@@ -43,7 +43,7 @@ const BoardColumn = (props) => {
                     style={titleReadOnly ? {display:"none"} : {}}
                 />
                 <Button className="m-2" onClick={() => props.addCardToColumn(props.ColumnId)}><small>Add task</small></Button>
-                <Droppable droppableId={props.ColumnId} >
+                <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>
                     { (provided, snapshot) => (
                         <TaskList
                             ref={provided.innerRef}
