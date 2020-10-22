@@ -85,9 +85,23 @@ namespace Tazkr.Models
             signalRHub.Logger.LogInformation($"Board.MoveCardToColumnAtIndex cardId={cardId}, columnId={columnId}, index={index}");
             Column column = signalRHub.DbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.ColumnId == columnId);
             List<Card> cards = column.Cards.OrderBy(x => x.Index).ToList();
-            for(int i=index; i < cards.Count; ++i)
+            // First remove the target card from list (if it exists)
+            int existingIndex = -1;
+            for(int i=0; i < cards.Count; ++i)
             {
-                cards[i].Index = i + 1;
+                if (cards[i].CardId == cardId)
+                {
+                    existingIndex = i;
+                }
+            }
+            if (existingIndex > -1)
+            {
+                cards.RemoveAt(existingIndex);
+            }
+            // Update the indexes with card in new position
+            for(int i=0; i < cards.Count; ++i)
+            {
+                cards[i].Index = i >= index ? i + 1 : i;
                 signalRHub.DbContext.Cards.Update(cards[i]);
             }
             Card cardToMove = signalRHub.DbContext.Cards.Find(cardId);
