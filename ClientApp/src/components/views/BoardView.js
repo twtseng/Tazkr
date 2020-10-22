@@ -87,8 +87,7 @@ const BoardView = () => {
     const startColumn = findColumnById(board, source.droppableId);
     const finishColumn = findColumnById(board, destination.droppableId);
     const card = findCardById(board, draggableId);
-    alert(`Moving ${JSON.stringify(card)} from ${JSON.stringify(startColumn)} to ${JSON.stringify(finishColumn)}`)
-
+ 
     if (source.droppableId === destination.droppableId) {
         // Reordering task on same column
         const newBoard = {...board}  
@@ -96,7 +95,7 @@ const BoardView = () => {
         newCards.splice(source.index, 1);
         newCards.splice(destination.index, 0, card);
         const updateColumn = findColumnById(newBoard, destination.droppableId);
-        updateColumn.tasks = newCards;
+        updateColumn.Cards = newCards;
         setBoard(newBoard);
         // const columnTaskDictionary = {};
         // columnTaskDictionary[source.droppableId] = newTasks.map(task => task._id);
@@ -130,10 +129,10 @@ const BoardView = () => {
           </Form.Group>
         </Form>
         <div className="d-flex flex-wrap">
-          {board.Columns.sort((a,b) => { return a.Index - b.Index }).map(col => 
+          {board.Columns.map(col => 
             <BoardColumn key={col.ColumnId} Title={col.Title} Index={col.Index} ColumnId={col.ColumnId} addCardToColumn={addCardToColumn} renameColumn={renameColumn}>
-                {col.Cards.sort((a,b) => { return a.Index - b.Index }).map(t =>
-                  <TaskCard key={t.CardId} Title={t.Title} CardId={t.CardId} Index={t.Index} renameCard={renameCard}/>
+                {col.Cards.map((t, index) =>
+                  <TaskCard key={t.CardId} Title={t.Title} CardId={t.CardId} Index={index} renameCard={renameCard}/>
                 )}
             </BoardColumn>
           )}

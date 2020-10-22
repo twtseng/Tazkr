@@ -47,6 +47,7 @@ const BoardColumn = (props) => {
                             isDraggingOver={snapshot.isDraggingOver}
                         >
                             { props.children }
+                            {provided.placeholder}
                         </TaskList>
                     )}
                 </Droppable>
