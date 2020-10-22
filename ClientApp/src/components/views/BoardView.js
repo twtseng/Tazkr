@@ -15,15 +15,17 @@ const BoardView = () => {
   const { signalRHub } = React.useContext(AppContext);
 
   const RefreshBoard = (boardJson) => {
-    console.log("BoardView.RefreshBoard:"+boardJson);
-    setBoard(JSON.parse(boardJson));
+    const inputBoard = JSON.parse(boardJson);
+    inputBoard.Columns.sort((a,b) => { return a.Index - b.Index });
+    inputBoard.Columns.forEach(col => {
+      col.Cards.sort((a,b) => { return a.Index - b.Index });
+    });
+    setBoard(inputBoard);
   }
  
   const getAuthToken = async () => {
-      console.log("Getting auth token");
       const token = await authService.getAccessToken();
       await signalRHub.startHub(token);
-      console.log("Got auth token");
   }
   const joinBoard = async () => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "JoinBoard", Param1: "" }))
@@ -43,6 +45,9 @@ const BoardView = () => {
   }
   const renameColumn = async (columnId, newTitle) => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameColumn", Param1: columnId, Param2: newTitle}))
+  }
+  const moveCardToColumnAtIndex = async (taskId, columnId, index) => {
+    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "MoveCardToColumnAtIndex", Param1: taskId, Param2: columnId, Param3: index}))
   }
 
   React.useEffect(() => {
@@ -97,9 +102,6 @@ const BoardView = () => {
         const updateColumn = findColumnById(newBoard, destination.droppableId);
         updateColumn.Cards = newCards;
         setBoard(newBoard);
-        // const columnTaskDictionary = {};
-        // columnTaskDictionary[source.droppableId] = newTasks.map(task => task._id);
-        // socket.emit('setTasksForColumns',{columnTaskDictionary:columnTaskDictionary});
     } else { 
         // Moving task to new column
         const newBoard = {...board} 
@@ -112,11 +114,8 @@ const BoardView = () => {
         const newFinishColumn = findColumnById(newBoard, destination.droppableId);
         newFinishColumn.Cards = finishColumnCards;
         setBoard(newBoard);
-        // const columnTaskDictionary = {};
-        // columnTaskDictionary[source.droppableId] = startColumnTasks.map(task => task._id);
-        // columnTaskDictionary[destination.droppableId] = finishColumnTasks.map(task => task._id);
-        // socket.emit('setTasksForColumns',{columnTaskDictionary:columnTaskDictionary});
-    }    
+    }
+    moveCardToColumnAtIndex(draggableId, destination.droppableId, destination.index);
   }
   return (
     <DragDropContext onDragEnd={onDragEnd}>

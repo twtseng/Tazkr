@@ -30,7 +30,10 @@ namespace Tazkr.Models
         public List<Column> Columns { get; set; }
         public async Task<string> GetBoardJson(SignalRHub signalRHub)
         {
-            Board board = await signalRHub.DbContext.Boards.Include(x => x.BoardUsers).Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefaultAsync(x => x.BoardId == this.BoardId);
+            Board board = await signalRHub.DbContext.Boards
+            .Include(x => x.BoardUsers)
+            .Include(x => x.Columns)
+            .ThenInclude(x => x.Cards).FirstOrDefaultAsync(x => x.BoardId == this.BoardId);
             return JsonConvert.SerializeObject(board, Formatting.None,new JsonSerializerSettings(){ReferenceLoopHandling = ReferenceLoopHandling.Ignore});
         }
         public async Task AddColumn(SignalRHub signalRHub, string columnTitle)
@@ -77,6 +80,22 @@ namespace Tazkr.Models
             signalRHub.DbContext.Columns.Update(column);
             await signalRHub.DbContext.SaveChangesAsync();
         }
+        public async Task MoveCardToColumnAtIndex(SignalRHub signalRHub, string cardId, string columnId, int index)
+        {
+            signalRHub.Logger.LogInformation($"Board.MoveCardToColumnAtIndex cardId={cardId}, columnId={columnId}, index={index}");
+            Column column = signalRHub.DbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.ColumnId == columnId);
+            List<Card> cards = column.Cards.OrderBy(x => x.Index).ToList();
+            for(int i=index; i < cards.Count; ++i)
+            {
+                cards[i].Index = i + 1;
+                signalRHub.DbContext.Cards.Update(cards[i]);
+            }
+            Card cardToMove = signalRHub.DbContext.Cards.Find(cardId);
+            cardToMove.ColumnId = columnId;
+            cardToMove.Index = index;
+            signalRHub.DbContext.Cards.Update(cardToMove);
+            await signalRHub.DbContext.SaveChangesAsync();
+        }
         public override async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
             switch (hubPayload.Method)
@@ -109,7 +128,11 @@ namespace Tazkr.Models
                 case "RenameColumn":
                     await this.RenameColumn(signalRHub, hubPayload.Param1, hubPayload.Param2);
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
-                    break;              
+                    break;
+                case "MoveCardToColumnAtIndex":
+                    await this.MoveCardToColumnAtIndex(signalRHub, hubPayload.Param1, hubPayload.Param2, int.Parse(hubPayload.Param3));
+                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
+                    break;         
                 default:
                     signalRHub.Logger.LogInformation($"Board UNKNOWN METHOD({hubPayload.Method})");
                     break;

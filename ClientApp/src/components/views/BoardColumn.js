@@ -6,7 +6,7 @@ import styled from 'styled-components'
 const TaskList = styled.div`
     padding: 8px;
     flex-grow: 1;
-    background-color: ${props => (props.isDraggingOver ? 'teal' : 'white')};
+    background-color: ${props => (props.isDraggingOver ? 'darkgray' : 'white')};
     min-height: 100px;
 `;
 
