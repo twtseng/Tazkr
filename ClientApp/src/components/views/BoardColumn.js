@@ -27,7 +27,7 @@ const BoardColumn = (props) => {
     }
     return (
         <Card className='col-3 m-4'>
-            <Card.Body>
+            <Card.Body style={{minHeight:"50px"}}>
                 <div className="TitleRow d-flex justify-content-between">
                     <div className="TitleEdit">
                         <div onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>

@@ -67,7 +67,16 @@ namespace Tazkr.Models
             .Select(x => new { x.Title, x.BoardId, CreatedBy = x.CreatedBy.UserName, x.HubGroupId});
             await signalRHub.Clients.Caller.SendAsync("RefreshBoards", JsonConvert.SerializeObject(boardData));  
         }
-        public void CreateBoard(SignalRHub signalRHub, ApplicationUser appUser, string boardTitle)
+        public async Task RefreshBoardsForAllClients(SignalRHub signalRHub)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.GetBoards");
+            this.RefreshHubGroups(signalRHub);
+            var boardData = signalRHub.DbContext.Boards
+            .Include(board => board.CreatedBy)
+            .Select(x => new { x.Title, x.BoardId, CreatedBy = x.CreatedBy.UserName, x.HubGroupId});
+            await signalRHub.Clients.All.SendAsync("RefreshBoards", JsonConvert.SerializeObject(boardData));  
+        }
+        public async Task CreateBoard(SignalRHub signalRHub, ApplicationUser appUser, string boardTitle)
         {
             signalRHub.Logger.LogInformation($"AppDataManager.CreateBoard");
             Board board = new Board();
@@ -76,14 +85,24 @@ namespace Tazkr.Models
             signalRHub.DbContext.Boards.Add(board);
             signalRHub.DbContext.SaveChanges();
             this.RefreshHubGroups(signalRHub);
+            await this.RefreshBoardsForAllClients(signalRHub);
         }
-        public void DeleteBoard(SignalRHub signalRHub, ApplicationUser appUser, string boardId)
+        public async Task DeleteBoard(SignalRHub signalRHub, ApplicationUser appUser, string boardId)
         {
             signalRHub.Logger.LogInformation($"AppDataManager.DeleteBoard boardId:{boardId}");
-            Board board = signalRHub.DbContext.Boards.Find(boardId);
+            Board board = signalRHub.DbContext.Boards.Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefault(x => x.BoardId == boardId);
+            foreach(Column column in board.Columns)
+            {
+                foreach(Card card in column.Cards)
+                {
+                    signalRHub.DbContext.Cards.Remove(card);
+                }
+                signalRHub.DbContext.Columns.Remove(column);
+            }
             signalRHub.DbContext.Boards.Remove(board);
             signalRHub.DbContext.SaveChanges();
             this.RefreshHubGroups(signalRHub);
+            await this.RefreshBoardsForAllClients(signalRHub);
         }
         public async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
@@ -104,11 +123,11 @@ namespace Tazkr.Models
                         await this.GetBoards(signalRHub);
                         break;
                     case "CreateBoard":
-                        this.CreateBoard(signalRHub, appUser, hubPayload.Param1);
+                        await this.CreateBoard(signalRHub, appUser, hubPayload.Param1);
                         await this.GetBoards(signalRHub);
                         break;
                     case "DeleteBoard":
-                        this.DeleteBoard(signalRHub, appUser, hubPayload.Param1);
+                        await this.DeleteBoard(signalRHub, appUser, hubPayload.Param1);
                         await this.GetBoards(signalRHub);
                         break;    
                 }

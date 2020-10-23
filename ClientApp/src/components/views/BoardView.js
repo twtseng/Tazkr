@@ -2,7 +2,7 @@ import React from 'react';
 import { Jumbotron, Button, Card, Form } from 'react-bootstrap'
 import authService from '../api-authorization/AuthorizeService';
 import AppContext from '../AppContext';
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import TaskCard from './TaskCard';
 import BoardColumn from './BoardColumn';
 import {DragDropContext} from 'react-beautiful-dnd';
@@ -15,6 +15,7 @@ const BoardView = () => {
   const [titleReadOnly, setTitleReadOnly] = React.useState(true)
   const [columnTitle, setColumnTitle] = React.useState("");
   const { signalRHub } = React.useContext(AppContext);
+  const history = useHistory();
 
   const RefreshBoard = (boardJson) => {
     const inputBoard = JSON.parse(boardJson);
@@ -56,7 +57,8 @@ const BoardView = () => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameBoard", Param1: boardId, Param2: newTitle}))
   }
   const deleteBoard = async (boardId, newTitle) => {
-    signalRHub.callAction("", JSON.stringify({ Method: "deleteBoard", Param1: boardId }))
+    await signalRHub.callAction("", JSON.stringify({ Method: "DeleteBoard", Param1: boardId }));
+    history.push("/boards");
   }
   const handleBoardTitleKeyPress = (event) => {
     if(event.key === 'Enter'){
@@ -152,7 +154,7 @@ const BoardView = () => {
               style={titleReadOnly ? {display:"none"} : {}}
               />
           </div>
-          <Button onClick={deleteBoard} className="col-2"><small>Delete Board</small></Button>
+          <Button onClick={() => deleteBoard(board.BoardId)} className="col-2"><small>Delete Board</small></Button>
         </div>
         <Form className="mt-3">
           <Form.Group controlId="formBasicEmail" className="d-flex">

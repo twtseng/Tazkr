@@ -19,7 +19,8 @@ export default () => {
   return (
     <AppContext.Provider value={{signalRHub}}>
       <Layout>
-        <AuthorizeRoute exact path='/' component={Home} />
+        {/* <AuthorizeRoute exact path='/' component={Home} /> */}
+        <AuthorizeRoute exact path='/' component={BoardsView} />
         <AuthorizeRoute exact path='/boards' component={BoardsView} />
         <AuthorizeRoute exact path='/board/:hubGroupId' component={BoardView} />
         <AuthorizeRoute exact path='/newboard/:hubGroupId' component={NewBoardView} />

@@ -12,8 +12,9 @@ const BoardsView = () => {
   const { signalRHub } = React.useContext(AppContext);
 
   const RefreshBoards = (boardsJson) => {
-    console.log(boardsJson);
-    setBoards(JSON.parse(boardsJson));
+    const inputBoards = JSON.parse(boardsJson);
+    inputBoards.sort(x => x.Title);  
+    setBoards(inputBoards);
   }
  
   const getAuthToken = async () => {
