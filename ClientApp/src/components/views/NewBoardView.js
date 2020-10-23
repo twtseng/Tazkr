@@ -9,11 +9,9 @@ import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
 import styled from 'styled-components'
 
 const DragContainer = styled.div`
-    border: 1px solid lightgrey;
-    padding: 10px;
-    margin-bottom: 8px;
     border-radius: 10px;
     background-color: ${props => (props.isDragging ? "darkgray" : "white")};
+    display: inline-block
 `
 
 const BoardView = () => {
@@ -155,7 +153,7 @@ const BoardView = () => {
         </Form>
         <Droppable droppableId="droppable" type="BoardDroppable">
           {(provided, snapshot) => (
-            <div className="d-flex flex-row"
+            <div className="d-flex flex-nowrap" style={{overflowX:"auto"}}
               ref={provided.innerRef}
             >
               {board.Columns.map((col,index) => 

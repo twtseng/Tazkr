@@ -77,6 +77,14 @@ namespace Tazkr.Models
             signalRHub.DbContext.SaveChanges();
             this.RefreshHubGroups(signalRHub);
         }
+        public void DeleteBoard(SignalRHub signalRHub, ApplicationUser appUser, string boardId)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.DeleteBoard boardId:{boardId}");
+            Board board = signalRHub.DbContext.Boards.Find(boardId);
+            signalRHub.DbContext.Boards.Remove(board);
+            signalRHub.DbContext.SaveChanges();
+            this.RefreshHubGroups(signalRHub);
+        }
         public async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
             // If hubGroupId is blank, this is a global action (not group specific)
@@ -99,6 +107,10 @@ namespace Tazkr.Models
                         this.CreateBoard(signalRHub, appUser, hubPayload.Param1);
                         await this.GetBoards(signalRHub);
                         break;
+                    case "DeleteBoard":
+                        this.DeleteBoard(signalRHub, appUser, hubPayload.Param1);
+                        await this.GetBoards(signalRHub);
+                        break;    
                 }
             }
             else // Handle group (board or chatroom) specific action

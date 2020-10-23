@@ -33,7 +33,7 @@ const TaskCard = (props) => {
                 isDragging={snapshot.isDragging}
             >
                 <div onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
-                    <small>{cardTitle}</small>
+                    <small>{cardTitle === "" ? "<blank>" : cardTitle}</small>
                 </div>
                 <Form.Control 
                 className="input-sm" 
@@ -42,7 +42,6 @@ const TaskCard = (props) => {
                 value={cardTitle} 
                 onChange={e => setCardTitle(e.target.value)}
                 onKeyPress={handleKeyPress}
-                onMouseLeave={() => { if (!titleReadOnly) {updateCardTitle();}}}
                 size="sm"
                 style={titleReadOnly ? {display:"none"} : {}}
                 />

@@ -54,10 +54,7 @@ const BoardsView = () => {
           {boards.map(x => 
             <Card  className='col-3 m-4' key={x.HubGroupId}>
               <Card.Body>
-                <Card.Title>{x.Title}</Card.Title>
-                <Card.Text><small>BoardId: {x.BoardId}</small></Card.Text>
-                <Card.Text><small>CreatedBy: {x.CreatedBy}</small></Card.Text>
-                <Card.Text><small>HubGroupId: {x.HubGroupId}</small></Card.Text>
+                <Card.Title>{x.Title == "" ? "<title blank>" : x.Title}</Card.Title>
                 <Link to={`/board/${x.HubGroupId}`}>Go to board</Link>
               </Card.Body>
             </Card>

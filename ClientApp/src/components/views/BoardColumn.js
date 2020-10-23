@@ -7,7 +7,7 @@ const TaskList = styled.div`
     padding: 8px;
     flex-grow: 1;
     background-color: ${props => (props.isDraggingOver ? 'lightgray' : 'white')};
-    min-height: 100px;
+    height: 70%;
     border-radius: 10px;
 `;
 
@@ -28,21 +28,25 @@ const BoardColumn = (props) => {
     return (
         <Card className='col-3 m-4'>
             <Card.Body>
-                <div onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
-                    <b>{columnTitle}</b>
+                <div className="TitleRow d-flex justify-content-between">
+                    <div className="TitleEdit">
+                        <div onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
+                            <b>{columnTitle === "" ? "<blank>" : columnTitle}</b>
+                        </div>
+                        <Form.Control 
+                            className="col-12 input-sm" 
+                            name="columnTitle" 
+                            type="text" 
+                            value={columnTitle} 
+                            onChange={e => setColumnTitle(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            onMouseLeave={updateColumnTitle}
+                            size="sm"
+                            style={titleReadOnly ? {display:"none"} : {}}
+                        />
+                    </div>
+                    <Button className="m-2" onClick={() => props.addCardToColumn(props.ColumnId)}><small>Add task</small></Button>
                 </div>
-                <Form.Control 
-                    className="col-12 input-sm" 
-                    name="columnTitle" 
-                    type="text" 
-                    value={columnTitle} 
-                    onChange={e => setColumnTitle(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    onMouseLeave={updateColumnTitle}
-                    size="sm"
-                    style={titleReadOnly ? {display:"none"} : {}}
-                />
-                <Button className="m-2" onClick={() => props.addCardToColumn(props.ColumnId)}><small>Add task</small></Button>
                 <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>
                     { (provided, snapshot) => (
                         <TaskList

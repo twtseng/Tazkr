@@ -11,6 +11,8 @@ const BoardView = () => {
   const { hubGroupId } = useParams();
 
   const [board, setBoard] = React.useState({Columns:[]});
+  const [boardTitle, setBoardTitle] = React.useState("")
+  const [titleReadOnly, setTitleReadOnly] = React.useState(true)
   const [columnTitle, setColumnTitle] = React.useState("");
   const { signalRHub } = React.useContext(AppContext);
 
@@ -21,8 +23,9 @@ const BoardView = () => {
       col.Cards.sort((a,b) => { return a.Index - b.Index });
     });
     setBoard(inputBoard);
+    setBoardTitle(inputBoard.Title)
   }
- 
+
   const getAuthToken = async () => {
       const token = await authService.getAccessToken();
       await signalRHub.startHub(token);
@@ -49,7 +52,20 @@ const BoardView = () => {
   const moveCardToColumnAtIndex = async (taskId, columnId, index) => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "MoveCardToColumnAtIndex", Param1: taskId, Param2: columnId, Param3: index}))
   }
-
+  const renameBoard = async (boardId, newTitle) => {
+    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameBoard", Param1: boardId, Param2: newTitle}))
+  }
+  const deleteBoard = async (boardId, newTitle) => {
+    signalRHub.callAction("", JSON.stringify({ Method: "deleteBoard", Param1: boardId }))
+  }
+  const handleBoardTitleKeyPress = (event) => {
+    if(event.key === 'Enter'){
+      if (boardTitle !== board.Title) {
+        renameBoard(board.BoardId, boardTitle);
+      }
+      setTitleReadOnly(true);
+    }
+  } 
   React.useEffect(() => {
     authService.getAccessToken()
     .then((token) => {
@@ -120,14 +136,35 @@ const BoardView = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Jumbotron className="d-flex flex-column">
-        <h1>{board.Title} Board</h1>
-        <Form>
+        <div className="TitleRow d-flex justify-content-between">
+          <div className="TitleEdit">
+            <h5 onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
+                {board.Title === "" ? "Board Title: <title blank>" : "Board Title: "+boardTitle}
+            </h5>
+            <Form.Control 
+              className="input-lg col-12" 
+              name="taskTitle" 
+              type="text" 
+              value={boardTitle} 
+              onChange={e => setBoardTitle(e.target.value)}
+              onKeyPress={handleBoardTitleKeyPress}
+              size="sm"
+              style={titleReadOnly ? {display:"none"} : {}}
+              />
+          </div>
+          <Button onClick={deleteBoard} className="col-2"><small>Delete Board</small></Button>
+        </div>
+        <Form className="mt-3">
           <Form.Group controlId="formBasicEmail" className="d-flex">
+            
             <Button onClick={addColumn} className="col-2"><small>Add Column</small></Button>
             <Form.Control className="ml-3 col-3" name="title" type="text" placeholder="Enter column title" value={columnTitle} onChange={e => setColumnTitle(e.target.value)} />
           </Form.Group>
         </Form>
-        <div className="d-flex flex-wrap">
+        <div 
+          className="d-flex flex-nowrap" 
+          style={{overflowX:"auto"}}
+          >
           {board.Columns.map(col => 
             <BoardColumn key={col.ColumnId} Title={col.Title} Index={col.Index} ColumnId={col.ColumnId} addCardToColumn={addCardToColumn} renameColumn={renameColumn}>
                 {col.Cards.map((t, index) =>

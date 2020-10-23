@@ -16,3 +16,13 @@ code {
 .btn:hover {
   background-color:  #0d4b8a;
 }
+
+.scrolling-wrapper {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  .taskcolumn {
+    display: inline-block;
+  }
+}

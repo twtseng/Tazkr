@@ -110,6 +110,14 @@ namespace Tazkr.Models
             signalRHub.DbContext.Cards.Update(cardToMove);
             await signalRHub.DbContext.SaveChangesAsync();
         }
+        public async Task RenameBoard(SignalRHub signalRHub, string boardId, string newName)
+        {
+            signalRHub.Logger.LogInformation($"Board.RenameBoard boardId={boardId}, newName={newName}");
+            Board board = signalRHub.DbContext.Boards.Find(boardId);
+            board.Title = newName;
+            signalRHub.DbContext.Boards.Update(board);
+            await signalRHub.DbContext.SaveChangesAsync();
+        }
         public override async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
             switch (hubPayload.Method)
@@ -146,7 +154,11 @@ namespace Tazkr.Models
                 case "MoveCardToColumnAtIndex":
                     await this.MoveCardToColumnAtIndex(signalRHub, hubPayload.Param1, hubPayload.Param2, int.Parse(hubPayload.Param3));
                     await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
-                    break;         
+                    break;
+                case "RenameBoard":
+                    await this.RenameBoard(signalRHub, hubPayload.Param1, hubPayload.Param2);
+                    await signalRHub.Clients.Group(this.HubGroupId).SendAsync("BoardJson", await this.GetBoardJson(signalRHub));
+                    break;             
                 default:
                     signalRHub.Logger.LogInformation($"Board UNKNOWN METHOD({hubPayload.Method})");
                     break;

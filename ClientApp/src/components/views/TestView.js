@@ -29,7 +29,13 @@ const reorder = (list, startIndex, endIndex) => {
   const getListStyle = isDraggingOver => ({
     background: isDraggingOver ? "lightblue" : "lightgrey",
     padding: grid,
-    width: 200
+    width: 200,
+  });
+  const getListStyle2 = isDraggingOver => ({
+    background: isDraggingOver ? "lightblue" : "lightgrey",
+    padding: grid,
+    width: 200,
+    display: "inline-flex",
   });
 
 const TestView = () => {
@@ -60,6 +66,20 @@ const TestView = () => {
                 {
                   id: "21",
                   content: "SubItem 21 content"
+                }
+              ]
+            },
+            {
+              id: "3",
+              content: "item 3 content",
+              subItems: [
+                {
+                  id: "30",
+                  content: "SubItem 30 content"
+                },
+                {
+                  id: "31",
+                  content: "SubItem 31 content"
                 }
               ]
             }
@@ -137,7 +157,7 @@ const TestView = () => {
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
+              style={getListStyle2(snapshot.isDraggingOver)}
             >
               {testItems.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
