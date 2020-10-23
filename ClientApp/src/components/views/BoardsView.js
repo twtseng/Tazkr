@@ -9,6 +9,7 @@ const BoardsView = () => {
 
   const [boards, setBoards] = React.useState([]);
   const [boardTitle, setBoardTitle] = React.useState("");
+  const [currentUsers, setCurrentUsers] = React.useState([]);
   const { signalRHub } = React.useContext(AppContext);
 
   const RefreshBoards = (boardsJson) => {
@@ -16,7 +17,10 @@ const BoardsView = () => {
     inputBoards.sort(x => x.Title);  
     setBoards(inputBoards);
   }
- 
+  const RefreshCurrentUsers = (usersJson) => {
+    const inputUsers = JSON.parse(usersJson);
+    setCurrentUsers(inputUsers);
+  } 
   const getAuthToken = async () => {
       console.log("Getting auth token");
       const token = await authService.getAccessToken();
@@ -37,6 +41,7 @@ const BoardsView = () => {
     authService.getAccessToken()
     .then((token) => {
         signalRHub.addMethod("RefreshBoards", RefreshBoards);
+        signalRHub.addMethod("RefreshCurrentUsers", RefreshCurrentUsers);
         signalRHub.startHub(token)
         .then(() => getBoards())
     });
@@ -50,16 +55,37 @@ const BoardsView = () => {
             <Form.Control className="ml-3 col-3" name="title" type="text" placeholder="Enter board title" value={boardTitle} onChange={e => setBoardTitle(e.target.value)} />
           </Form.Group>
         </Form>
-        <h1>Boards</h1>
+        <h3>Boards</h3>
         <div className="d-flex flex-wrap">
           {boards.map(x => 
-            <Card  className='col-3 m-4' key={x.HubGroupId}>
+            <Card className='col-2 m-4' key={x.HubGroupId}>
               <Card.Body>
                 <Card.Title>{x.Title == "" ? "<title blank>" : x.Title}</Card.Title>
                 <Link to={`/board/${x.HubGroupId}`}>Go to board</Link>
               </Card.Body>
             </Card>
           )}
+        </div>
+        <h3>Current users</h3>
+        <div className="currentUsers">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">UserName</th>
+                <th scope="col">LastSeen</th>
+              </tr>
+            </thead>
+            <tbody>
+            {currentUsers.map(x => 
+              
+                  <tr>
+                    <td>{x.UserName}</td>
+                    <td>{x.LastRequestTime}</td>
+                  </tr>
+
+            )}  
+            </tbody>
+          </table>          
         </div>
       </Jumbotron>
   );

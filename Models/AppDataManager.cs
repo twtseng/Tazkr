@@ -16,9 +16,11 @@ namespace Tazkr.Models
     public class AppDataManager
     {
         public List<HubGroup> HubGroups { get; set; }
+        public List<ApplicationUser> ApplicationUsers { get; set; }
         public AppDataManager()
         {
             this.HubGroups = new List<HubGroup>();
+            this.ApplicationUsers = new List<ApplicationUser>();
         }
         public void RefreshHubGroups(SignalRHub signalRHub)
         {
@@ -104,8 +106,27 @@ namespace Tazkr.Models
             this.RefreshHubGroups(signalRHub);
             await this.RefreshBoardsForAllClients(signalRHub);
         }
+
+        public async Task UpdateUserInCache(SignalRHub signalRHub, ApplicationUser appUser)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.UpdateUserInCache");
+            if (!this.ApplicationUsers.Exists(x => x.Id == appUser.Id))
+            {
+                appUser.LastRequestTime = DateTime.UtcNow;
+                this.ApplicationUsers.Add(appUser);
+                await signalRHub.Clients.All.SendAsync("RefreshCurrentUsers",
+                JsonConvert.SerializeObject(this.ApplicationUsers, Formatting.None,new JsonSerializerSettings(){ReferenceLoopHandling = ReferenceLoopHandling.Ignore}));
+            }
+            ApplicationUser cachedUser = this.ApplicationUsers.FirstOrDefault(x => x.Id == appUser.Id);
+            if (cachedUser != null)
+            {
+                appUser.LastRequestTime = DateTime.UtcNow;
+            }
+        }        
         public async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
+            await this.UpdateUserInCache(signalRHub, appUser);
+
             // If hubGroupId is blank, this is a global action (not group specific)
             if (string.IsNullOrWhiteSpace(hubGroupId))
             {

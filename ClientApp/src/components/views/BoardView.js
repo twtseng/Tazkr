@@ -53,19 +53,19 @@ const BoardView = () => {
   const moveCardToColumnAtIndex = async (taskId, columnId, index) => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "MoveCardToColumnAtIndex", Param1: taskId, Param2: columnId, Param3: index}))
   }
-  const renameBoard = async (boardId, newTitle) => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameBoard", Param1: boardId, Param2: newTitle}))
-  }
   const deleteBoard = async (boardId, newTitle) => {
     await signalRHub.callAction("", JSON.stringify({ Method: "DeleteBoard", Param1: boardId }));
     history.push("/boards");
   }
+  const renameBoard = async () => {
+    if (boardTitle !== board.Title) {
+      signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameBoard", Param1: board.BoardId, Param2: boardTitle}))
+    }
+    setTitleReadOnly(true);
+  }
   const handleBoardTitleKeyPress = (event) => {
     if(event.key === 'Enter'){
-      if (boardTitle !== board.Title) {
-        renameBoard(board.BoardId, boardTitle);
-      }
-      setTitleReadOnly(true);
+      renameBoard();
     }
   } 
   React.useEffect(() => {
@@ -150,6 +150,7 @@ const BoardView = () => {
               value={boardTitle} 
               onChange={e => setBoardTitle(e.target.value)}
               onKeyPress={handleBoardTitleKeyPress}
+              onMouseLeave={renameBoard}
               size="sm"
               style={titleReadOnly ? {display:"none"} : {}}
               />
