@@ -35,6 +35,10 @@ const BoardsView = () => {
     signalRHub.callAction("", JSON.stringify({ Method: "CreateBoard", Param1: boardTitle }));
     setBoardTitle("");
   }
+  const getCurrentUsers = async () => {
+    signalRHub.callAction("", JSON.stringify({ Method: "GetCurrentUsers"}));
+    setBoardTitle("");
+  }
 
 
   React.useEffect(() => {
@@ -44,6 +48,7 @@ const BoardsView = () => {
         signalRHub.addMethod("RefreshCurrentUsers", RefreshCurrentUsers);
         signalRHub.startHub(token)
         .then(() => getBoards())
+        .then(() => getCurrentUsers())
     });
 },[]);
 

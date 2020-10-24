@@ -6,11 +6,9 @@ import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizat
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 import AppContext from './components/AppContext';
 import { SignalRHub } from './components/SignalRHub';
-import Home from './components/Home';
 import BoardsView from './components/views/BoardsView';
 import BoardView from './components/views/BoardView';
-import TestView from './components/views/TestView';
-import NewBoardView from './components/views/NewBoardView';
+
 
 import './custom.css'
 const signalRHub = new SignalRHub();
@@ -23,8 +21,6 @@ export default () => {
         <AuthorizeRoute exact path='/' component={BoardsView} />
         <AuthorizeRoute exact path='/boards' component={BoardsView} />
         <AuthorizeRoute exact path='/board/:hubGroupId' component={BoardView} />
-        <AuthorizeRoute exact path='/newboard/:hubGroupId' component={NewBoardView} />
-        <AuthorizeRoute exact path='/testview' component={TestView} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>
     </AppContext.Provider>

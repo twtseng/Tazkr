@@ -27,10 +27,6 @@ const BoardView = () => {
     setBoardTitle(inputBoard.Title)
   }
 
-  const getAuthToken = async () => {
-      const token = await authService.getAccessToken();
-      await signalRHub.startHub(token);
-  }
   const joinBoard = async () => {
     signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "JoinBoard", Param1: "" }))
   }
@@ -67,7 +63,12 @@ const BoardView = () => {
     if(event.key === 'Enter'){
       renameBoard();
     }
-  } 
+  }
+  const reconnectHub = () => {
+    signalRHub.restartHub()
+        .then(() => joinBoard())
+        .then(() => getBoard())
+  }
   React.useEffect(() => {
     authService.getAccessToken()
     .then((token) => {
@@ -138,6 +139,7 @@ const BoardView = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Jumbotron className="d-flex flex-column">
+      <Button onClick={reconnectHub} className="col-2"><small>Reconnect hub</small></Button>
         <div className="TitleRow d-flex justify-content-between">
           <div className="TitleEdit">
             <h5 onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
@@ -171,7 +173,7 @@ const BoardView = () => {
           {board.Columns.map(col => 
             <BoardColumn key={col.ColumnId} Title={col.Title} Index={col.Index} ColumnId={col.ColumnId} addCardToColumn={addCardToColumn} renameColumn={renameColumn}>
                 {col.Cards.map((t, index) =>
-                  <TaskCard key={t.CardId} Title={t.Title} CardId={t.CardId} Index={index} renameCard={renameCard}/>
+                  <TaskCard key={t.CardId+t.Title} Title={t.Title} CardId={t.CardId} Index={index} renameCard={renameCard}/>
                 )}
             </BoardColumn>
           )}

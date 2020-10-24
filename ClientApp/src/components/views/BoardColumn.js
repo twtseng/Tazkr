@@ -27,7 +27,7 @@ const BoardColumn = (props) => {
     }
     return (
         <Card className='col-3 m-4'>
-            <Card.Body style={{minHeight:"50px"}}>
+            <Card.Body style={{minHeight:"200px"}}>
                 <div className="TitleRow d-flex justify-content-between">
                     <div className="TitleEdit">
                         <div onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
@@ -47,6 +47,7 @@ const BoardColumn = (props) => {
                     </div>
                     <Button className="m-2" onClick={() => props.addCardToColumn(props.ColumnId)}><small>Add task</small></Button>
                 </div>
+                <div>
                 <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>
                     { (provided, snapshot) => (
                         <TaskList
@@ -59,6 +60,7 @@ const BoardColumn = (props) => {
                         </TaskList>
                     )}
                 </Droppable>
+                </div>
             </Card.Body>
         </Card>
     )

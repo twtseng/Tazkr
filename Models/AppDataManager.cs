@@ -114,15 +114,20 @@ namespace Tazkr.Models
             {
                 appUser.LastRequestTime = DateTime.UtcNow;
                 this.ApplicationUsers.Add(appUser);
-                await signalRHub.Clients.All.SendAsync("RefreshCurrentUsers",
-                JsonConvert.SerializeObject(this.ApplicationUsers, Formatting.None,new JsonSerializerSettings(){ReferenceLoopHandling = ReferenceLoopHandling.Ignore}));
+                await this.RefreshCurrentUsers(signalRHub);
             }
             ApplicationUser cachedUser = this.ApplicationUsers.FirstOrDefault(x => x.Id == appUser.Id);
             if (cachedUser != null)
             {
                 appUser.LastRequestTime = DateTime.UtcNow;
             }
-        }        
+        }
+        public async Task RefreshCurrentUsers(SignalRHub signalRHub)
+        {
+            signalRHub.Logger.LogInformation($"AppDataManager.RefreshCurrentUsers");
+            await signalRHub.Clients.All.SendAsync("RefreshCurrentUsers",
+                JsonConvert.SerializeObject(this.ApplicationUsers, Formatting.None,new JsonSerializerSettings(){ReferenceLoopHandling = ReferenceLoopHandling.Ignore}));
+        }     
         public async Task CallAction(SignalRHub signalRHub, ApplicationUser appUser, string hubGroupId, HubPayload hubPayload)
         {
             await this.UpdateUserInCache(signalRHub, appUser);
@@ -131,6 +136,9 @@ namespace Tazkr.Models
             if (string.IsNullOrWhiteSpace(hubGroupId))
             {
                 switch (hubPayload.Method) {
+                    case "GetCurrentUsers":
+                        await this.RefreshCurrentUsers(signalRHub);
+                        break;
                     case "JoinGroup":
                         await this.JoinGroup(signalRHub, appUser, hubPayload.Param1);
                         break;
