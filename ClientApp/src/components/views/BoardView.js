@@ -72,7 +72,9 @@ const BoardView = () => {
   React.useEffect(() => {
     authService.getAccessToken()
     .then((token) => {
-        signalRHub.addMethod("BoardJson", RefreshBoard);
+        signalRHub.setMethods( { 
+          "BoardJson" : RefreshBoard
+        });
         signalRHub.startHub(token)
         .then(() => joinBoard())
         .then(() => getBoard())

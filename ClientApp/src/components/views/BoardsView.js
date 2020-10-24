@@ -44,8 +44,10 @@ const BoardsView = () => {
   React.useEffect(() => {
     authService.getAccessToken()
     .then((token) => {
-        signalRHub.addMethod("RefreshBoards", RefreshBoards);
-        signalRHub.addMethod("RefreshCurrentUsers", RefreshCurrentUsers);
+        signalRHub.setMethods( { 
+          "RefreshBoards" : RefreshBoards,
+          "RefreshCurrentUsers": RefreshCurrentUsers
+        });
         signalRHub.startHub(token)
         .then(() => getBoards())
         .then(() => getCurrentUsers())

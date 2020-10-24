@@ -8,8 +8,8 @@ export class SignalRHub {
     this.connectionState = "";
   }
   // Add a client method and associated handler
-  addMethod(methodName, handler) {
-    this.methodDict[methodName] = handler;
+  setMethods(methodDict) {
+    this.methodDict = methodDict;
   }
   restartHub() {
     this.hub = new signalR.HubConnectionBuilder()
