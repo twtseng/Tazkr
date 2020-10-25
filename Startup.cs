@@ -104,7 +104,7 @@ namespace Tazkr
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Board}/{action=Index}/{id?}");
+                    pattern: "{controller=BoardData}/{action=GetBoards}/{id?}");
                 endpoints.MapRazorPages();
                 endpoints.MapHub<SignalRHub>("/hub");
             });
