@@ -23,14 +23,10 @@ namespace Tazkr.Models
         public List<ColumnPayload> Columns { get; set; }
         public BoardPayload(Board board)
         {
-            this.BoardId = board.BoardId;
-            this.Title = board.Title;
+            this.BoardId = board != null ? board.BoardId : "<null>";
+            this.Title = board != null ? board.Title : "<null>";
             this.CreatedBy = new ApplicationUserPayload(board.CreatedBy);
-            this.Columns = new List<ColumnPayload>();
-            if (board.Columns != null)
-            {
-                this.Columns = board.Columns.Select(column => new ColumnPayload(column)).ToList();
-            }
+            this.Columns = board.Columns != null? board.Columns.Select(column => new ColumnPayload(column)).ToList() : new List<ColumnPayload>();
         }
     }
 }

@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Tazkr.Models
 {
     /// <summary>
-    /// Subset of Client object to be returned to client app
+    /// Subset of Column object to be returned to client app
     /// </summary>
     public class ColumnPayload
     {
@@ -20,10 +20,10 @@ namespace Tazkr.Models
         public List<CardPayload> Cards { get; set; }
         public ColumnPayload(Column column)
         {
-            this.ColumnId = column.ColumnId;
-            this.Title = column.Title;
-            this.Index = column.Index;
-            this.Cards = column.Cards.Select(card => new CardPayload(card)).ToList();
+            this.ColumnId = column != null ? column.ColumnId : "<null>";
+            this.Title = column != null ? column.Title : "<null>";
+            this.Index = column != null ? column.Index : 0;
+            this.Cards = column != null ? column.Cards.Select(card => new CardPayload(card)).ToList() : new List<CardPayload>();
         }
     }
 }

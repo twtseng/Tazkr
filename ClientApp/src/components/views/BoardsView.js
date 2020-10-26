@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Jumbotron, Button, Card, Form } from 'react-bootstrap'
 import authService from '../api-authorization/AuthorizeService';
 import AppContext from '../AppContext';
+import callBoardDataApi from '../BoardDataApi';
 
 const BoardsView = () => {
 
@@ -29,30 +30,18 @@ const BoardsView = () => {
   }
 
   const getBoards = async () => {
-    signalRHub.callAction("", JSON.stringify({ Method: "GetBoards", Param1: "" }))
+      const boardsData = await callBoardDataApi("BoardData/GetBoards","GET");
+      setBoards(boardsData);
   }
+  
   const createBoard = async () => {
     signalRHub.callAction("", JSON.stringify({ Method: "CreateBoard", Param1: boardTitle }));
     setBoardTitle("");
   }
-  const getCurrentUsers = async () => {
-    signalRHub.callAction("", JSON.stringify({ Method: "GetCurrentUsers"}));
-    setBoardTitle("");
-  }
-
 
   React.useEffect(() => {
-    authService.getAccessToken()
-    .then((token) => {
-        signalRHub.setMethods( { 
-          "RefreshBoards" : RefreshBoards,
-          "RefreshCurrentUsers": RefreshCurrentUsers
-        });
-        signalRHub.startHub(token)
-        .then(() => getBoards())
-        .then(() => getCurrentUsers())
-    });
-},[]);
+    getBoards();
+  },[]);
 
   return (
       <Jumbotron className="d-flex flex-column">
@@ -65,10 +54,10 @@ const BoardsView = () => {
         <h3>Boards</h3>
         <div className="d-flex flex-wrap">
           {boards.map(x => 
-            <Card className='col-2 m-4' key={x.HubGroupId}>
+            <Card className='col-2 m-4' key={x.boardId}>
               <Card.Body>
-                <Card.Title>{x.Title == "" ? "<title blank>" : x.Title}</Card.Title>
-                <Link to={`/board/${x.HubGroupId}`}>Go to board</Link>
+                <Card.Title>{x.title == "" ? "<title blank>" : x.title}</Card.Title>
+                <Link to={`/board/${x.boardId}`}>Go to board</Link>
               </Card.Body>
             </Card>
           )}

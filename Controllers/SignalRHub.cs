@@ -24,19 +24,17 @@ namespace Tazkr.Controllers
     {
         public ILogger<SignalRHub> Logger { get; private set; }
         public ApplicationDbContext DbContext  { get; private set; }
-        AppDataManager _appDataManager;
-        public SignalRHub(ILogger<SignalRHub> logger, ApplicationDbContext dbContext, AppDataManager appDataManager)
+        public SignalRHub(ILogger<SignalRHub> logger, ApplicationDbContext dbContext)
         {
             this.Logger = logger;
             this.DbContext = dbContext;
-            this._appDataManager = appDataManager;
         }
-        public async Task CallAction(string accessToken, string hubGroupId, string payloadString)
+        public void CallAction(string accessToken, string hubGroupId, string payloadString)
         {
             Logger.LogInformation($"SignalRHub.CallAction groupId=[{hubGroupId}] payload=[{payloadString}]");
             ApplicationUser appUser = this.GetUserFromAccessToken(accessToken);
             HubPayload hubPayload = JsonConvert.DeserializeObject<HubPayload>(payloadString);
-            await _appDataManager.CallAction(this, appUser, hubGroupId, hubPayload);
+            // await _appDataManager.CallAction(this, appUser, hubGroupId, hubPayload);
         }
         public ApplicationUser GetUserFromAccessToken(string accessToken)
         {
