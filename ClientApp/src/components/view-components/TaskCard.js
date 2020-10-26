@@ -1,7 +1,8 @@
-import React from 'react'
-import { Button, Card, Form } from 'react-bootstrap'
-import styled from 'styled-components'
-import { Draggable } from 'react-beautiful-dnd'
+import React from 'react';
+import { Button, Card, Form } from 'react-bootstrap';
+import styled from 'styled-components';
+import { Draggable } from 'react-beautiful-dnd';
+import callBoardDataApi from '../api-board-data/BoardDataApi';
 
 const DragContainer = styled.div`
     border: 1px solid lightgrey;
@@ -16,7 +17,12 @@ const TaskCard = (props) => {
     const [titleReadOnly, setTitleReadOnly] = React.useState(true)
     const updateCardTitle = () => {
         setTitleReadOnly(true);
-        props.renameCard(props.CardId, cardTitle);
+        callBoardDataApi(`BoardData/RenameCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle })
+            .then(() => {
+                console.log("updateCardTitle completed");
+                props.getBoard();
+            })
+            .catch((err) => console.log(`updateCardTitle failed, err = ${err}`));
     }
     const handleKeyPress = (event) => {
         if(event.key === 'Enter'){

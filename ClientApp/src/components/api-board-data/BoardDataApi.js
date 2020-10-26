@@ -1,12 +1,12 @@
 import React from 'react';
-import authService from './api-authorization/AuthorizeService';
+import authService from '../api-authorization/AuthorizeService';
 
 export default async (url = '', method='GET', data = {}) => {
     console.log(`BoardDataApi, url[${url}] method[${method}] data[${data}]`);
     const token = await authService.getAccessToken();
     const response = await fetch(url, {
         method: method, // *GET, POST, PUT, DELETE, etc.
-        mode: 'no-cors', // no-cors, *cors, same-origin
+        mode: 'same-origin', // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         credentials: 'same-origin', // include, *same-origin, omit
         headers: {

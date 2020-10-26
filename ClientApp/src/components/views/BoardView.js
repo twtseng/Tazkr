@@ -1,62 +1,52 @@
 import React from 'react';
-import { Jumbotron, Button, Card, Form } from 'react-bootstrap'
-import authService from '../api-authorization/AuthorizeService';
+import { Jumbotron, Button, Form } from 'react-bootstrap'
 import AppContext from '../AppContext';
 import { useParams, useHistory } from "react-router-dom";
-import TaskCard from './TaskCard';
-import BoardColumn from './BoardColumn';
+import TaskCard from '../view-components/TaskCard';
+import BoardColumn from '../view-components/BoardColumn';
 import {DragDropContext} from 'react-beautiful-dnd';
-import callBoardDataApi from '../BoardDataApi';
+import callBoardDataApi from '../api-board-data/BoardDataApi';
+import dragEndHandler from '../dragdrop/BoardViewDragEndHandler';
 
 const BoardView = () => {
-  const { hubGroupId } = useParams();
+  const { boardId } = useParams();
 
-  const [board, setBoard] = React.useState({Columns:[]});
+  const [board, setBoard] = React.useState({columns:[]});
   const [boardTitle, setBoardTitle] = React.useState("")
   const [titleReadOnly, setTitleReadOnly] = React.useState(true)
   const [columnTitle, setColumnTitle] = React.useState("");
   const { signalRHub } = React.useContext(AppContext);
   const history = useHistory();
 
-  const RefreshBoard = (boardJson) => {
-    const inputBoard = JSON.parse(boardJson);
-    inputBoard.Columns.sort((a,b) => { return a.Index - b.Index });
-    inputBoard.Columns.forEach(col => {
-      col.Cards.sort((a,b) => { return a.Index - b.Index });
+  const RefreshBoard = (inputBoard) => {
+    // Sort the board items before display
+    inputBoard.columns.sort((a,b) => { return a.index - b.index });
+    inputBoard.columns.forEach(col => {
+      col.cards.sort((a,b) => { return a.index - b.index });
     });
     setBoard(inputBoard);
-    setBoardTitle(inputBoard.Title)
+    setBoardTitle(inputBoard.title);
   }
 
-  const joinBoard = async () => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "JoinBoard", Param1: "" }))
-  }
   const getBoard = async () => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "GetBoard", Param1: "" }))
+    const boardData = await callBoardDataApi(`BoardData/GetBoard/${boardId}`,"GET");
+    RefreshBoard(boardData);
   }
+
   const addColumn = async () => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "AddColumn", Param1: columnTitle }));
+    await callBoardDataApi(`BoardData/AddColumnToBoard`,"PATCH",{ Param1: boardId, Param2: columnTitle});
     setColumnTitle("");
+    getBoard();
   }
-  const addCardToColumn = async (columnId) => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "AddCardToColumn", Param1: columnId }))
-  }
-  const renameCard = async (cardId, newTitle) => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameCard", Param1: cardId, Param2: newTitle}))
-  }
-  const renameColumn = async (columnId, newTitle) => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameColumn", Param1: columnId, Param2: newTitle}))
-  }
-  const moveCardToColumnAtIndex = async (taskId, columnId, index) => {
-    signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "MoveCardToColumnAtIndex", Param1: taskId, Param2: columnId, Param3: index}))
-  }
-  const deleteBoard = async (boardId, newTitle) => {
-    await signalRHub.callAction("", JSON.stringify({ Method: "DeleteBoard", Param1: boardId }));
+  const deleteBoard = async () => {
+    await callBoardDataApi(`BoardData/DeleteBoard`,"DELETE",{ Param1: boardId });
     history.push("/boards");
   }
   const renameBoard = async () => {
-    if (boardTitle !== board.Title) {
-      signalRHub.callAction(hubGroupId, JSON.stringify({ Method: "RenameBoard", Param1: board.BoardId, Param2: boardTitle}))
+    if (boardTitle !== board.title) {
+      callBoardDataApi(`BoardData/RenameBoard`,"PATCH",{ Param1: boardId, Param2: boardTitle })
+      .then(() => console.log("renameBoard completed"))
+      .catch((err) => console.log(`renameBoard failed, err = ${err}`));
     }
     setTitleReadOnly(true);
   }
@@ -65,88 +55,18 @@ const BoardView = () => {
       renameBoard();
     }
   }
-  const reconnectHub = () => {
-    signalRHub.restartHub()
-        .then(() => joinBoard())
-        .then(() => getBoard())
-  }
-  React.useEffect(() => {
-    authService.getAccessToken()
-    .then((token) => {
-        signalRHub.setMethods( { 
-          "BoardJson" : RefreshBoard
-        });
-        signalRHub.startHub(token)
-        .then(() => joinBoard())
-        .then(() => getBoard())
-    });
-  },[]);
 
-  const findCardById = (inputBoard, cardId) => {
-    for (let colIndex = 0; colIndex < inputBoard.Columns.length; ++colIndex) {
-        const column = inputBoard.Columns[colIndex];
-        for (let cardIndex = 0; cardIndex < column.Cards.length; ++cardIndex) {
-            if (column.Cards[cardIndex].CardId === cardId) {
-                return column.Cards[cardIndex];
-            }
-        }
-    }
-    return null;
-  }
-  const findColumnById = (inputBoard, columnId) => {
-      for (let colIndex = 0; colIndex < inputBoard.Columns.length; ++colIndex) {
-          if (inputBoard.Columns[colIndex].ColumnId === columnId) {
-              return inputBoard.Columns[colIndex];
-          }
-      }
-      return null;
-  }
-  const onDragEnd = result => {
-    const { destination, source, draggableId } = result;
-    // Exit if No destination
-    if (!destination) {
-        return;
-    }
-    // Exit if Dropping on same place
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
-        return;
-    }
-    const startColumn = findColumnById(board, source.droppableId);
-    const finishColumn = findColumnById(board, destination.droppableId);
-    const card = findCardById(board, draggableId);
- 
-    if (source.droppableId === destination.droppableId) {
-        // Reordering task on same column
-        const newBoard = {...board}  
-        const newCards = [...startColumn.Cards];
-        newCards.splice(source.index, 1);
-        newCards.splice(destination.index, 0, card);
-        const updateColumn = findColumnById(newBoard, destination.droppableId);
-        updateColumn.Cards = newCards;
-        setBoard(newBoard);
-    } else { 
-        // Moving task to new column
-        const newBoard = {...board} 
-        const startColumnCards = [...startColumn.Cards];
-        startColumnCards.splice(source.index, 1);
-        const newStartColumn = findColumnById(newBoard, source.droppableId);
-        newStartColumn.Cards = startColumnCards;
-        const finishColumnCards = [...finishColumn.Cards];
-        finishColumnCards.splice(destination.index, 0, card);
-        const newFinishColumn = findColumnById(newBoard, destination.droppableId);
-        newFinishColumn.Cards = finishColumnCards;
-        setBoard(newBoard);
-    }
-    moveCardToColumnAtIndex(draggableId, destination.droppableId, destination.index);
-  }
+  React.useEffect(() => {
+    getBoard();
+  },[]);
+  
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={(result) => dragEndHandler(result, board, setBoard)}>
       <Jumbotron className="d-flex flex-column">
-      <Button onClick={reconnectHub} className="col-2"><small>Reconnect hub</small></Button>
         <div className="TitleRow d-flex justify-content-between">
-          <div className="TitleEdit">
+          <div className="TitleEdit col-6">
             <h5 onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
-                {board.Title === "" ? "Board Title: <title blank>" : "Board Title: "+boardTitle}
+                {board.title === "" ? "Board Title: <title blank>" : "Board Title: "+boardTitle}
             </h5>
             <Form.Control 
               className="input-lg col-12" 
@@ -160,7 +80,7 @@ const BoardView = () => {
               style={titleReadOnly ? {display:"none"} : {}}
               />
           </div>
-          <Button onClick={() => deleteBoard(board.BoardId)} className="col-2"><small>Delete Board</small></Button>
+          <Button onClick={deleteBoard} className="col-2"><small>Delete Board</small></Button>
         </div>
         <Form className="mt-3">
           <Form.Group controlId="formBasicEmail" className="d-flex">
@@ -173,10 +93,10 @@ const BoardView = () => {
           className="d-flex flex-nowrap" 
           style={{overflowX:"auto"}}
           >
-          {board.Columns.map(col => 
-            <BoardColumn key={col.ColumnId} Title={col.Title} Index={col.Index} ColumnId={col.ColumnId} addCardToColumn={addCardToColumn} renameColumn={renameColumn}>
-                {col.Cards.map((t, index) =>
-                  <TaskCard key={t.CardId+t.Title} Title={t.Title} CardId={t.CardId} Index={index} renameCard={renameCard}/>
+          {board.columns.map(col => 
+            <BoardColumn key={col.columnId} Title={col.title} Index={col.index} ColumnId={col.columnId} getBoard={getBoard}>
+                {col.cards.map((t, index) =>
+                  <TaskCard key={t.cardId+t.title} Title={t.title} CardId={t.cardId} Index={index} getBoard={getBoard}/>
                 )}
             </BoardColumn>
           )}

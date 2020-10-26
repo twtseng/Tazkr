@@ -5,7 +5,7 @@ import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 import AppContext from './components/AppContext';
-import { SignalRHub } from './components/SignalRHub';
+import { SignalRHub } from './components/api-board-data/SignalRHub';
 import BoardsView from './components/views/BoardsView';
 import BoardView from './components/views/BoardView';
 
@@ -17,10 +17,9 @@ export default () => {
   return (
     <AppContext.Provider value={{signalRHub}}>
       <Layout>
-        {/* <AuthorizeRoute exact path='/' component={Home} /> */}
         <AuthorizeRoute exact path='/' component={BoardsView} />
         <AuthorizeRoute exact path='/boards' component={BoardsView} />
-        <AuthorizeRoute exact path='/board/:hubGroupId' component={BoardView} />
+        <AuthorizeRoute exact path='/board/:boardId' component={BoardView} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>
     </AppContext.Provider>

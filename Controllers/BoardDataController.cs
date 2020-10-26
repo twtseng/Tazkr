@@ -36,6 +36,7 @@ namespace Tazkr.Controllers
         [HttpGet("GetBoard/{boardId}")]
         public BoardPayload GetBoard(string boardId)
         {
+            _logger.LogInformation($"BoardDataController.GetBoard({boardId})");
             BoardPayload boardPayload = _dbContext.Boards
             .Include(board => board.Columns)
             .ThenInclude(col => col.Cards)
@@ -58,13 +59,13 @@ namespace Tazkr.Controllers
                 _dbContext.SaveChanges();
                 string status = $"BoardDataController.CreateBoard(boardTitle={boardTitle}), boardId:{board.BoardId}";
                 _logger.LogInformation(status);
-                return new OkObjectResult(status);
+                return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.CreateBoard(boardTitle={boardTitle}) exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
-                return BadRequest(exceptionString);
+                return BadRequest(new {status=exceptionString});
             }
         }
         [HttpDelete("DeleteBoard")]
@@ -76,7 +77,7 @@ namespace Tazkr.Controllers
             {
                 string errorString = $"BoardDataController.DeleteBoard Board NOT found with boardId:{boardId}";
                 _logger.LogInformation(errorString);
-                return BadRequest(errorString);
+                return BadRequest(new {status=errorString});
             }
             else
             {
@@ -94,13 +95,13 @@ namespace Tazkr.Controllers
                     _dbContext.SaveChanges();
                     string status = $"BoardDataController.DeleteBoard Deleted board with boardId:{boardId}";
                     _logger.LogInformation(status);
-                    return new OkObjectResult(status);
+                    return new OkObjectResult(new {status});
                 }
                 catch (Exception ex)
                 {
                     string exceptionString = $"BoardDataController.DeleteBoard(boardId:{boardId}) exception occurred: {ex.ToString()}";
                     _logger.LogInformation(exceptionString);
-                    return BadRequest(exceptionString);
+                    return BadRequest(new {status=exceptionString});
                 }
             }
         }
@@ -117,13 +118,13 @@ namespace Tazkr.Controllers
                 _dbContext.SaveChanges();
                 string status = $"BoardDataController.RenameBoard(boardId:{boardId}), newName={newName}";
                 _logger.LogInformation(status);
-                return new OkObjectResult(status);
+                return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.RenameBoard(boardId:{boardId}, newName={newName}) exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
-                return BadRequest(exceptionString);
+                return BadRequest(new {status=exceptionString});
             }
         }
         [HttpPatch("AddColumnToBoard")]
@@ -145,13 +146,13 @@ namespace Tazkr.Controllers
                 _dbContext.SaveChanges();
                 string status = $"BoardDataController.AddColumnToBoard BoardId={boardId}, Title={columnTitle}";
                 _logger.LogInformation(status);
-                return new OkObjectResult(status);
+                return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.AddColumnToBoard BoardId={boardId}, Title={columnTitle} exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
-                return BadRequest(exceptionString);
+                return BadRequest(new {status=exceptionString});
             }            
         }
         [HttpDelete("DeleteColumn")]
@@ -163,7 +164,7 @@ namespace Tazkr.Controllers
             {
                 string errorString = $"BoardDataController.DeleteColumn Column NOT found with ColumnId:{columnId}";
                 _logger.LogInformation(errorString);
-                return BadRequest(errorString);
+                return BadRequest(new {status=errorString});
             }
             else
             {
@@ -177,13 +178,13 @@ namespace Tazkr.Controllers
                     _dbContext.SaveChanges();
                     string status = $"BoardDataController.DeleteColumn Deleted column with columnId:{columnId}";
                     _logger.LogInformation(status);
-                    return new OkObjectResult(status);
+                    return new OkObjectResult(new {status});
                 }
                 catch (Exception ex)
                 {
                     string exceptionString = $"BoardDataController.DeleteColumn(columnId:{columnId}) exception occurred: {ex.ToString()}";
                     _logger.LogInformation(exceptionString);
-                    return BadRequest(exceptionString);
+                    return BadRequest(new {status=exceptionString});
                 }
             }
         }
@@ -200,13 +201,38 @@ namespace Tazkr.Controllers
                 _dbContext.SaveChanges();
                 string status = $"BoardDataController.RenameColumn columnId={columnId}, newName={newName}";
                 _logger.LogInformation(status);
-                return new OkObjectResult(status);
+                return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.RenameColumn columnId={columnId}, newName={newName} exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
-                return BadRequest(exceptionString);
+                return BadRequest(new {status=exceptionString});
+            }
+        }
+        [HttpPut("AddCardToColumn")]
+        public IActionResult AddCardToColumn(ClientRequestPayload payload)
+        {
+            string columnId = payload.Param1;
+            string cardTitle = payload.Param2;
+            try
+            {
+                List<Card> cards = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.ColumnId == columnId).Cards.ToList();
+                Card card = new Card();
+                card.Title = cardTitle;
+                card.Index = cards.Count > 0 ? cards.Max(col => col.Index) + 1 : 0;
+                card.ColumnId = columnId;
+                _dbContext.Cards.Add(card);
+                _dbContext.SaveChanges();
+                string status = $"BoardDataController.AddCardToColumn(columnId={columnId}), cardId:{card.CardId}";
+                _logger.LogInformation(status);
+                return new OkObjectResult(new {status});
+            }
+            catch (Exception ex)
+            {
+                string exceptionString = $"BoardDataController.AddCardToColumn(columnId={columnId}) exception occurred: {ex.ToString()}";
+                _logger.LogInformation(exceptionString);
+                return BadRequest(new {status=exceptionString});
             }
         }
         [HttpPatch("MoveCardToColumnAtIndex")]
@@ -245,13 +271,13 @@ namespace Tazkr.Controllers
                 _dbContext.SaveChanges();
                 string status = $"BoardDataController.MoveCardToColumnAtIndex cardId={cardId}, columnId={columnId}, index={index}";
                 _logger.LogInformation(status);
-                return new OkObjectResult(status);
+                return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.MoveCardToColumnAtIndex cardId={cardId}, columnId={columnId}, index={index} exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
-                return BadRequest(exceptionString);
+                return BadRequest(new {status=exceptionString});
             }
         }
         [HttpPatch("RenameCard")]
@@ -264,16 +290,16 @@ namespace Tazkr.Controllers
                 Card card = _dbContext.Cards.Find(cardId);
                 card.Title = newName;
                 _dbContext.Cards.Update(card);
-                _dbContext.SaveChangesAsync();
+                _dbContext.SaveChanges();
                 string status = $"BoardDataController.RenameCard cardId={cardId}, newName={newName}";
                 _logger.LogInformation(status);
-                return new OkObjectResult(status);
+                return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.RenameCard cardId={cardId}, newName={newName} exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
-                return BadRequest(exceptionString);                
+                return BadRequest(new {status=exceptionString});                
             }
         }
         [HttpDelete("DeleteCard")]
@@ -284,15 +310,16 @@ namespace Tazkr.Controllers
             {
                 Card card = _dbContext.Cards.Find(cardId);
                 _dbContext.Cards.Remove(card);
+                _dbContext.SaveChanges();
                 string status = $"BoardDataController.DeleteCard(cardId={cardId})";
                 _logger.LogInformation(status);
-                return new OkObjectResult(status);
+                return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.DeleteCard(cardId={cardId}) exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
-                return BadRequest(exceptionString);
+                return BadRequest(new {status=exceptionString});
             }
         }
     }
