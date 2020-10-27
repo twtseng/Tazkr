@@ -62,7 +62,7 @@ const BoardView = () => {
   
   return (
     <DragDropContext onDragEnd={(result) => dragEndHandler(result, board, setBoard)}>
-      <Jumbotron className="d-flex flex-column">
+      <Jumbotron className="d-flex flex-column h-100">
         <div className="TitleRow d-flex justify-content-between">
           <div className="TitleEdit col-6">
             <h5 onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>

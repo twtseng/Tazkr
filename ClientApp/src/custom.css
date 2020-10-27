@@ -1,3 +1,17 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+.contentbox {
+  padding-top: 70px;
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+.contentbox .row.content {
+  flex: 1 1 auto;
+}
+
 /* Provide sufficient contrast against white background */
 a {
   color: #0366d6;

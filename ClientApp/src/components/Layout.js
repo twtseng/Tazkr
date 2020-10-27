@@ -7,9 +7,16 @@ export class Layout extends Component {
 
   render () {
     return (
-      <div style={{height:"100%"}}>
+      <div className="contentbox">
         <NavMenu />
-          {this.props.children}
+          <div className="row content">
+            <div className="col-10 bg-light">
+              {this.props.children}
+            </div>
+            <div className="col-2 border rounded">
+
+            </div>
+          </div>
       </div>
     );
   }
