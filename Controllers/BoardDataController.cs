@@ -280,24 +280,32 @@ namespace Tazkr.Controllers
                 return BadRequest(new {status=exceptionString});
             }
         }
-        [HttpPatch("RenameCard")]
-        public IActionResult RenameCard(ClientRequestPayload payload)
+        [HttpPatch("UpdateCard")]
+        public IActionResult UpdateCard(ClientRequestPayload payload)
         {
             string cardId = payload.Param1;
             string newName = payload.Param2;
+            string newDescription = payload.Param3;
             try
             {
                 Card card = _dbContext.Cards.Find(cardId);
-                card.Title = newName;
+                if (!string.IsNullOrWhiteSpace(newName))
+                {
+                    card.Title = newName;
+                }
+                if (!string.IsNullOrWhiteSpace(newDescription))
+                {
+                    card.Description = newDescription;
+                }                
                 _dbContext.Cards.Update(card);
                 _dbContext.SaveChanges();
-                string status = $"BoardDataController.RenameCard cardId={cardId}, newName={newName}";
+                string status = $"BoardDataController.UpdateCard cardId={cardId}, newName={newName}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
-                string exceptionString = $"BoardDataController.RenameCard cardId={cardId}, newName={newName} exception occurred: {ex.ToString()}";
+                string exceptionString = $"BoardDataController.UpdateCard cardId={cardId}, newName={newName} exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});                
             }

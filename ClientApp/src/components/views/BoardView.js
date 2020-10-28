@@ -96,7 +96,13 @@ const BoardView = () => {
           {board.columns.map(col => 
             <BoardColumn key={col.columnId} Title={col.title} Index={col.index} ColumnId={col.columnId} getBoard={getBoard}>
                 {col.cards.map((t, index) =>
-                  <TaskCard key={t.cardId+t.title} Title={t.title} CardId={t.cardId} Index={index} getBoard={getBoard}/>
+                  <TaskCard 
+                    key={t.cardId+t.title} 
+                    Title={t.title} 
+                    CardId={t.cardId} 
+                    Index={index} 
+                    Description={t.description} 
+                    getBoard={getBoard}/>
                 )}
             </BoardColumn>
           )}
