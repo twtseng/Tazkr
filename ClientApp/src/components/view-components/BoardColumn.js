@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card, Form } from 'react-bootstrap'
+import { Button, Card, Form, Dropdown } from 'react-bootstrap'
 import {Droppable} from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import callBoardDataApi from '../api-board-data/BoardDataApi';
@@ -40,11 +40,13 @@ const BoardColumn = (props) => {
         }
     }
     return (
-        <Card className='col-3 m-4'>
+        <Card className='col-4 mr-2'>
             
                 <div className="TitleRow d-flex justify-content-between">
                     <div className="TitleEdit">
-                        <div onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
+                        <div
+                            className="editable"
+                            onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
                             <b>{columnTitle === "" ? "<blank>" : columnTitle}</b>
                         </div>
                         <Form.Control 
@@ -59,8 +61,15 @@ const BoardColumn = (props) => {
                             style={titleReadOnly ? {display:"none"} : {}}
                         />
                     </div>
-                    <Button className="m-2" onClick={deleteColumn}><small>Delete Column</small></Button>
-                    
+                    <Dropdown>
+                        <Dropdown.Toggle variant="muted" id="dropdown-basic">
+                            <small>Column actions</small>
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={addCardToColumn}>Add Card</Dropdown.Item>
+                            <Dropdown.Item onClick={deleteColumn}>Delete Column</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </div>
                 <Card.Body style={{minHeight:"200px"}}>
                 <div style={{height:"100%", display:"flex", alignItems:"stretch"}}>
@@ -73,7 +82,6 @@ const BoardColumn = (props) => {
                         >
                             { props.children }
                             {provided.placeholder}
-                            <Button className="m-2" onClick={addCardToColumn}><small>Add task</small></Button>
                         </TaskList>
                     )}
                 </Droppable>

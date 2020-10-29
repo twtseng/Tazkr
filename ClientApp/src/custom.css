@@ -27,16 +27,21 @@ code {
   border-color: #1861ac;
 }
 
-.btn:hover {
+.btn:hover  {
   background-color:  #0d4b8a;
+  color:white;
 }
 
+.editable:hover {
+  background-color: darkgray;
+}
+.clickable:hover {
+  background-color: lightgray;
+}
 .scrolling-wrapper {
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
 
-  .taskcolumn {
-    display: inline-block;
-  }
+
 }

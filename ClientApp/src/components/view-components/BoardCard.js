@@ -5,7 +5,7 @@ import { Card } from 'react-bootstrap'
 const BoardCard = props => {
     const history = useHistory();
     return (
-        <Card className='col-2 m-4' 
+        <Card className='col-2 m-4 clickable' 
             key={props.BoardId} 
             onClick={() => history.push(`/board/${props.BoardId}`)}
         >

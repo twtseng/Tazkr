@@ -1,5 +1,5 @@
 import React from 'react';
-import { Jumbotron, Button, Form } from 'react-bootstrap'
+import { Jumbotron, Button, Form, Dropdown } from 'react-bootstrap'
 import AppContext from '../AppContext';
 import { useParams, useHistory } from "react-router-dom";
 import TaskCard from '../view-components/TaskCard';
@@ -65,7 +65,9 @@ const BoardView = () => {
       <Jumbotron className="d-flex flex-column h-100">
         <div className="TitleRow d-flex justify-content-between">
           <div className="TitleEdit col-6">
-            <h5 onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
+            <h5 
+              className="editable"
+              onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
                 {board.title === "" ? "Board Title: <title blank>" : "Board Title: "+boardTitle}
             </h5>
             <Form.Control 
@@ -80,15 +82,16 @@ const BoardView = () => {
               style={titleReadOnly ? {display:"none"} : {}}
               />
           </div>
-          <Button onClick={deleteBoard} className="col-2"><small>Delete Board</small></Button>
+          <Dropdown>
+              <Dropdown.Toggle variant="muted" id="dropdown-basic">
+                  <small>Board actions</small>
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={addColumn}>Add Column</Dropdown.Item>
+                <Dropdown.Item onClick={deleteBoard}>Delete Board</Dropdown.Item>
+              </Dropdown.Menu>
+          </Dropdown>
         </div>
-        <Form className="mt-3">
-          <Form.Group controlId="formBasicEmail" className="d-flex">
-            
-            <Button onClick={addColumn} className="col-2"><small>Add Column</small></Button>
-            <Form.Control className="ml-3 col-3" name="title" type="text" placeholder="Enter column title" value={columnTitle} onChange={e => setColumnTitle(e.target.value)} />
-          </Form.Group>
-        </Form>
         <div 
           className="d-flex flex-nowrap" 
           style={{overflowX:"auto"}}

@@ -6,10 +6,9 @@ import callBoardDataApi from '../api-board-data/BoardDataApi';
 import TaskDialog from './TaskDialog';
 
 const DragContainer = styled.div`
-    border: 1px solid lightgrey;
-    padding: 5px;
+ 
     margin-bottom: 8px;
-    border-radius: 10px;
+   
     background-color: ${props => (props.isDragging ? "darkgray" : "white")};
 `
 
@@ -22,6 +21,7 @@ const TaskCard = (props) => {
 
     const [cardTitle, setCardTitle] = React.useState(props.Title)
     const [titleReadOnly, setTitleReadOnly] = React.useState(true)
+
     const updateCardTitle = () => {
         setTitleReadOnly(true);
         callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle })
@@ -44,20 +44,24 @@ const TaskCard = (props) => {
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
                 isDragging={snapshot.isDragging}
+                
             >
-                <Card style={{border:"none"}} onClick={showDialog}>
+                <Card 
+                    style={{border:"none", padding:"5px", border:"solid 1px black"}} 
+                    onClick={showDialog} className="clickable">
                     <Card.Title>
-                        <span onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
+                        <span
+                            className="editable"
+                            onClick={(e) => { e.stopPropagation(); setTitleReadOnly(false);}} style={titleReadOnly ? {} : {display:"none"}}>
                             <small>{cardTitle === "" ? "<blank>" : cardTitle}</small>
                         </span>
-                        <Form.Control 
-                            className="input-sm" 
+                        <Form.Control
+                            onClick={(e) => { e.stopPropagation(); e.target.select(); }}
                             name="taskTitle" 
                             type="text" 
                             value={cardTitle} 
                             onChange={e => setCardTitle(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            size="sm"
                             style={titleReadOnly ? {display:"none"} : {}}
                         />
                     </Card.Title>
