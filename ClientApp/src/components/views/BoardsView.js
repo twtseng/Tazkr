@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Jumbotron, Button, Card, Form } from 'react-bootstrap'
 import AppContext from '../AppContext';
-import callBoardDataApi from '../api-board-data/BoardDataApi'
+import callBoardDataApi from '../api-board-data/BoardDataApi';
+import BoardCard from '../view-components/BoardCard';
 
 const BoardsView = () => {
 
@@ -17,8 +17,9 @@ const BoardsView = () => {
   }
   
   const createBoard = async () => {
-    signalRHub.callAction("", JSON.stringify({ Method: "CreateBoard", Param1: boardTitle }));
+    const boardsData = await callBoardDataApi("BoardData/CreateBoard","PUT", { Param1: boardTitle });
     setBoardTitle("");
+    getBoards();
   }
 
   React.useEffect(() => {
@@ -36,12 +37,7 @@ const BoardsView = () => {
         <h3>Boards</h3>
         <div className="d-flex flex-wrap">
           {boards.map(x => 
-            <Card className='col-2 m-4' key={x.boardId}>
-              <Card.Body>
-                <Card.Title>{x.title == "" ? "<title blank>" : x.title}</Card.Title>
-                <Link to={`/board/${x.boardId}`}>Go to board</Link>
-              </Card.Body>
-            </Card>
+            <BoardCard Title={x.title} BoardId={x.boardId} />
           )}
         </div>
       </Jumbotron>

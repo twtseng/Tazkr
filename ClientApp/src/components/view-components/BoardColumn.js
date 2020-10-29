@@ -60,7 +60,7 @@ const BoardColumn = (props) => {
                         />
                     </div>
                     <Button className="m-2" onClick={deleteColumn}><small>Delete Column</small></Button>
-                    <Button className="m-2" onClick={addCardToColumn}><small>Add task</small></Button>
+                    
                 </div>
                 <Card.Body style={{minHeight:"200px"}}>
                 <div style={{height:"100%", display:"flex", alignItems:"stretch"}}>
@@ -73,6 +73,7 @@ const BoardColumn = (props) => {
                         >
                             { props.children }
                             {provided.placeholder}
+                            <Button className="m-2" onClick={addCardToColumn}><small>Add task</small></Button>
                         </TaskList>
                     )}
                 </Droppable>
