@@ -39,38 +39,42 @@ const BoardColumn = (props) => {
             updateColumnTitle();
         }
     }
+
     return (
-        <Card className='col-4 mr-2'>
-            
-                <div className="TitleRow d-flex justify-content-between">
-                    <div className="TitleEdit">
+        <Card className='col-4 mr-2 p-0'> 
+            <Card.Header className="bg-secondary text-light">   
+                <div className="TitleRow d-flex justify-content-between align-baseline">
+                    <div className="TitleEdit align-text-bottom">
                         <div
-                            className="editable"
-                            onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
-                            <b>{columnTitle === "" ? "<blank>" : columnTitle}</b>
+                            className="editable align-text-bottom font-weight-bold"
+                            onClick={() => setTitleReadOnly(false)} 
+                            style={titleReadOnly ? {} : {display:"none"}}>
+                            {columnTitle === "" ? "<title blank>" : columnTitle}
                         </div>
-                        <Form.Control 
-                            className="col-12 input-sm" 
+                        <Form.Control
+                            className="col-12 input-sm text-dark font-weight-bold" 
                             name="columnTitle" 
                             type="text" 
                             value={columnTitle} 
                             onChange={e => setColumnTitle(e.target.value)}
                             onKeyPress={handleKeyPress}
                             onMouseLeave={updateColumnTitle}
+                            onFocus={(e) => e.target.select()}
                             size="sm"
                             style={titleReadOnly ? {display:"none"} : {}}
                         />
                     </div>
                     <Dropdown>
-                        <Dropdown.Toggle variant="muted" id="dropdown-basic">
+                        <Dropdown.Toggle className="text-light" variant="muted" id="dropdown-basic">
                             <small>Column actions</small>
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                            <Dropdown.Item onClick={addCardToColumn}>Add Card</Dropdown.Item>
-                            <Dropdown.Item onClick={deleteColumn}>Delete Column</Dropdown.Item>
+                            <Dropdown.Item onClick={addCardToColumn}><small>Add Card</small></Dropdown.Item>
+                            <Dropdown.Item onClick={deleteColumn}><small>Delete Column</small></Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                 </div>
+                </Card.Header> 
                 <Card.Body style={{minHeight:"200px"}}>
                 <div style={{height:"100%", display:"flex", alignItems:"stretch"}}>
                 <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>

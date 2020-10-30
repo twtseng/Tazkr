@@ -1,5 +1,5 @@
 import React from 'react';
-import { Jumbotron, Button, Form, Dropdown } from 'react-bootstrap'
+import { Card, Form, Dropdown } from 'react-bootstrap'
 import AppContext from '../AppContext';
 import { useParams, useHistory } from "react-router-dom";
 import TaskCard from '../view-components/TaskCard';
@@ -14,7 +14,6 @@ const BoardView = () => {
   const [board, setBoard] = React.useState({columns:[]});
   const [boardTitle, setBoardTitle] = React.useState("")
   const [titleReadOnly, setTitleReadOnly] = React.useState(true)
-  const [columnTitle, setColumnTitle] = React.useState("");
   const { signalRHub } = React.useContext(AppContext);
   const history = useHistory();
 
@@ -34,8 +33,7 @@ const BoardView = () => {
   }
 
   const addColumn = async () => {
-    await callBoardDataApi(`BoardData/AddColumnToBoard`,"PATCH",{ Param1: boardId, Param2: columnTitle});
-    setColumnTitle("");
+    await callBoardDataApi(`BoardData/AddColumnToBoard`,"PATCH",{ Param1: boardId, Param2: "New Column"});
     getBoard();
   }
   const deleteBoard = async () => {
@@ -62,16 +60,18 @@ const BoardView = () => {
   
   return (
     <DragDropContext onDragEnd={(result) => dragEndHandler(result, board, setBoard)}>
-      <Jumbotron className="d-flex flex-column h-100">
+      <Card className="d-flex flex-column h-100">
+        <Card.Header className="bg-secondary text-light">   
         <div className="TitleRow d-flex justify-content-between">
+          
           <div className="TitleEdit col-6">
             <h5 
               className="editable"
               onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
-                {board.title === "" ? "Board Title: <title blank>" : "Board Title: "+boardTitle}
+                {board.title === "" ? "<title blank>" : boardTitle}
             </h5>
             <Form.Control 
-              className="input-lg col-12" 
+              className="input-lg col-12 font-weight-bold" 
               name="taskTitle" 
               type="text" 
               value={boardTitle} 
@@ -83,17 +83,18 @@ const BoardView = () => {
               />
           </div>
           <Dropdown>
-              <Dropdown.Toggle variant="muted" id="dropdown-basic">
+              <Dropdown.Toggle className="text-light" variant="muted">
                   <small>Board actions</small>
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item onClick={addColumn}>Add Column</Dropdown.Item>
-                <Dropdown.Item onClick={deleteBoard}>Delete Board</Dropdown.Item>
+                <Dropdown.Item onClick={addColumn}><small>Add Column</small></Dropdown.Item>
+                <Dropdown.Item onClick={deleteBoard}><small>Delete Board</small></Dropdown.Item>
               </Dropdown.Menu>
           </Dropdown>
         </div>
-        <div 
-          className="d-flex flex-nowrap" 
+        </Card.Header>
+        <Card.Body
+          className="d-flex flex-nowrap bg-light" 
           style={{overflowX:"auto"}}
           >
           {board.columns.map(col => 
@@ -109,8 +110,8 @@ const BoardView = () => {
                 )}
             </BoardColumn>
           )}
-        </div>
-      </Jumbotron>
+        </Card.Body> 
+      </Card>
     </DragDropContext>  
   );
 }

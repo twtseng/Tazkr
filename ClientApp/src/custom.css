@@ -33,7 +33,7 @@ code {
 }
 
 .editable:hover {
-  background-color: darkgray;
+  color: #3aabf7;
 }
 .clickable:hover {
   background-color: lightgray;
@@ -42,6 +42,4 @@ code {
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-
-
 }
