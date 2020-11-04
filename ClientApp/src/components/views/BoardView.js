@@ -69,11 +69,6 @@ const BoardView = () => {
           <div className="TitleRow d-flex justify-content-between">
             
             <div className="TitleEdit col-6">
-              <h5 
-                className="editable"
-                onClick={() => setTitleReadOnly(false)} style={titleReadOnly ? {} : {display:"none"}}>
-                  {board.title === "" ? "<title blank>" : boardTitle}
-              </h5>
               <Form.Control 
                 className="input-lg col-12 font-weight-bold" 
                 name="taskTitle" 
@@ -81,9 +76,10 @@ const BoardView = () => {
                 value={boardTitle} 
                 onChange={e => setBoardTitle(e.target.value)}
                 onKeyPress={handleBoardTitleKeyPress}
-                onMouseLeave={renameBoard}
+                onMouseLeave={() => { renameBoard(); document.getSelection().removeAllRanges(); }}
                 size="sm"
-                style={titleReadOnly ? {display:"none"} : {}}
+                onClick={(e) => { setTitleReadOnly(false);e.target.select();}}
+                readOnly={titleReadOnly}
                 />
             </div>
             <Dropdown>

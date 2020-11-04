@@ -45,12 +45,6 @@ const BoardColumn = (props) => {
             <Card.Header className="bg-secondary text-light">   
                 <div className="TitleRow d-flex justify-content-between align-baseline">
                     <div className="TitleEdit align-text-bottom">
-                        <div
-                            className="editable align-text-bottom font-weight-bold"
-                            onClick={() => setTitleReadOnly(false)} 
-                            style={titleReadOnly ? {} : {display:"none"}}>
-                            {columnTitle === "" ? "<title blank>" : columnTitle}
-                        </div>
                         <Form.Control
                             className="col-12 input-sm text-dark font-weight-bold" 
                             name="columnTitle" 
@@ -58,10 +52,10 @@ const BoardColumn = (props) => {
                             value={columnTitle} 
                             onChange={e => setColumnTitle(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            onMouseLeave={updateColumnTitle}
-                            onFocus={(e) => e.target.select()}
+                            onMouseLeave={(e) => { updateColumnTitle(); document.getSelection().removeAllRanges(); }}
                             size="sm"
-                            style={titleReadOnly ? {display:"none"} : {}}
+                            onClick={(e) => { setTitleReadOnly(false) ; e.target.select(); }}
+                            readOnly={titleReadOnly}
                         />
                     </div>
                     <Dropdown>

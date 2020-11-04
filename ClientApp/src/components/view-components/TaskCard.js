@@ -23,6 +23,7 @@ const TaskCard = (props) => {
     const [titleReadOnly, setTitleReadOnly] = React.useState(true)
 
     const updateCardTitle = () => {
+        document.getSelection().removeAllRanges();
         setTitleReadOnly(true);
         callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle })
             .then(() => {
@@ -44,25 +45,21 @@ const TaskCard = (props) => {
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
                 isDragging={snapshot.isDragging}
-                
             >
-                <Card 
+                <Card
                     style={{border:"none", padding:"5px", border:"solid 1px black"}} 
                     onClick={showDialog} className="clickable">
                     <Card.Title>
-                        <span
-                            className="editable"
-                            onClick={(e) => { e.stopPropagation(); setTitleReadOnly(false);}} style={titleReadOnly ? {} : {display:"none"}}>
-                            <small>{cardTitle === "" ? "<blank>" : cardTitle}</small>
-                        </span>
                         <Form.Control
-                            onClick={(e) => { e.stopPropagation(); e.target.select(); }}
+                            className="col-10"
                             name="taskTitle" 
                             type="text" 
                             value={cardTitle} 
                             onChange={e => setCardTitle(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            style={titleReadOnly ? {display:"none"} : {}}
+                            onClick={(e) => { e.stopPropagation(); setTitleReadOnly(false); e.target.select();}}
+                            onMouseLeave={() => { updateCardTitle(); }}
+                            readOnly={titleReadOnly}
                         />
                     </Card.Title>
                 </Card>
