@@ -28,7 +28,7 @@ export class NavMenu extends Component {
         <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow fixed-top" 
           light 
           style={{backgroundColor:"white"}}>
-          <Container>
+          <Container className="col-12">
             <NavbarBrand tag={Link} to="/">Tazkr</NavbarBrand>
             <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>

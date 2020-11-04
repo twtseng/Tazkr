@@ -10,8 +10,8 @@ using Tazkr.Data;
 namespace Tazkr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201023195835_TazkrSchema2")]
-    partial class TazkrSchema2
+    [Migration("20201104035100_TazkrSchema1")]
+    partial class TazkrSchema1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -246,9 +246,6 @@ namespace Tazkr.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("BoardId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -298,8 +295,6 @@ namespace Tazkr.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BoardId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -319,9 +314,6 @@ namespace Tazkr.Migrations
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("HubGroupId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -337,15 +329,12 @@ namespace Tazkr.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BoardId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BoardId1")
+                    b.Property<string>("BoardId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ApplicationUserId", "BoardId");
 
-                    b.HasIndex("BoardId1");
+                    b.HasIndex("BoardId");
 
                     b.ToTable("BoardUsers");
                 });
@@ -449,13 +438,6 @@ namespace Tazkr.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Tazkr.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("Tazkr.Models.Board", null)
-                        .WithMany("ApplicationUsers")
-                        .HasForeignKey("BoardId");
-                });
-
             modelBuilder.Entity("Tazkr.Models.Board", b =>
                 {
                     b.HasOne("Tazkr.Models.ApplicationUser", "CreatedBy")
@@ -473,7 +455,9 @@ namespace Tazkr.Migrations
 
                     b.HasOne("Tazkr.Models.Board", "Board")
                         .WithMany("BoardUsers")
-                        .HasForeignKey("BoardId1");
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Tazkr.Models.Card", b =>

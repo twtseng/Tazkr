@@ -19,14 +19,14 @@ namespace Tazkr.Models
         public int Index { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public Card.Priority Pri_Level { get; set; }
+        public string Pri_Level { get; set; }
         public CardPayload(Card card)
         {
             this.CardId = card.CardId;
             this.Index = card.Index;
             this.Title = card.Title;
             this.Description = card.Description;
-            this.Pri_Level = card.Pri_Level;
+            this.Pri_Level = card.Pri_Level.ToString();
         }
 
     }

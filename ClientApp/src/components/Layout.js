@@ -10,12 +10,9 @@ export class Layout extends Component {
       <div className="contentbox">
         <NavMenu />
           <div className="row content">
-            <div className="col-10 bg-light">
-              {this.props.children}
-            </div>
-            <div className="col-2 border rounded">
-
-            </div>
+            <Container className="col-12">
+            {this.props.children}
+            </Container>
           </div>
       </div>
     );

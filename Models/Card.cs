@@ -7,7 +7,7 @@ namespace Tazkr.Models
 {
     public class Card
     {
-        public enum Priority 
+        public enum Priority
         { 
             Low,
             Med,

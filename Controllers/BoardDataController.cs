@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Tazkr.Models;
 using Tazkr.Data;
@@ -18,7 +19,12 @@ namespace Tazkr.Controllers
     {
         private readonly ILogger<BoardDataController> _logger;
         private readonly ApplicationDbContext _dbContext;
-
+        public ApplicationUser GetApplicationUser()
+        {
+            string userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ApplicationUser appUser = _dbContext.Users.Find(userId); 
+            return appUser;       
+        }
         public BoardDataController(ILogger<BoardDataController> logger, ApplicationDbContext dbContext)
         {
             _logger = logger;
@@ -29,6 +35,7 @@ namespace Tazkr.Controllers
         public IEnumerable<BoardPayload> GetBoards()
         {
             return _dbContext.Boards
+            .Include(board => board.CreatedBy)
             .Include(board => board.Columns)
             .ThenInclude(col => col.Cards)
             .Select(board => new BoardPayload(board)).ToList();
@@ -36,13 +43,32 @@ namespace Tazkr.Controllers
         [HttpGet("GetBoard/{boardId}")]
         public BoardPayload GetBoard(string boardId)
         {
-            _logger.LogInformation($"BoardDataController.GetBoard({boardId})");
-            BoardPayload boardPayload = _dbContext.Boards
+            ApplicationUser user = this.GetApplicationUser();
+            _logger.LogInformation($"BoardDataController.GetBoard({boardId}), User={user.Email}");
+            Board board = _dbContext.Boards
+            .Include(board => board.BoardUsers)
+            .ThenInclude(user => user.ApplicationUser)
+            .Include(board => board.CreatedBy)
             .Include(board => board.Columns)
             .ThenInclude(col => col.Cards)
             .Where(board => board.BoardId == boardId)
-            .Select(board => new BoardPayload(board))
             .FirstOrDefault();
+
+            BoardPayload boardPayload = new BoardPayload(board);
+
+            // Set permission level for this user
+            if (board.CreatedBy.Id == user.Id)
+            {
+                boardPayload.PermissionLevel = BoardPayload.PermissionLevels.Owner.ToString();
+            }
+            else if (board.BoardUsers.Exists(x => x.ApplicationUserId == user.Id)) 
+            {
+                boardPayload.PermissionLevel = BoardPayload.PermissionLevels.User.ToString();
+            }
+            else
+            {
+                boardPayload.PermissionLevel = BoardPayload.PermissionLevels.Viewer.ToString();
+            }
 
             return boardPayload;
         }
@@ -52,8 +78,9 @@ namespace Tazkr.Controllers
             string boardTitle = payload.Param1;
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 Board board = new Board();
-                //board.CreatedById = appUser.Id;
+                board.CreatedById = user.Id;
                 board.Title = boardTitle;
                 _dbContext.Boards.Add(board);
                 _dbContext.SaveChanges();
@@ -73,11 +100,18 @@ namespace Tazkr.Controllers
         {
             string boardId = payload.Param1;
             Board board = _dbContext.Boards.Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefault(x => x.BoardId == boardId);
+            ApplicationUser user = this.GetApplicationUser();
             if (board == null) 
             {
                 string errorString = $"BoardDataController.DeleteBoard Board NOT found with boardId:{boardId}";
                 _logger.LogInformation(errorString);
                 return BadRequest(new {status=errorString});
+            }
+            else if (board.CreatedById != user.Id)
+            {
+                string errorString = $"BoardDataController.DeleteBoard User does not have permission to delete board:{boardId}";
+                _logger.LogInformation(errorString);
+                return BadRequest(new {status=errorString});                
             }
             else
             {
@@ -329,6 +363,38 @@ namespace Tazkr.Controllers
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});
             }
+        }
+        [HttpGet("GetUsers")]
+        public IEnumerable<ApplicationUserPayload> GetUsers()
+        {
+            return _dbContext.Users.Select(user => new ApplicationUserPayload(user)).ToList();
+        }
+        [HttpPatch("AddUserToBoard")]
+        public IActionResult AddUserToBoard(ClientRequestPayload payload)
+        {
+            string boardId = payload.Param1;
+            string userId = payload.Param2;
+            try
+            {
+                if (_dbContext.BoardUsers.Where(x => x.BoardId == boardId && x.ApplicationUserId == userId).ToList().Count > 0)
+                {
+                    string error = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId} already exists";
+                    _logger.LogInformation(error);
+                    return BadRequest(new {error});
+                }
+                BoardUser boardUser = new BoardUser() { BoardId=boardId, ApplicationUserId=userId };
+                _dbContext.BoardUsers.Add(boardUser);
+                _dbContext.SaveChanges();
+                string status = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId}";
+                _logger.LogInformation(status);
+                return new OkObjectResult(new {status});
+            }
+            catch (Exception ex)
+            {
+                string exceptionString = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId} exception occurred: {ex.ToString()}";
+                _logger.LogInformation(exceptionString);
+                return BadRequest(new {status=exceptionString});
+            }            
         }
     }
 }

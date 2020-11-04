@@ -13,10 +13,12 @@ namespace Tazkr.Models
     {
         public string UserName { get; set; }
         public string Email { get; set; }
+        public string Id { get; set; }
         public ApplicationUserPayload(ApplicationUser appUser)
         {
             this.UserName = appUser != null ? appUser.UserName : "<null>";
             this.Email =  appUser != null ? appUser.Email : "<null>";
+            this.Id = appUser != null ? appUser.Id : "<null>";
         }
     }
 }

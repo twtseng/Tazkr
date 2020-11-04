@@ -25,19 +25,28 @@ const BoardsView = () => {
   },[]);
 
   return (
-      <Card className="d-flex flex-column">
-        <Card.Header className="bg-secondary text-light"> 
-          <Button onClick={createBoard}>Add Board</Button>
-        </Card.Header>
+    <div className="col-12 d-flex">
+      <div className="col-10 h-100">
+        <Card className="d-flex flex-column bg-light h-100">
+          <Card.Header className="bg-secondary text-light"> 
+            <Button onClick={createBoard}>Add a Board</Button>
+          </Card.Header>
+          <Card.Body>
+            <h6>Boards</h6>
+            <div className="d-flex flex-wrap">
+              {boards.map(x => 
+                <BoardCard Title={x.title} BoardId={x.boardId} CreatedBy={x.createdBy} />
+              )}
+            </div>
+          </Card.Body>
+        </Card>
+      </div>
+      <Card className="col-2 bg-light">
         <Card.Body>
-          <h3>Boards</h3>
-          <div className="d-flex flex-wrap">
-            {boards.map(x => 
-              <BoardCard Title={x.title} BoardId={x.boardId} />
-            )}
-          </div>
+          <h6>Users</h6>
         </Card.Body>
       </Card>
+    </div>
   );
 }
 

@@ -6,7 +6,7 @@ namespace Tazkr.Models
     {
         // NOTE: Composite key ApplicationUserId, BoardId defined in ApplicationDbContext.OnModelCreating
         public string ApplicationUserId { get; set; }
-        public int BoardId { get; set; }
+        public string BoardId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
         public Board Board { get; set; }
     }
