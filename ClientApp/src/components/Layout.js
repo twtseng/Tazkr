@@ -7,12 +7,12 @@ export class Layout extends Component {
 
   render () {
     return (
-      <div className="contentbox">
+      <div className="h-100" style={{paddingTop: "70px"}}>
         <NavMenu />
-          <div className="row content">
-            <Container className="col-12">
+          <div className="h-100">
+            <div className="col-12 h-100">
             {this.props.children}
-            </Container>
+            </div>
           </div>
       </div>
     );

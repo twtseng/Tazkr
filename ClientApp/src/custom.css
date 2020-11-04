@@ -2,6 +2,7 @@ html, body, #root {
   height: 100%;
   margin: 0;
 }
+/* Provide sufficient contrast against white background */
 .contentbox {
   padding-top: 70px;
   display: flex;
@@ -10,6 +11,18 @@ html, body, #root {
 }
 .contentbox .row.content {
   flex: 1 1 auto;
+}
+
+
+@media only screen and (max-width: 1023px){
+  .taskcolumn {
+    min-width: 400px;
+  }
+}
+@media only screen and (min-width: 1024px){
+  .taskcolumn {
+    min-width: 400px;
+  }
 }
 
 /* Provide sufficient contrast against white background */

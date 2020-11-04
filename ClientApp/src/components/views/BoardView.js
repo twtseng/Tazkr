@@ -62,7 +62,7 @@ const BoardView = () => {
   
   return (
     <DragDropContext onDragEnd={(result) => dragEndHandler(result, board, setBoard)}>
-      <div className="col-12 d-flex">
+      <div className="col-12 d-flex h-100">
       <div className="col-10 h-100"> 
         <Card className="d-flex flex-column bg-light h-100">
           <Card.Header className="bg-secondary text-light">   
@@ -98,8 +98,7 @@ const BoardView = () => {
           </div>
           </Card.Header>
           <Card.Body
-            className="d-flex flex-nowrap bg-light" 
-            style={{overflowX:"auto"}}
+            className="d-flex flex-nowrap bg-light scrolling-wrapper" 
             >
             {board.columns.map(col => 
               <BoardColumn key={col.columnId} Title={col.title} Index={col.index} ColumnId={col.columnId} getBoard={getBoard}>

@@ -41,7 +41,7 @@ const BoardColumn = (props) => {
     }
 
     return (
-        <Card className='col-4 mr-2 p-0'> 
+        <Card className='mr-2 p-0 taskcolumn' style={{height: "100%"}}> 
             <Card.Header className="bg-secondary text-light">   
                 <div className="TitleRow d-flex justify-content-between align-baseline">
                     <div className="TitleEdit align-text-bottom">
@@ -75,8 +75,8 @@ const BoardColumn = (props) => {
                     </Dropdown>
                 </div>
                 </Card.Header> 
-                <Card.Body style={{minHeight:"200px"}}>
-                <div style={{height:"100%", display:"flex", alignItems:"stretch"}}>
+                <Card.Body style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll"}}>
+                <div style={{minHeight:"100%", display:"flex"}}>
                 <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>
                     { (provided, snapshot) => (
                         <TaskList
