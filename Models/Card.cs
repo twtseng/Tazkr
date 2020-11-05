@@ -24,5 +24,16 @@ namespace Tazkr.Models
         public string ColumnId { get; set; }
         public Column Column { get; set; }
 
+        public override Object GetServerResponsePayload()
+        {
+            return new {
+                this.Id,
+                this.UpdateHashCode,        
+                this.Index,
+                this.Title,
+                this.Description,
+                Pri_Level = this.Pri_Level.ToString()
+            };
+        }
     }
 }

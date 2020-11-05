@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tazkr.Models
 {
-    public class BaseEntity {
+    public abstract class BaseEntity {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Id { get; set; }
@@ -24,6 +24,12 @@ namespace Tazkr.Models
             this.UpdatedByUserId = copy.UpdatedByUserId;
             this.UpdateHashCode = copy.UpdateHashCode;
         }
+        
+        /// <summary>
+        /// Return a JSON friendly subset of this object to the client app
+        /// Used to reduce the payload and avoid JSON encoding issues such as circular references
+        /// </summary>
+        abstract public Object GetServerResponsePayload(); 
     }
 }
 

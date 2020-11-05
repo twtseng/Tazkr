@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Dynamic;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,16 +33,16 @@ namespace Tazkr.Controllers
         }
 
         [HttpGet("GetBoards")]
-        public IEnumerable<BoardPayload> GetBoards()
+        public IEnumerable<Object> GetBoards()
         {
             return _dbContext.Boards
             .Include(board => board.CreatedBy)
             .Include(board => board.Columns)
             .ThenInclude(col => col.Cards)
-            .Select(board => new BoardPayload(board)).ToList();
+            .Select(board => board.GetServerResponsePayload()).ToList();
         }
         [HttpGet("GetBoard/{boardId}")]
-        public BoardPayload GetBoard(string boardId)
+        public Object GetBoard(string boardId)
         {
             ApplicationUser user = this.GetApplicationUser();
             _logger.LogInformation($"BoardDataController.GetBoard({boardId}), User={user.Email}");
@@ -54,24 +55,25 @@ namespace Tazkr.Controllers
             .Where(board => board.Id == boardId)
             .FirstOrDefault();
 
-            BoardPayload boardPayload = new BoardPayload(board);
+            // BoardPayload boardPayload = new BoardPayload(board);
 
-            // Set permission level for this user
-            if (board.CreatedBy.Id == user.Id)
-            {
-                boardPayload.PermissionLevel = BoardPayload.PermissionLevels.Owner.ToString();
-            }
-            else if (board.BoardUsers.Exists(x => x.ApplicationUserId == user.Id)) 
-            {
-                boardPayload.PermissionLevel = BoardPayload.PermissionLevels.User.ToString();
-            }
-            else
-            {
-                boardPayload.PermissionLevel = BoardPayload.PermissionLevels.Viewer.ToString();
-            }
+            // // Set permission level for this user
+            // if (board.CreatedBy.Id == user.Id)
+            // {
+            //     boardPayload.PermissionLevel = BoardPayload.PermissionLevels.Owner.ToString();
+            // }
+            // else if (board.BoardUsers.Exists(x => x.ApplicationUserId == user.Id)) 
+            // {
+            //     boardPayload.PermissionLevel = BoardPayload.PermissionLevels.User.ToString();
+            // }
+            // else
+            // {
+            //     boardPayload.PermissionLevel = BoardPayload.PermissionLevels.Viewer.ToString();
+            // }
 
-            return boardPayload;
+            return board.GetServerResponsePayload();
         }
+
         [HttpPut("CreateBoard")]
         public IActionResult CreateBoard(ClientRequestPayload payload)
         {
@@ -395,6 +397,19 @@ namespace Tazkr.Controllers
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});
             }            
+        }
+        [HttpGet("test")]
+        public IEnumerable<dynamic> Test()
+        {
+            List<dynamic> results = new List<dynamic>();
+            for(int i=0; i<10; ++i)
+            {
+                dynamic newObj = new ExpandoObject();
+                newObj.Field1 = $"Field1Value {i}";
+                newObj.Field2 = $"Field2Value {i}";
+                results.Add(newObj);
+            }
+            return results;
         }
     }
 }

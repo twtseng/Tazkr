@@ -11,5 +11,13 @@ namespace Tazkr.Models
         public List<Board> BoardsCreated { get; set; }
         public List<BoardUser> Boards { get; set; }
         public DateTime LastRequestTime { get; set; }
+        public Object GetServerResponsePayload()
+        {
+            return new {           
+                this.UserName,
+                this.Email,
+                this.Id
+            };
+        }
     }
 }

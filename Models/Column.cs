@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,5 +16,15 @@ namespace Tazkr.Models
         public string BoardId { get; set; }
         public Board Board { get; set; }
         public List<Card> Cards { get; set; }
+        public override Object GetServerResponsePayload()
+        {
+            return new {           
+                this.Id,
+                this.UpdateHashCode,
+                this.Title,
+                this.Index,
+                Cards = this.Cards == null ? new List<Object>() : this.Cards.Select(x => x.GetServerResponsePayload()).ToList()
+            };
+        }
     }
 }
