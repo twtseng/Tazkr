@@ -1,14 +1,12 @@
 import React from 'react';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Card, Form } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
 import callBoardDataApi from '../api-board-data/BoardDataApi';
 import TaskDialog from './TaskDialog';
 
 const DragContainer = styled.div`
- 
     margin-bottom: 8px;
-   
     background-color: ${props => (props.isDragging ? "darkgray" : "white")};
 `
 
@@ -23,7 +21,6 @@ const TaskCard = (props) => {
     const [titleReadOnly, setTitleReadOnly] = React.useState(true)
 
     const updateCardTitle = () => {
-        document.getSelection().removeAllRanges();
         setTitleReadOnly(true);
         callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle })
             .then(() => {
@@ -31,6 +28,8 @@ const TaskCard = (props) => {
                 props.getBoard();
             })
             .catch((err) => console.log(`updateCardTitle failed, err = ${err}`));
+        document.getSelection().removeAllRanges();
+        document.activeElement.blur();  
     }
     const handleKeyPress = (event) => {
         if(event.key === 'Enter'){
@@ -48,10 +47,11 @@ const TaskCard = (props) => {
             >
                 <Card
                     style={{border:"none", padding:"5px", border:"solid 1px black"}} 
-                    onClick={showDialog} className="clickable">
-                    <Card.Title>
+                    onClick={showDialog} className="clickable">                       
+                    <Card.Header className="bg-secondary text-light">
                         <Form.Control
-                            className="col-10"
+                            className="text-dark bg-light font-weight-bold"
+                            size="sm"
                             name="taskTitle" 
                             type="text" 
                             value={cardTitle} 
@@ -60,8 +60,12 @@ const TaskCard = (props) => {
                             onClick={(e) => { e.stopPropagation(); setTitleReadOnly(false); e.target.select();}}
                             onMouseLeave={() => { updateCardTitle(); }}
                             readOnly={titleReadOnly}
+                            style={titleReadOnly ? {backgroundColor:"transparent", border:"none"} : {}}
                         />
-                    </Card.Title>
+                    </Card.Header>
+                    <Card.Body>
+                        <small>Details blah blah blah</small>
+                    </Card.Body>
                 </Card>
                 <TaskDialog
                     CardId={props.CardId}

@@ -3,7 +3,7 @@ html, body, #root {
   margin: 0;
 }
 /* Provide sufficient contrast against white background */
-.contentbox {
+/* .contentbox {
   padding-top: 70px;
   display: flex;
   flex-flow: column;
@@ -11,19 +11,12 @@ html, body, #root {
 }
 .contentbox .row.content {
   flex: 1 1 auto;
+} */
+
+.taskcolumn {
+  min-width: 300px;
 }
 
-
-@media only screen and (max-width: 1023px){
-  .taskcolumn {
-    min-width: 400px;
-  }
-}
-@media only screen and (min-width: 1024px){
-  .taskcolumn {
-    min-width: 400px;
-  }
-}
 
 /* Provide sufficient contrast against white background */
 a {
@@ -46,7 +39,7 @@ code {
 }
 
 .editable:hover {
-  color: #3aabf7;
+  border: 1px solid #3aabf7;
 }
 .clickable:hover {
   background-color: lightgray;
