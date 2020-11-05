@@ -14,6 +14,7 @@ const BoardCard = props => {
           </Card.Header>
         <Card.Body>
           <small>CreatedBy: {props.CreatedBy.email}</small>
+          <small>BoardId: {props.BoardId}</small>
         </Card.Body>
       </Card>
     )

@@ -306,7 +306,7 @@ namespace Tazkr.Migrations
 
             modelBuilder.Entity("Tazkr.Models.Board", b =>
                 {
-                    b.Property<string>("BoardId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedById")
@@ -318,10 +318,16 @@ namespace Tazkr.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UpdateHashCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("BoardId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
 
@@ -345,7 +351,7 @@ namespace Tazkr.Migrations
 
             modelBuilder.Entity("Tazkr.Models.Card", b =>
                 {
-                    b.Property<string>("CardId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ColumnId")
@@ -366,10 +372,16 @@ namespace Tazkr.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UpdateHashCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("CardId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ColumnId");
 
@@ -378,7 +390,7 @@ namespace Tazkr.Migrations
 
             modelBuilder.Entity("Tazkr.Models.Column", b =>
                 {
-                    b.Property<string>("ColumnId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BoardId")
@@ -393,10 +405,16 @@ namespace Tazkr.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UpdateHashCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ColumnId");
+                    b.HasKey("Id");
 
                     b.HasIndex("BoardId");
 

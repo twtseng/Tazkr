@@ -13,13 +13,7 @@ namespace Tazkr.Models
             Med,
             High 
         };
-        public Card()
-        {
-            this.CardId = System.Guid.NewGuid().ToString();
-        }
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string CardId { get; set; }
+
         /// <summary>
         /// Order that this card appears on the column
         /// </summary>

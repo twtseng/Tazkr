@@ -42,12 +42,15 @@ namespace Tazkr.Data
 
             foreach (var entityEntry in entries)
             {
-                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
+                BaseEntity entity = (BaseEntity) entityEntry.Entity;
+                entity.UpdatedDate = DateTime.Now;
 
                 if (entityEntry.State == EntityState.Added)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                    entity.CreatedDate = DateTime.Now;
                 }
+
+                entity.UpdateHashCode = ((BaseEntity)entityEntry.Entity).GetHashCode();
             }
 
             return base.SaveChanges();

@@ -51,7 +51,7 @@ namespace Tazkr.Controllers
             .Include(board => board.CreatedBy)
             .Include(board => board.Columns)
             .ThenInclude(col => col.Cards)
-            .Where(board => board.BoardId == boardId)
+            .Where(board => board.Id == boardId)
             .FirstOrDefault();
 
             BoardPayload boardPayload = new BoardPayload(board);
@@ -84,7 +84,7 @@ namespace Tazkr.Controllers
                 board.Title = boardTitle;
                 _dbContext.Boards.Add(board);
                 _dbContext.SaveChanges();
-                string status = $"BoardDataController.CreateBoard(boardTitle={boardTitle}), boardId:{board.BoardId}";
+                string status = $"BoardDataController.CreateBoard(boardTitle={boardTitle}), boardId:{board.Id}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }
@@ -99,7 +99,7 @@ namespace Tazkr.Controllers
         public IActionResult DeleteBoard(ClientRequestPayload payload)
         {
             string boardId = payload.Param1;
-            Board board = _dbContext.Boards.Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefault(x => x.BoardId == boardId);
+            Board board = _dbContext.Boards.Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefault(x => x.Id == boardId);
             ApplicationUser user = this.GetApplicationUser();
             if (board == null) 
             {
@@ -173,7 +173,7 @@ namespace Tazkr.Controllers
                 column.Title = columnTitle;
 
                 // Set index to the next highest index for this Board, or 0 if this is the first column
-                List<Column> columns = _dbContext.Boards.Include(x => x.Columns).FirstOrDefault(x => x.BoardId == column.BoardId).Columns.ToList();
+                List<Column> columns = _dbContext.Boards.Include(x => x.Columns).FirstOrDefault(x => x.Id == column.BoardId).Columns.ToList();
                 column.Index = columns.Count > 0 ? columns.Max(col => col.Index) + 1 : 0;
 
                 _dbContext.Columns.Add(column);
@@ -193,7 +193,7 @@ namespace Tazkr.Controllers
         public IActionResult DeleteColumn(ClientRequestPayload payload)
         {
             string columnId = payload.Param1;
-            Column column = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.ColumnId == columnId);
+            Column column = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.Id == columnId);
             if (column == null) 
             {
                 string errorString = $"BoardDataController.DeleteColumn Column NOT found with ColumnId:{columnId}";
@@ -251,14 +251,14 @@ namespace Tazkr.Controllers
             string cardTitle = payload.Param2;
             try
             {
-                List<Card> cards = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.ColumnId == columnId).Cards.ToList();
+                List<Card> cards = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.Id == columnId).Cards.ToList();
                 Card card = new Card();
                 card.Title = cardTitle;
                 card.Index = cards.Count > 0 ? cards.Max(col => col.Index) + 1 : 0;
                 card.ColumnId = columnId;
                 _dbContext.Cards.Add(card);
                 _dbContext.SaveChanges();
-                string status = $"BoardDataController.AddCardToColumn(columnId={columnId}), cardId:{card.CardId}";
+                string status = $"BoardDataController.AddCardToColumn(columnId={columnId}), cardId:{card.Id}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }
@@ -277,13 +277,13 @@ namespace Tazkr.Controllers
             int index = int.Parse(payload.Param3);
             try
             {
-                Column column = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.ColumnId == columnId);
+                Column column = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.Id == columnId);
                 List<Card> cards = column.Cards.OrderBy(x => x.Index).ToList();
                 // First remove the target card from list (if it exists)
                 int existingIndex = -1;
                 for(int i=0; i < cards.Count; ++i)
                 {
-                    if (cards[i].CardId == cardId)
+                    if (cards[i].Id == cardId)
                     {
                         existingIndex = i;
                     }

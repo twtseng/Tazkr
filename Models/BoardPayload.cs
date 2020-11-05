@@ -22,20 +22,15 @@ namespace Tazkr.Models
             User, // Can edit and move items but not delete
             Viewer // Can view only and not modify data
         }
-        public string BoardId { get; set; }
+
         public string Title { get; set; }
         public ApplicationUserPayload CreatedBy { get; set; }
         public List<ApplicationUserPayload> BoardUsers { get; set; }
         public List<ColumnPayload> Columns { get; set; }
-        public int Key { 
-            get 
-            {
-                return $"{this.BoardId}{this.UpdatedDate}".GetHashCode();
-            }
-        }
+
         public BoardPayload(Board board) : base(board)
         {
-            this.BoardId = board != null ? board.BoardId : "<null>";
+            this.Id = board != null ? board.Id : "<null>";
             this.Title = board != null ? board.Title : "<null>";
             this.CreatedBy = new ApplicationUserPayload(board.CreatedBy);
             this.Columns = board.Columns != null? board.Columns.Select(column => new ColumnPayload(column)).ToList() : new List<ColumnPayload>();

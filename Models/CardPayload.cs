@@ -11,8 +11,6 @@ namespace Tazkr.Models
     /// </summary>
     public class CardPayload : BaseEntity
     {
-
-        public string CardId { get; set; }
         /// <summary>
         /// Order that this card appears on the column
         /// </summary>
@@ -20,15 +18,8 @@ namespace Tazkr.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string Pri_Level { get; set; }
-        public int Key { 
-            get 
-            {
-                return $"{this.CardId}{this.UpdatedDate}".GetHashCode();
-            }
-        }
         public CardPayload(Card card) : base(card)
         {
-            this.CardId = card.CardId;
             this.Index = card.Index;
             this.Title = card.Title;
             this.Description = card.Description;

@@ -7,13 +7,6 @@ namespace Tazkr.Models
 {
     public class Column : BaseEntity
     {
-        public Column()
-        {
-            this.ColumnId = System.Guid.NewGuid().ToString();
-        }
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string ColumnId { get; set; }
         /// <summary>
         /// Order that this column appears on the board
         /// </summary>

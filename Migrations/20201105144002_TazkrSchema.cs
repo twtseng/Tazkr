@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Tazkr.Migrations
 {
-    public partial class TazkrSchema1 : Migration
+    public partial class TazkrSchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -191,13 +191,17 @@ namespace Tazkr.Migrations
                 name: "Boards",
                 columns: table => new
                 {
-                    BoardId = table.Column<string>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    UpdateHashCode = table.Column<int>(nullable: false),
+                    UpdatedByUserId = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     CreatedById = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Boards", x => x.BoardId);
+                    table.PrimaryKey("PK_Boards", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Boards_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
@@ -226,7 +230,7 @@ namespace Tazkr.Migrations
                         name: "FK_BoardUsers_Boards_BoardId",
                         column: x => x.BoardId,
                         principalTable: "Boards",
-                        principalColumn: "BoardId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -234,19 +238,23 @@ namespace Tazkr.Migrations
                 name: "Columns",
                 columns: table => new
                 {
-                    ColumnId = table.Column<string>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    UpdateHashCode = table.Column<int>(nullable: false),
+                    UpdatedByUserId = table.Column<string>(nullable: true),
                     Index = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     BoardId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Columns", x => x.ColumnId);
+                    table.PrimaryKey("PK_Columns", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Columns_Boards_BoardId",
                         column: x => x.BoardId,
                         principalTable: "Boards",
-                        principalColumn: "BoardId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -254,7 +262,11 @@ namespace Tazkr.Migrations
                 name: "Cards",
                 columns: table => new
                 {
-                    CardId = table.Column<string>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    UpdateHashCode = table.Column<int>(nullable: false),
+                    UpdatedByUserId = table.Column<string>(nullable: true),
                     Index = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
@@ -263,12 +275,12 @@ namespace Tazkr.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cards", x => x.CardId);
+                    table.PrimaryKey("PK_Cards", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Cards_Columns_ColumnId",
                         column: x => x.ColumnId,
                         principalTable: "Columns",
-                        principalColumn: "ColumnId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 

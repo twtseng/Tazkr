@@ -14,15 +14,7 @@ namespace Tazkr.Models
 {
     public class Board : BaseEntity
     {
-        public Board()
-        {
-            this.BoardId = System.Guid.NewGuid().ToString();
-        }
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string BoardId { get; set; }
         public string Title { get; set; }
-
         public string CreatedById { get; set; }
         [InverseProperty("BoardsCreated")]
         public ApplicationUser CreatedBy { get; set; }

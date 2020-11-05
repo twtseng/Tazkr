@@ -47,13 +47,13 @@ const BoardView = () => {
           <Card.Body
             className="d-flex flex-nowrap bg-light scrolling-wrapper">
             {board.columns.map(col => 
-              <BoardColumn key={col.columnId} Title={col.title} Index={col.index} ColumnId={col.columnId} getBoard={getBoard}>
+              <BoardColumn key={col.updateHashCode} HashCode={col.updateHashCode} Title={col.title} Index={col.index} ColumnId={col.id} getBoard={getBoard}>
                   {col.cards.map((t, index) =>
                     <TaskCard 
-                      key={t.key}
-                      HashCode={t.key}
+                      key={t.updateHashCode}
+                      HashCode={t.updateHashCode}
                       Title={t.title} 
-                      CardId={t.cardId} 
+                      CardId={t.id} 
                       Index={index} 
                       Description={t.description} 
                       getBoard={getBoard}/>

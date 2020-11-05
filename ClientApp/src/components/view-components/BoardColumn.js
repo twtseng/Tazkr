@@ -69,6 +69,9 @@ const BoardColumn = (props) => {
                     </Dropdown>
                 </div>
                 </Card.Header> 
+                <Card.Header>
+                    HashCode: {props.HashCode}
+                </Card.Header> 
                 <Card.Body style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll"}}>
                 <div style={{minHeight:"100%", display:"flex"}}>
                 <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>

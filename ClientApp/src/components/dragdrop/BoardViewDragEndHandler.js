@@ -8,7 +8,7 @@ const findCardById = (inputBoard, cardId) => {
     for (let colIndex = 0; colIndex < inputBoard.columns.length; ++colIndex) {
         const column = inputBoard.columns[colIndex];
         for (let cardIndex = 0; cardIndex < column.cards.length; ++cardIndex) {
-            if (column.cards[cardIndex].cardId === cardId) {
+            if (column.cards[cardIndex].id === cardId) {
                 return column.cards[cardIndex];
             }
         }
@@ -17,7 +17,7 @@ const findCardById = (inputBoard, cardId) => {
 }
 const findColumnById = (inputBoard, columnId) => {
     for (let colIndex = 0; colIndex < inputBoard.columns.length; ++colIndex) {
-        if (inputBoard.columns[colIndex].columnId === columnId) {
+        if (inputBoard.columns[colIndex].id === columnId) {
             return inputBoard.columns[colIndex];
         }
     }

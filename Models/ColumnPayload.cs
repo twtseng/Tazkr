@@ -11,22 +11,14 @@ namespace Tazkr.Models
     /// </summary>
     public class ColumnPayload : BaseEntity
     {
-        public string ColumnId { get; set; }
         /// <summary>
         /// Order that this column appears on the board
         /// </summary>
         public int Index { get; set; }
         public string Title { get; set; }
         public List<CardPayload> Cards { get; set; }
-        public int Key { 
-            get 
-            {
-                return $"{this.ColumnId}{this.UpdatedDate}".GetHashCode();
-            }
-        }
         public ColumnPayload(Column column) : base(column)
         {
-            this.ColumnId = column != null ? column.ColumnId : "<null>";
             this.Title = column != null ? column.Title : "<null>";
             this.Index = column != null ? column.Index : 0;
             this.Cards = column != null ? column.Cards.Select(card => new CardPayload(card)).ToList() : new List<CardPayload>();
