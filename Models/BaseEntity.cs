@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tazkr.Models
 {
+    /// <summary>
+    /// Base class for Tazkr EF entities
+    /// </summary>
     public abstract class BaseEntity {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

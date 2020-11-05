@@ -367,9 +367,9 @@ namespace Tazkr.Controllers
             }
         }
         [HttpGet("GetUsers")]
-        public IEnumerable<ApplicationUserPayload> GetUsers()
+        public IEnumerable<dynamic> GetUsers()
         {
-            return _dbContext.Users.Select(user => new ApplicationUserPayload(user)).ToList();
+            return _dbContext.Users.Select(user => user.GetServerResponsePayload()).ToList();
         }
         [HttpPatch("AddUserToBoard")]
         public IActionResult AddUserToBoard(ClientRequestPayload payload)
