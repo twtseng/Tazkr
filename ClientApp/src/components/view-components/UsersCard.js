@@ -34,8 +34,8 @@ const UsersCard = (props) => {
             </Select>     
         </Card.Body>
         <Card.Body>
-            {props.board.boardUsers.map(x => (
-                <div><small>{x.userName}</small></div>
+            {props.board.BoardUsers.map(x => (
+                <div><small>{x.UserName}</small></div>
             ))}
         </Card.Body>
       </Card>

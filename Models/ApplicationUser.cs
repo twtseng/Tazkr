@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +14,11 @@ namespace Tazkr.Models
         public DateTime LastRequestTime { get; set; }
         public Object GetServerResponsePayload()
         {
-            return new {           
-                this.UserName,
-                this.Email,
-                this.Id
-            };
+            dynamic obj = new ExpandoObject();
+            obj.UserName = this.UserName;
+            obj.Email = this.Email;
+            obj.Id = this.Id;
+            return obj;
         }
     }
 }

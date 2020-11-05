@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,15 +17,15 @@ namespace Tazkr.Models
         public string BoardId { get; set; }
         public Board Board { get; set; }
         public List<Card> Cards { get; set; }
-        public override Object GetServerResponsePayload()
+        public override dynamic GetServerResponsePayload()
         {
-            return new {           
-                this.Id,
-                this.UpdateHashCode,
-                this.Title,
-                this.Index,
-                Cards = this.Cards == null ? new List<Object>() : this.Cards.Select(x => x.GetServerResponsePayload()).ToList()
-            };
+            dynamic obj = new ExpandoObject();
+            obj.Id = this.Id;
+            obj.UpdateHashCode = this.UpdateHashCode;
+            obj.Index = this.Index;
+            obj.Title = this.Title;
+            obj.Cards = this.Cards == null ? new List<Object>() : this.Cards.Select(x => x.GetServerResponsePayload()).ToList();
+            return obj;
         }
     }
 }

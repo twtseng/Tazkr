@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,16 +27,16 @@ namespace Tazkr.Models
         public List<BoardUser> BoardUsers { get; set; }
         public List<Column> Columns { get; set; }
 
-        public override Object GetServerResponsePayload()
+        public override dynamic GetServerResponsePayload()
         {
-            return new {           
-                this.Id,
-                this.UpdateHashCode,
-                CreatedBy = this.CreatedBy == null ? null : this.CreatedBy.GetServerResponsePayload(),
-                this.Title,
-                Columns = this.Columns == null ? new List<Object>() : this.Columns.Select(x => x.GetServerResponsePayload()).ToList(),
-                BoardUsers = this.BoardUsers == null ? new List<Object>() : this.BoardUsers.Select(x => x.ApplicationUser.GetServerResponsePayload()).ToList()
-            };
+            dynamic obj = new ExpandoObject();
+            obj.Id = this.Id;
+            obj.UpdateHashCode = this.UpdateHashCode;
+            obj.CreatedBy = this.CreatedBy == null ? null : this.CreatedBy.GetServerResponsePayload();
+            obj.Title = this.Title;
+            obj.Columns = this.Columns == null ? new List<Object>() : this.Columns.Select(x => x.GetServerResponsePayload()).ToList();
+            obj.BoardUsers = this.BoardUsers == null ? new List<Object>() : this.BoardUsers.Select(x => x.ApplicationUser.GetServerResponsePayload()).ToList();
+            return obj;
         }
     }
 }

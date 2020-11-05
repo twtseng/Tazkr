@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Dynamic;
 
 namespace Tazkr.Models
 {
@@ -23,17 +21,16 @@ namespace Tazkr.Models
         public Priority Pri_Level { get; set; }
         public string ColumnId { get; set; }
         public Column Column { get; set; }
-
-        public override Object GetServerResponsePayload()
+        public override dynamic GetServerResponsePayload()
         {
-            return new {
-                this.Id,
-                this.UpdateHashCode,        
-                this.Index,
-                this.Title,
-                this.Description,
-                Pri_Level = this.Pri_Level.ToString()
-            };
+            dynamic obj = new ExpandoObject();
+            obj.Id = this.Id;
+            obj.UpdateHashCode = this.UpdateHashCode;
+            obj.Index = this.Index;
+            obj.Title = this.Title;
+            obj.Description = this.Description;
+            obj.Pri_Level = this.Pri_Level.ToString();
+            return obj;
         }
     }
 }

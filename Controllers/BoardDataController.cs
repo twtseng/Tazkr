@@ -45,7 +45,7 @@ namespace Tazkr.Controllers
         public Object GetBoard(string boardId)
         {
             ApplicationUser user = this.GetApplicationUser();
-            _logger.LogInformation($"BoardDataController.GetBoard({boardId}), User={user.Email}");
+            _logger.LogInformation($"BoardDataController.GetBoard({boardId})");
             Board board = _dbContext.Boards
             .Include(board => board.BoardUsers)
             .ThenInclude(user => user.ApplicationUser)
@@ -55,21 +55,21 @@ namespace Tazkr.Controllers
             .Where(board => board.Id == boardId)
             .FirstOrDefault();
 
-            // BoardPayload boardPayload = new BoardPayload(board);
+            dynamic boardPayload = board.GetServerResponsePayload();
 
-            // // Set permission level for this user
-            // if (board.CreatedBy.Id == user.Id)
-            // {
-            //     boardPayload.PermissionLevel = BoardPayload.PermissionLevels.Owner.ToString();
-            // }
-            // else if (board.BoardUsers.Exists(x => x.ApplicationUserId == user.Id)) 
-            // {
-            //     boardPayload.PermissionLevel = BoardPayload.PermissionLevels.User.ToString();
-            // }
-            // else
-            // {
-            //     boardPayload.PermissionLevel = BoardPayload.PermissionLevels.Viewer.ToString();
-            // }
+            //Set permission level for this user
+            if (board.CreatedBy.Id == user.Id)
+            {
+                boardPayload.PermissionLevel = Board.PermissionLevels.Owner.ToString();
+            }
+            else if (board.BoardUsers.Exists(x => x.ApplicationUserId == user.Id)) 
+            {
+                boardPayload.PermissionLevel = Board.PermissionLevels.User.ToString();
+            }
+            else
+            {
+                boardPayload.PermissionLevel = Board.PermissionLevels.Viewer.ToString();
+            }
 
             return board.GetServerResponsePayload();
         }

@@ -13,10 +13,10 @@ import BoardStatusBar from '../view-components/BoardStatusBar';
 const BoardView = () => {
   const { boardId } = useParams();
   const initialBoardState = {
-    columns:[], 
-    createdBy:{userName:""}, 
-    boardUsers:[],
-    permissionLevel:"Viewer"
+    Columns:[], 
+    CreatedBy:{UserName:""}, 
+    BoardUsers:[],
+    PermissionLevel:"Viewer"
   };
   const [board, setBoard] = React.useState(initialBoardState);
   const [boardTitle, setBoardTitle] = React.useState("");
@@ -24,12 +24,12 @@ const BoardView = () => {
 
   const getBoard = async () => {
     const boardData = await callBoardDataApi(`BoardData/GetBoard/${boardId}`,"GET");
-    boardData.columns.sort((a,b) => { return a.index - b.index });
-    boardData.columns.forEach(col => {
-      col.cards.sort((a,b) => { return a.index - b.index });
+    boardData.Columns.sort((a,b) => { return a.Index - b.Index });
+    boardData.Columns.forEach(col => {
+      col.Cards.sort((a,b) => { return a.Index - b.Index });
     });
     setBoard(boardData);
-    setBoardTitle(boardData.title);
+    setBoardTitle(boardData.Title);
   }
 
   React.useEffect(() => {
@@ -46,16 +46,16 @@ const BoardView = () => {
           </Card.Header>
           <Card.Body
             className="d-flex flex-nowrap bg-light scrolling-wrapper">
-            {board.columns.map(col => 
-              <BoardColumn key={col.updateHashCode} HashCode={col.updateHashCode} Title={col.title} Index={col.index} ColumnId={col.id} getBoard={getBoard}>
-                  {col.cards.map((t, index) =>
+            {board.Columns.map(col => 
+              <BoardColumn key={col.UpdateHashCode} HashCode={col.UpdateHashCode} Title={col.Title} Index={col.Index} ColumnId={col.Id} getBoard={getBoard}>
+                  {col.Cards.map((t, index) =>
                     <TaskCard 
-                      key={t.updateHashCode}
-                      HashCode={t.updateHashCode}
-                      Title={t.title} 
-                      CardId={t.id} 
+                      key={t.UpdateHashCode}
+                      HashCode={t.UpdateHashCode}
+                      Title={t.Title} 
+                      CardId={t.Id} 
                       Index={index} 
-                      Description={t.description} 
+                      Description={t.Description} 
                       getBoard={getBoard}/>
                   )}
               </BoardColumn>
@@ -68,7 +68,7 @@ const BoardView = () => {
           <Card.Header className="bg-secondary text-light">BoardTitle: {boardTitle}</Card.Header>
           <Card.Header className="bg-secondary text-light">Owner</Card.Header>
           <Card.Body>
-            <small>{board.createdBy.userName}</small>
+            <small>{board.CreatedBy.UserName}</small>
           </Card.Body> 
         </Card>
         <UsersCard board={board} getBoard={getBoard} />

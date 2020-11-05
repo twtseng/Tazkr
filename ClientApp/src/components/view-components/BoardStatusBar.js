@@ -8,17 +8,17 @@ const BoardStatusBar = (props) => {
     const history = useHistory();
 
     const addColumn = async () => {
-        await callBoardDataApi(`BoardData/AddColumnToBoard`,"PATCH",{ Param1: props.board.id, Param2: "New Column"});
+        await callBoardDataApi(`BoardData/AddColumnToBoard`,"PATCH",{ Param1: props.board.Id, Param2: "New Column"});
         props.getBoard();
       }
       const deleteBoard = async () => {
-        callBoardDataApi(`BoardData/DeleteBoard`,"DELETE",{ Param1: props.board.id })
+        callBoardDataApi(`BoardData/DeleteBoard`,"DELETE",{ Param1: props.board.Id })
         .then(() => history.push("/boards"))
         .catch(err => alert(err))
       }
       const renameBoard = async () => {
-        if (props.boardTitle !== props.board.title) {
-          callBoardDataApi(`BoardData/RenameBoard`,"PATCH",{ Param1: props.board.id, Param2: props.boardTitle })
+        if (props.boardTitle !== props.board.Title) {
+          callBoardDataApi(`BoardData/RenameBoard`,"PATCH",{ Param1: props.board.Id, Param2: props.boardTitle })
           .then(() => console.log("renameBoard completed"))
           .catch((err) => console.log(`renameBoard failed, err = ${err}`));
         }

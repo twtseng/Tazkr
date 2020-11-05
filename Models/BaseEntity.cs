@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,7 +30,7 @@ namespace Tazkr.Models
         /// Return a JSON friendly subset of this object to the client app
         /// Used to reduce the payload and avoid JSON encoding issues such as circular references
         /// </summary>
-        abstract public Object GetServerResponsePayload(); 
+        abstract public dynamic GetServerResponsePayload(); 
     }
 }
 
