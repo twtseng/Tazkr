@@ -50,7 +50,8 @@ const BoardView = () => {
               <BoardColumn key={col.columnId} Title={col.title} Index={col.index} ColumnId={col.columnId} getBoard={getBoard}>
                   {col.cards.map((t, index) =>
                     <TaskCard 
-                      key={t.cardId+t.title} 
+                      key={t.key}
+                      HashCode={t.key}
                       Title={t.title} 
                       CardId={t.cardId} 
                       Index={index} 

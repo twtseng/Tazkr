@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tazkr.Models
 {
-    public class Card
+    public class Card : BaseEntity
     {
         public enum Priority
         { 

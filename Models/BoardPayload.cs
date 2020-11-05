@@ -15,7 +15,7 @@ namespace Tazkr.Models
     /// <summary>
     /// Subset of Board object to be returned to client app
     /// </summary>
-    public class BoardPayload
+    public class BoardPayload : BaseEntity
     {
         public enum PermissionLevels {
             Owner, // Full permissions on the board
@@ -27,7 +27,13 @@ namespace Tazkr.Models
         public ApplicationUserPayload CreatedBy { get; set; }
         public List<ApplicationUserPayload> BoardUsers { get; set; }
         public List<ColumnPayload> Columns { get; set; }
-        public BoardPayload(Board board)
+        public int Key { 
+            get 
+            {
+                return $"{this.BoardId}{this.UpdatedDate}".GetHashCode();
+            }
+        }
+        public BoardPayload(Board board) : base(board)
         {
             this.BoardId = board != null ? board.BoardId : "<null>";
             this.Title = board != null ? board.Title : "<null>";

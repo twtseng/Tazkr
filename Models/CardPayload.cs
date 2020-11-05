@@ -9,7 +9,7 @@ namespace Tazkr.Models
     /// <summary>
     /// Subset of Card object to be returned to client app
     /// </summary>
-    public class CardPayload
+    public class CardPayload : BaseEntity
     {
 
         public string CardId { get; set; }
@@ -20,7 +20,13 @@ namespace Tazkr.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string Pri_Level { get; set; }
-        public CardPayload(Card card)
+        public int Key { 
+            get 
+            {
+                return $"{this.CardId}{this.UpdatedDate}".GetHashCode();
+            }
+        }
+        public CardPayload(Card card) : base(card)
         {
             this.CardId = card.CardId;
             this.Index = card.Index;

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tazkr.Models
 {
-    public class Column
+    public class Column : BaseEntity
     {
         public Column()
         {

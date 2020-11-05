@@ -9,7 +9,7 @@ namespace Tazkr.Models
     /// <summary>
     /// Subset of Column object to be returned to client app
     /// </summary>
-    public class ColumnPayload
+    public class ColumnPayload : BaseEntity
     {
         public string ColumnId { get; set; }
         /// <summary>
@@ -18,7 +18,13 @@ namespace Tazkr.Models
         public int Index { get; set; }
         public string Title { get; set; }
         public List<CardPayload> Cards { get; set; }
-        public ColumnPayload(Column column)
+        public int Key { 
+            get 
+            {
+                return $"{this.ColumnId}{this.UpdatedDate}".GetHashCode();
+            }
+        }
+        public ColumnPayload(Column column) : base(column)
         {
             this.ColumnId = column != null ? column.ColumnId : "<null>";
             this.Title = column != null ? column.Title : "<null>";

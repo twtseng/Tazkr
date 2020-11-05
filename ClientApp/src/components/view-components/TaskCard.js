@@ -64,7 +64,10 @@ const TaskCard = (props) => {
                         />
                     </Card.Header>
                     <Card.Body>
-                        <small>Details blah blah blah</small>
+                        <small>HashCode:{props.HashCode}</small>
+                    </Card.Body>
+                    <Card.Body>
+                        <small>Desc:{props.Description}</small>
                     </Card.Body>
                 </Card>
                 <TaskDialog

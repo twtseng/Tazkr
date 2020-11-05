@@ -12,7 +12,7 @@ using Tazkr.Controllers;
 
 namespace Tazkr.Models
 {
-    public class Board
+    public class Board : BaseEntity
     {
         public Board()
         {
