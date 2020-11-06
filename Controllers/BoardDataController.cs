@@ -13,7 +13,7 @@ using Tazkr.Data;
 
 namespace Tazkr.Controllers
 {
-    // [Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]    
     public class BoardDataController : ControllerBase
@@ -23,7 +23,9 @@ namespace Tazkr.Controllers
         public ApplicationUser GetApplicationUser()
         {
             string userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            ApplicationUser appUser = _dbContext.Users.Find(userId); 
+            ApplicationUser appUser = _dbContext.Users.Find(userId);
+            appUser.LastRequestTimeUTC = DateTime.UtcNow;
+            _dbContext.Users.Update(appUser);
             return appUser;       
         }
         public BoardDataController(ILogger<BoardDataController> logger, ApplicationDbContext dbContext)
@@ -85,7 +87,12 @@ namespace Tazkr.Controllers
                 board.CreatedById = user.Id;
                 board.Title = boardTitle;
                 _dbContext.Boards.Add(board);
-                _dbContext.SaveChanges();
+                Column column = new Column();
+                column.BoardId = board.Id;
+                column.Title = "New Column";
+                _dbContext.Columns.Add(column);
+                _dbContext.SaveChangesForUser(user);
+ 
                 string status = $"BoardDataController.CreateBoard(boardTitle={boardTitle}), boardId:{board.Id}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -128,7 +135,7 @@ namespace Tazkr.Controllers
                         _dbContext.Columns.Remove(column);
                     }
                     _dbContext.Boards.Remove(board);
-                    _dbContext.SaveChanges();
+                    _dbContext.SaveChangesForUser(user);
                     string status = $"BoardDataController.DeleteBoard Deleted board with boardId:{boardId}";
                     _logger.LogInformation(status);
                     return new OkObjectResult(new {status});
@@ -148,10 +155,11 @@ namespace Tazkr.Controllers
             string newName = payload.Param2;
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 Board board = _dbContext.Boards.Find(boardId);
                 board.Title = newName;
                 _dbContext.Boards.Update(board);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.RenameBoard(boardId:{boardId}), newName={newName}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -170,6 +178,7 @@ namespace Tazkr.Controllers
             string columnTitle = payload.Param2;
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 Column column = new Column();
                 column.BoardId = boardId;
                 column.Title = columnTitle;
@@ -179,7 +188,7 @@ namespace Tazkr.Controllers
                 column.Index = columns.Count > 0 ? columns.Max(col => col.Index) + 1 : 0;
 
                 _dbContext.Columns.Add(column);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.AddColumnToBoard BoardId={boardId}, Title={columnTitle}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -205,13 +214,14 @@ namespace Tazkr.Controllers
             else
             {
                 try
-                {   
+                {
+                    ApplicationUser user = this.GetApplicationUser();
                     foreach(Card card in column.Cards)
                     {
                         _dbContext.Cards.Remove(card);
                     }
                     _dbContext.Columns.Remove(column);
-                    _dbContext.SaveChanges();
+                    _dbContext.SaveChangesForUser(user);
                     string status = $"BoardDataController.DeleteColumn Deleted column with columnId:{columnId}";
                     _logger.LogInformation(status);
                     return new OkObjectResult(new {status});
@@ -231,10 +241,11 @@ namespace Tazkr.Controllers
             string newName = payload.Param2;
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 Column column = _dbContext.Columns.Find(columnId);
                 column.Title = payload.Param2;
                 _dbContext.Columns.Update(column);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.RenameColumn columnId={columnId}, newName={newName}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -253,13 +264,14 @@ namespace Tazkr.Controllers
             string cardTitle = payload.Param2;
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 List<Card> cards = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.Id == columnId).Cards.ToList();
                 Card card = new Card();
                 card.Title = cardTitle;
                 card.Index = cards.Count > 0 ? cards.Max(col => col.Index) + 1 : 0;
                 card.ColumnId = columnId;
                 _dbContext.Cards.Add(card);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.AddCardToColumn(columnId={columnId}), cardId:{card.Id}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -279,6 +291,7 @@ namespace Tazkr.Controllers
             int index = int.Parse(payload.Param3);
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 Column column = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.Id == columnId);
                 List<Card> cards = column.Cards.OrderBy(x => x.Index).ToList();
                 // First remove the target card from list (if it exists)
@@ -304,7 +317,7 @@ namespace Tazkr.Controllers
                 cardToMove.ColumnId = columnId;
                 cardToMove.Index = index;
                 _dbContext.Cards.Update(cardToMove);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.MoveCardToColumnAtIndex cardId={cardId}, columnId={columnId}, index={index}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -324,6 +337,7 @@ namespace Tazkr.Controllers
             string newDescription = payload.Param3;
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 Card card = _dbContext.Cards.Find(cardId);
                 if (!string.IsNullOrWhiteSpace(newName))
                 {
@@ -334,7 +348,7 @@ namespace Tazkr.Controllers
                     card.Description = newDescription;
                 }                
                 _dbContext.Cards.Update(card);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.UpdateCard cardId={cardId}, newName={newName}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -352,9 +366,10 @@ namespace Tazkr.Controllers
             string cardId = payload.Param1;
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 Card card = _dbContext.Cards.Find(cardId);
                 _dbContext.Cards.Remove(card);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.DeleteCard(cardId={cardId})";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -378,6 +393,7 @@ namespace Tazkr.Controllers
             string userId = payload.Param2;
             try
             {
+                ApplicationUser user = this.GetApplicationUser();
                 if (_dbContext.BoardUsers.Where(x => x.BoardId == boardId && x.ApplicationUserId == userId).ToList().Count > 0)
                 {
                     string error = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId} already exists";
@@ -386,7 +402,7 @@ namespace Tazkr.Controllers
                 }
                 BoardUser boardUser = new BoardUser() { BoardId=boardId, ApplicationUserId=userId };
                 _dbContext.BoardUsers.Add(boardUser);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});

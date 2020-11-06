@@ -35,7 +35,7 @@ const BoardsView = () => {
             <h6>Boards</h6>
             <div className="d-flex flex-wrap">
               {boards.map(x => 
-                <BoardCard Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} />
+                <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} />
               )}
             </div>
           </Card.Body>

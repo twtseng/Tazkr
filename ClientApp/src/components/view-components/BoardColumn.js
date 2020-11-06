@@ -18,7 +18,7 @@ const BoardColumn = (props) => {
         setTitleReadOnly(true);
         if (columnTitle !== props.Title) {
             callBoardDataApi(`BoardData/RenameColumn`,"PATCH",{ Param1: props.ColumnId, Param2: columnTitle })
-            .then(() => console.log("updateColumnTitle completed"))
+            .then(() => { console.log("updateColumnTitle completed"); props.getBoard(); })
             .catch((err) => console.log(`updateColumnTitle failed, err = ${err}`));
         }
     }

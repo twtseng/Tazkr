@@ -40,7 +40,7 @@ namespace Tazkr.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    LastRequestTime = table.Column<DateTime>(nullable: false)
+                    LastRequestTimeUTC = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -192,8 +192,8 @@ namespace Tazkr.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedDateUTC = table.Column<DateTime>(nullable: false),
+                    UpdatedDateUTC = table.Column<DateTime>(nullable: false),
                     UpdateHashCode = table.Column<int>(nullable: false),
                     UpdatedByUserId = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
@@ -239,8 +239,8 @@ namespace Tazkr.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedDateUTC = table.Column<DateTime>(nullable: false),
+                    UpdatedDateUTC = table.Column<DateTime>(nullable: false),
                     UpdateHashCode = table.Column<int>(nullable: false),
                     UpdatedByUserId = table.Column<string>(nullable: true),
                     Index = table.Column<int>(nullable: false),
@@ -263,8 +263,8 @@ namespace Tazkr.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedDateUTC = table.Column<DateTime>(nullable: false),
+                    UpdatedDateUTC = table.Column<DateTime>(nullable: false),
                     UpdateHashCode = table.Column<int>(nullable: false),
                     UpdatedByUserId = table.Column<string>(nullable: true),
                     Index = table.Column<int>(nullable: false),

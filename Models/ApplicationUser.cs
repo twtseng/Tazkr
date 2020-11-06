@@ -11,7 +11,7 @@ namespace Tazkr.Models
     {
         public List<Board> BoardsCreated { get; set; }
         public List<BoardUser> Boards { get; set; }
-        public DateTime LastRequestTime { get; set; }
+        public DateTime LastRequestTimeUTC { get; set; }
         public Object GetServerResponsePayload()
         {
             dynamic obj = new ExpandoObject();

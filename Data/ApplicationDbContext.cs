@@ -43,11 +43,11 @@ namespace Tazkr.Data
             foreach (var entityEntry in entries)
             {
                 BaseEntity entity = (BaseEntity) entityEntry.Entity;
-                entity.UpdatedDate = DateTime.Now;
+                entity.UpdatedDateUTC = DateTime.UtcNow;
 
                 if (entityEntry.State == EntityState.Added)
                 {
-                    entity.CreatedDate = DateTime.Now;
+                    entity.CreatedDateUTC = DateTime.UtcNow;
                 }
 
                 entity.UpdateHashCode = ((BaseEntity)entityEntry.Entity).GetHashCode();
@@ -55,6 +55,24 @@ namespace Tazkr.Data
 
             return base.SaveChanges();
         }
+        /// <summary>
+        /// Record the user that modified the data
+        /// </summary>
+        public int SaveChangesForUser(ApplicationUser user)
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.Entity is BaseEntity && (
+                        e.State == EntityState.Added
+                        || e.State == EntityState.Modified));
 
+            foreach (var entityEntry in entries)
+            {
+                BaseEntity entity = (BaseEntity) entityEntry.Entity;
+                entity.UpdatedByUserId = user.Id;
+            }
+
+            return this.SaveChanges();
+        }
     }
 }

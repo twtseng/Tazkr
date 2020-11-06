@@ -10,7 +10,7 @@ using Tazkr.Data;
 namespace Tazkr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201105144002_TazkrSchema")]
+    [Migration("20201105233128_TazkrSchema")]
     partial class TazkrSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -257,7 +257,7 @@ namespace Tazkr.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LastRequestTime")
+                    b.Property<DateTime>("LastRequestTimeUTC")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
@@ -314,7 +314,7 @@ namespace Tazkr.Migrations
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedDateUTC")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
@@ -326,7 +326,7 @@ namespace Tazkr.Migrations
                     b.Property<string>("UpdatedByUserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedDate")
+                    b.Property<DateTime>("UpdatedDateUTC")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -359,7 +359,7 @@ namespace Tazkr.Migrations
                     b.Property<string>("ColumnId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedDateUTC")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -380,7 +380,7 @@ namespace Tazkr.Migrations
                     b.Property<string>("UpdatedByUserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedDate")
+                    b.Property<DateTime>("UpdatedDateUTC")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -398,7 +398,7 @@ namespace Tazkr.Migrations
                     b.Property<string>("BoardId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedDateUTC")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Index")
@@ -413,7 +413,7 @@ namespace Tazkr.Migrations
                     b.Property<string>("UpdatedByUserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedDate")
+                    b.Property<DateTime>("UpdatedDateUTC")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
