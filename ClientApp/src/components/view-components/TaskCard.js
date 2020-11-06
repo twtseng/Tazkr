@@ -22,12 +22,14 @@ const TaskCard = (props) => {
 
     const updateCardTitle = () => {
         setTitleReadOnly(true);
-        callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle })
-            .then(() => {
-                console.log("updateCardTitle completed");
-                props.getBoard();
-            })
-            .catch((err) => console.log(`updateCardTitle failed, err = ${err}`));
+        if (cardTitle !== props.Title) {
+            callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle })
+                .then(() => {
+                    console.log("updateCardTitle completed");
+                    props.getBoard();
+                })
+                .catch((err) => console.log(`updateCardTitle failed, err = ${err}`));
+        }
         document.getSelection().removeAllRanges();
         document.activeElement.blur();  
     }
