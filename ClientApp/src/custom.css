@@ -2,21 +2,6 @@ html, body, #root {
   height: 100%;
   margin: 0;
 }
-/* Provide sufficient contrast against white background */
-/* .contentbox {
-  padding-top: 70px;
-  display: flex;
-  flex-flow: column;
-  height: 100%;
-}
-.contentbox .row.content {
-  flex: 1 1 auto;
-} */
-
-.taskcolumn {
-  min-width: 300px;
-}
-
 
 /* Provide sufficient contrast against white background */
 a {

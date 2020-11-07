@@ -17,21 +17,22 @@ const BoardCard = props => {
       }
     }
     return (
-        <Card className='taskcolumn clickable p-0 m-4' 
-            key={props.BoardId} 
-            onClick={() => history.push(`/board/${props.BoardId}`)}
-        >
-          <Card.Header className="bg-secondary text-light">
-            <TitleEdit
-                className="text-dark bg-light font-weight-bold"
-                size="sm"
-                title={boardTitle} 
-                setTitle={setBoardTitle}
-                updateTitle={renameBoard}        
-            />
-          </Card.Header>
+      <Card className='clickable p-0 m-2' 
+          key={props.BoardId} 
+          onClick={() => history.push(`/board/${props.BoardId}`)}
+          style={{width:"220px"}}
+      >
+        <Card.Header className="bg-secondary text-light">
+          <TitleEdit
+              className="text-dark bg-light font-weight-bold"
+              size="sm"
+              title={boardTitle} 
+              setTitle={setBoardTitle}
+              updateTitle={renameBoard}        
+          />
+        </Card.Header>
         <Card.Body>
-          <small>CreatedBy: {props.CreatedBy.email}</small>
+          <small>Creatr: {props.CreatedBy.email}</small>
           <small>BoardId: {props.BoardId}</small>
         </Card.Body>
       </Card>

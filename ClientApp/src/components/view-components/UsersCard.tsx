@@ -1,21 +1,26 @@
 import React from 'react';
 import callBoardDataApi from '../api-board-data/BoardDataApi';
-import { Card, ListGroup, ListGroupItem } from 'react-bootstrap';
-import Select from 'react-select'
+import { Card } from 'react-bootstrap';
+import Select from 'react-select';
+import { Board, User } from './TazkrObjects';
 
-const UsersCard = (props) => {
+interface Props {
+    getBoard: () => void;
+    board: Board;
+}
+
+const UsersCard = (props: Props) => {
     const [userOptions, setUserOptions] = React.useState([]);
-    const [selectedUser, setSelectedUser] = React.useState("");
     React.useEffect(()=>{
         callBoardDataApi(`BoardData/GetUsers`,"GET",{})
         .then(results => {
-            setUserOptions(results.map(x => ({ value: x.id, label: x.userName})));
+            setUserOptions(results.map((x:User) => ({ value: x.Id, label: x.UserName})));
         })
         .catch(err => console.log(`BoardData/GetUsers failed, error=${err}`))
     },[]);
     
-    const addUser = async (user) => {
-        await callBoardDataApi(`BoardData/AddUserToBoard`,"PATCH",{ Param1: props.board.boardId, Param2: user});
+    const addUser = async (user: string) => {
+        await callBoardDataApi(`BoardData/AddUserToBoard`,"PATCH",{ Param1: props.board.Id, Param2: user});
         props.getBoard();
     }
 
@@ -28,7 +33,7 @@ const UsersCard = (props) => {
             <Select
                 placeholder={"add user"}
                 value={null} 
-                onChange={item => addUser(item.value)} 
+                onChange={(item:any) => addUser(item.value)} 
                 className="text-dark form-control-sm" 
                 options={userOptions}>
             </Select>     

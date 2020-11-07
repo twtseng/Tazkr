@@ -39,7 +39,7 @@ const TitleEdit: React.FC<Props> = ({
             }
         }
     }
-    const onClick = (e:any) => {
+    const onClick = (e: any) => {
         e.stopPropagation();
         setTitleReadOnly(false);
         e.target.select();

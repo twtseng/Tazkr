@@ -2,7 +2,17 @@ import React from 'react';
 import { Button, FormGroup, Form, Modal } from 'react-bootstrap';
 import callBoardDataApi from '../api-board-data/BoardDataApi';
 
-const TaskDialog = props => {
+interface Props {
+    getBoard: () => void;
+    closeDialog: () => void;
+    handleClose: () => void;
+    Title: string;
+    Description: string;
+    showTaskDialog: boolean;
+    CardId: number;
+}
+
+const TaskDialog = (props: Props) => {
     const [cardTitle, setCardTitle] = React.useState(props.Title);
     const [cardDescription, setCardDescription] = React.useState(props.Description);
     const updateCard = () => {
@@ -36,7 +46,7 @@ const TaskDialog = props => {
             <Modal.Body>
                 <Form className="mt-3">
                     <FormGroup>
-                        <Form.Label for="title">Title</Form.Label>
+                        <Form.Label>Title</Form.Label>
                         <Form.Control 
                             type="text" 
                             name="title" 
@@ -47,7 +57,7 @@ const TaskDialog = props => {
                             />
                     </FormGroup>
                     <FormGroup>
-                        <Form.Label for="description">Description</Form.Label>
+                        <Form.Label>Description</Form.Label>
                         <Form.Control  
                             type="text" 
                             name="description" 
