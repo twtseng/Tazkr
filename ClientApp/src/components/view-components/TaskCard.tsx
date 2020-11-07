@@ -49,7 +49,8 @@ const TaskCard = (props:Props) => {
             >  
                 <Card
                     style={{border:"solid 1px black", padding:"5px"}} 
-                    onClick={showDialog} className="clickable">                       
+                    onClick={showDialog} 
+                    className="clickable col-12">                       
                     <Card.Header className="bg-secondary text-light">
                         <TitleEdit
                             className="text-dark bg-light font-weight-bold"
@@ -59,7 +60,7 @@ const TaskCard = (props:Props) => {
                             updateTitle={updateCardTitle}        
                         />
                     </Card.Header>
-                    <Card.Body>
+                    <Card.Body className="d-flex flex-wrap">
                         <div><small>HashCode: {props.HashCode}</small></div>
                         <div><small>{props.Description}</small></div>
                     </Card.Body>
