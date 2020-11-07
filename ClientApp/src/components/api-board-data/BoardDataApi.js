@@ -1,4 +1,3 @@
-import React from 'react';
 import authService from '../api-authorization/AuthorizeService';
 
 export default async (url = '', method='GET', data = {}) => {

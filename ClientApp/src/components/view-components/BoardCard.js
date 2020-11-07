@@ -17,7 +17,7 @@ const BoardCard = props => {
       }
     }
     return (
-        <Card className='col-2 clickable p-0 mr-4' 
+        <Card className='taskcolumn clickable p-0 m-4' 
             key={props.BoardId} 
             onClick={() => history.push(`/board/${props.BoardId}`)}
         >

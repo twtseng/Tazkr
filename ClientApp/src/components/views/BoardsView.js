@@ -12,6 +12,7 @@ const BoardsView = () => {
 
   const getBoards = async () => {
       const boardsData = await callBoardDataApi("BoardData/GetBoards","GET");
+      boardsData.sort((a,b) => { return (new Date(a.CreatedDateUTC)) - (new Date(b.CreatedDateUTC)) });
       setBoards(boardsData);
   }
   

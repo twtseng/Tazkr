@@ -2,9 +2,9 @@ import React from 'react'
 import { Form, Dropdown } from 'react-bootstrap'
 import { useHistory } from "react-router-dom";
 import callBoardDataApi from '../api-board-data/BoardDataApi';
+import TitleEdit from './TitleEdit';
 
 const BoardStatusBar = (props) => {
-    const [titleReadOnly, setTitleReadOnly] = React.useState(true);
     const history = useHistory();
 
     const addColumn = async () => {
@@ -22,7 +22,6 @@ const BoardStatusBar = (props) => {
           .then(() => console.log("renameBoard completed"))
           .catch((err) => console.log(`renameBoard failed, err = ${err}`));
         }
-        setTitleReadOnly(true);
       }
       const handleBoardTitleKeyPress = (event) => {
         if(event.key === 'Enter'){
@@ -31,29 +30,22 @@ const BoardStatusBar = (props) => {
       }    
     return (
         <div className="TitleRow d-flex justify-content-between"> 
-            {/* <div className="TitleEdit col-6"> */}
-            <Form.Control 
-                className="input-lg col-4 font-weight-bold" 
-                name="taskTitle" 
-                type="text" 
-                value={props.boardTitle} 
-                onChange={e => props.setBoardTitle(e.target.value)}
-                onKeyPress={handleBoardTitleKeyPress}
-                onMouseLeave={() => { renameBoard(); document.getSelection().removeAllRanges(); }}
-                size="sm"
-                onClick={(e) => { setTitleReadOnly(false);e.target.select();}}
-                readOnly={titleReadOnly}
-                />
-            {/* </div> */}
-            <Dropdown>
-                <Dropdown.Toggle className="text-light" variant="muted">
-                    <small>Board actions</small>
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                <Dropdown.Item onClick={addColumn}><small>Add Column</small></Dropdown.Item>
-                <Dropdown.Item onClick={deleteBoard}><small>Delete Board</small></Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown>
+          <TitleEdit
+              className="col-4 text-dark bg-light font-weight-bold"
+              size="sm"
+              title={props.boardTitle}
+              setTitle={props.setBoardTitle}
+              updateTitle={renameBoard}        
+          />  
+          <Dropdown>
+              <Dropdown.Toggle className="text-light" variant="muted">
+                  <small>Board actions</small>
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+              <Dropdown.Item onClick={addColumn}><small>Add Column</small></Dropdown.Item>
+              <Dropdown.Item onClick={deleteBoard}><small>Delete Board</small></Dropdown.Item>
+              </Dropdown.Menu>
+          </Dropdown>
         </div>  
     )
 }

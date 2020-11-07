@@ -32,6 +32,7 @@ namespace Tazkr.Models
             dynamic obj = new ExpandoObject();
             obj.Id = this.Id;
             obj.UpdateHashCode = this.UpdateHashCode;
+            obj.CreatedDateUTC = this.CreatedDateUTC;
             obj.CreatedBy = this.CreatedBy == null ? null : this.CreatedBy.GetServerResponsePayload();
             obj.Title = this.Title;
             obj.Columns = this.Columns == null ? new List<Object>() : this.Columns.Select(x => x.GetServerResponsePayload()).ToList();

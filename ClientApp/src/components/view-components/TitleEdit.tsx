@@ -30,6 +30,14 @@ const TitleEdit: React.FC<Props> = ({
         if (selection !== null) {
             selection.removeAllRanges();
         }
+        const activeElement = document.activeElement;
+        if (activeElement !== null) {
+            try {
+                (activeElement as HTMLElement).blur();
+            } catch (err) {
+                console.log(`TitleEdit.sendUpdateTitleRequest blur failed, error: ${err}`);
+            }
+        }
     }
     const onClick = (e:any) => {
         e.stopPropagation();

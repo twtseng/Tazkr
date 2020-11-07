@@ -1,8 +1,9 @@
 import React from 'react'
-import { Button, Card, Form, Dropdown } from 'react-bootstrap'
+import { Card, Form, Dropdown } from 'react-bootstrap'
 import {Droppable} from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import callBoardDataApi from '../api-board-data/BoardDataApi';
+import TitleEdit from './TitleEdit';
 
 const TaskList = styled.div`
     padding: 8px;
@@ -13,9 +14,7 @@ const TaskList = styled.div`
 
 const BoardColumn = (props) => {
     const [columnTitle, setColumnTitle] = React.useState(props.Title)
-    const [titleReadOnly, setTitleReadOnly] = React.useState(true)
     const updateColumnTitle = () => {
-        setTitleReadOnly(true);
         console.log(`updateColumnTitle: columnTitle=[${columnTitle}] props.Title:[${props.Title}]`)
         if (columnTitle !== props.Title) {
             console.log(`updateColumnTitle updating the column in the db...`)
@@ -36,28 +35,17 @@ const BoardColumn = (props) => {
         })
         .catch((err) => console.log(`addCardToColumn failed, err = ${err}`));
     }
-    const handleKeyPress = (event) => {
-        if(event.key === 'Enter'){
-            updateColumnTitle();
-        }
-    }
-
     return (
         <Card className='mr-2 p-0 taskcolumn' style={{height: "100%"}}> 
             <Card.Header className="bg-secondary text-light">   
                 <div className="TitleRow d-flex justify-content-between align-baseline">
                     <div className="TitleEdit align-text-bottom">
-                        <Form.Control
-                            className="col-12 input-sm text-dark font-weight-bold" 
-                            name="columnTitle" 
-                            type="text" 
-                            value={columnTitle} 
-                            onChange={e => setColumnTitle(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            onMouseLeave={(e) => { updateColumnTitle(); document.getSelection().removeAllRanges(); }}
+                        <TitleEdit
+                            className="text-dark bg-light font-weight-bold"
                             size="sm"
-                            onClick={(e) => { setTitleReadOnly(false) ; e.target.select(); }}
-                            readOnly={titleReadOnly}
+                            title={columnTitle} 
+                            setTitle={setColumnTitle}
+                            updateTitle={updateColumnTitle}        
                         />
                     </div>
                     <Dropdown>
@@ -76,18 +64,18 @@ const BoardColumn = (props) => {
                 </Card.Header> 
                 <Card.Body style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll"}}>
                 <div style={{minHeight:"100%", display:"flex"}}>
-                <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>
-                    { (provided, snapshot) => (
-                        <TaskList
-                            ref={provided.innerRef}
-                            {...provided.droppableProps}
-                            isDraggingOver={snapshot.isDraggingOver}
-                        >
-                            { props.children }
-                            {provided.placeholder}
-                        </TaskList>
-                    )}
-                </Droppable>
+                    <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>
+                        { (provided, snapshot) => (
+                            <TaskList
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                isDraggingOver={snapshot.isDraggingOver}
+                            >
+                                { props.children }
+                                {provided.placeholder}
+                            </TaskList>
+                        )}
+                    </Droppable>
                 </div>
             </Card.Body>
         </Card>

@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
+import authService from './components/api-authorization/AuthorizeService';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 import AppContext from './components/AppContext';
@@ -13,7 +14,14 @@ import BoardView from './components/views/BoardView';
 import './custom.css'
 const signalRHub = new SignalRHub();
 export default () => {
- 
+  const ensureLogin = () => {
+    authService.getAccessToken()
+    .then(token => console.log(`ensureLogin getAccessToken succeeded: ${token}`))
+    .catch(e => console.log(`ensureLogin error: ${e}`))
+  }
+  React.useEffect(()=>{
+    ensureLogin();
+  },[])
   return (
     <AppContext.Provider value={{signalRHub}}>
       <Layout>

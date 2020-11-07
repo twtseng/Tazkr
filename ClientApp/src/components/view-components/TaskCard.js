@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
 import callBoardDataApi from '../api-board-data/BoardDataApi';
 import TaskDialog from './TaskDialog';
+import TitleEdit from './TitleEdit';
 
 const DragContainer = styled.div`
     margin-bottom: 8px;
@@ -12,16 +13,10 @@ const DragContainer = styled.div`
 
 const TaskCard = (props) => {
     const [showTaskDialog, setShowTaskDialog] = React.useState(false);
-
     const closeDialog = () => setShowTaskDialog(false);
     const showDialog = () => setShowTaskDialog(true);
-
-
     const [cardTitle, setCardTitle] = React.useState(props.Title)
-    const [titleReadOnly, setTitleReadOnly] = React.useState(true)
-
     const updateCardTitle = () => {
-        setTitleReadOnly(true);
         if (cardTitle !== props.Title) {
             callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle })
                 .then(() => {
@@ -29,13 +24,6 @@ const TaskCard = (props) => {
                     props.getBoard();
                 })
                 .catch((err) => console.log(`updateCardTitle failed, err = ${err}`));
-        }
-        document.getSelection().removeAllRanges();
-        document.activeElement.blur();  
-    }
-    const handleKeyPress = (event) => {
-        if(event.key === 'Enter'){
-            updateCardTitle();
         }
     }
     return (
@@ -51,18 +39,12 @@ const TaskCard = (props) => {
                     style={{border:"none", padding:"5px", border:"solid 1px black"}} 
                     onClick={showDialog} className="clickable">                       
                     <Card.Header className="bg-secondary text-light">
-                        <Form.Control
+                        <TitleEdit
                             className="text-dark bg-light font-weight-bold"
                             size="sm"
-                            name="taskTitle" 
-                            type="text" 
-                            value={cardTitle} 
-                            onChange={e => setCardTitle(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            onClick={(e) => { e.stopPropagation(); setTitleReadOnly(false); e.target.select();}}
-                            onMouseLeave={() => { updateCardTitle(); }}
-                            readOnly={titleReadOnly}
-                            style={titleReadOnly ? {backgroundColor:"transparent", border:"none"} : {}}
+                            title={cardTitle} 
+                            setTitle={setCardTitle}
+                            updateTitle={updateCardTitle}        
                         />
                     </Card.Header>
                     <Card.Body>
