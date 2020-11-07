@@ -1,17 +1,29 @@
 import React from 'react';
-import { Card, Form } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
 import callBoardDataApi from '../api-board-data/BoardDataApi';
 import TaskDialog from './TaskDialog';
 import TitleEdit from './TitleEdit';
 
-const DragContainer = styled.div`
+interface Props {
+    Index : number;
+    CardId: string;
+    HashCode: number;
+    Description: string;
+    Title: string;
+    getBoard: () => void;
+}
+
+type DragContainerStyleProp = {
+    isDragging: boolean
+}
+const DragContainer = styled.div<DragContainerStyleProp>`
     margin-bottom: 8px;
     background-color: ${props => (props.isDragging ? "darkgray" : "white")};
 `
 
-const TaskCard = (props) => {
+const TaskCard = (props:Props) => {
     const [showTaskDialog, setShowTaskDialog] = React.useState(false);
     const closeDialog = () => setShowTaskDialog(false);
     const showDialog = () => setShowTaskDialog(true);
@@ -30,13 +42,13 @@ const TaskCard = (props) => {
         <Draggable draggableId={props.CardId} index={props.Index}>
         {(provided, snapshot) => (
             <DragContainer
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                ref={provided.innerRef}
-                isDragging={snapshot.isDragging}
-            >
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+            isDragging={snapshot.isDragging}
+            >  
                 <Card
-                    style={{border:"none", padding:"5px", border:"solid 1px black"}} 
+                    style={{border:"solid 1px black", padding:"5px"}} 
                     onClick={showDialog} className="clickable">                       
                     <Card.Header className="bg-secondary text-light">
                         <TitleEdit

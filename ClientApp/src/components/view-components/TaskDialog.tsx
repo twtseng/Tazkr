@@ -5,11 +5,10 @@ import callBoardDataApi from '../api-board-data/BoardDataApi';
 interface Props {
     getBoard: () => void;
     closeDialog: () => void;
-    handleClose: () => void;
     Title: string;
     Description: string;
     showTaskDialog: boolean;
-    CardId: number;
+    CardId: string;
 }
 
 const TaskDialog = (props: Props) => {
@@ -39,7 +38,7 @@ const TaskDialog = (props: Props) => {
             });
     }
     return (
-        <Modal show={props.showTaskDialog} onHide={props.handleClose}>
+        <Modal show={props.showTaskDialog} onHide={props.closeDialog}>
             <Modal.Header closeButton>
             <Modal.Title>{props.Title}</Modal.Title>
             </Modal.Header>
