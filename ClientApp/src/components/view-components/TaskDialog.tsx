@@ -57,14 +57,12 @@ const TaskDialog = (props: Props) => {
                     </FormGroup>
                     <FormGroup>
                         <Form.Label>Description</Form.Label>
-                        <Form.Control  
-                            type="text" 
-                            name="description" 
-                            id="description" 
+                        <textarea className="form-control"
+                            rows={3}
                             placeholder="enter description" 
                             value={cardDescription}
                             onChange={e => setCardDescription(e.target.value)}
-                            />
+                            ></textarea>
                     </FormGroup>
                 </Form>
             </Modal.Body>

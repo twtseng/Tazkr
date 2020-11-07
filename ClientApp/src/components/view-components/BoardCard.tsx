@@ -3,8 +3,16 @@ import { useHistory } from "react-router-dom";
 import { Card } from 'react-bootstrap';
 import TitleEdit from './TitleEdit';
 import callBoardDataApi from '../api-board-data/BoardDataApi';
+import { User } from './TazkrObjects';
 
-const BoardCard = props => {
+interface Props {
+  Title: string;
+  BoardId: string;
+  getBoards: () => void;
+  CreatedBy: User;
+}
+
+const BoardCard = (props:Props) => {
     const history = useHistory();
     const [boardTitle, setBoardTitle] = React.useState(props.Title);
     const renameBoard = async () => {
@@ -32,7 +40,7 @@ const BoardCard = props => {
           />
         </Card.Header>
         <Card.Body>
-          <small>Creatr: {props.CreatedBy.email}</small>
+          <small>Owner: {props.CreatedBy.UserName}</small>
           <small>BoardId: {props.BoardId}</small>
         </Card.Body>
       </Card>

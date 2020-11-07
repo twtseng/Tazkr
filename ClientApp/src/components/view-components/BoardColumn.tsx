@@ -1,18 +1,27 @@
-import React from 'react'
-import { Card, Form, Dropdown } from 'react-bootstrap'
+import React, { FunctionComponent } from 'react'
+import { Card, Dropdown } from 'react-bootstrap'
 import {Droppable} from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import callBoardDataApi from '../api-board-data/BoardDataApi';
 import TitleEdit from './TitleEdit';
 
-const TaskList = styled.div`
+type TaskListStyleProp = {
+    isDraggingOver: boolean
+}
+const TaskList = styled.div<TaskListStyleProp>`
     padding: 8px;
     flex-grow: 1;
     background-color: ${props => (props.isDraggingOver ? 'lightgray' : 'white')};
     border-radius: 10px;
 `;
-
-const BoardColumn = (props) => {
+interface Props {
+    Index : number;
+    ColumnId: string;
+    HashCode: number;
+    Title: string;
+    getBoard: () => void;
+}
+const BoardColumn: FunctionComponent<Props> = (props) => {
     const [columnTitle, setColumnTitle] = React.useState(props.Title)
     const updateColumnTitle = () => {
         console.log(`updateColumnTitle: columnTitle=[${columnTitle}] props.Title:[${props.Title}]`)
@@ -50,7 +59,7 @@ const BoardColumn = (props) => {
                     </div>
                     <Dropdown>
                         <Dropdown.Toggle className="text-light" variant="muted" id="dropdown-basic">
-                            <small>Column actions</small>
+                            <small>...</small>
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             <Dropdown.Item onClick={addCardToColumn}><small>Add Card</small></Dropdown.Item>

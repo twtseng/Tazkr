@@ -9,13 +9,7 @@ interface Props {
     size: "sm" | "lg";
 }
 
-const TitleEdit: React.FC<Props> = ({
-    updateTitle,
-    title,
-    setTitle,
-    className,
-    size
-}) => {
+const TitleEdit: React.FC<Props> = (props: Props) => {
     const [titleReadOnly, setTitleReadOnly] = React.useState<boolean>(true);
     const handleKeyPress = (event: any) => {
         if(event.key === 'Enter'){
@@ -24,7 +18,7 @@ const TitleEdit: React.FC<Props> = ({
     }
   
     const sendUpdateTitleRequest = () => {
-        updateTitle();
+        props.updateTitle();
         setTitleReadOnly(true);
         const selection = document.getSelection();
         if (selection !== null) {
@@ -46,11 +40,11 @@ const TitleEdit: React.FC<Props> = ({
     }
     return (
         <Form.Control
-            className={className}
-            size={size}
+            className={props.className}
+            size={props.size}
             type="text"
-            value={title} 
-            onChange={e => setTitle(e.target.value)}
+            value={props.title} 
+            onChange={e => props.setTitle(e.target.value)}
             onKeyPress={handleKeyPress}
             onClick={onClick}
             onMouseLeave={sendUpdateTitleRequest}

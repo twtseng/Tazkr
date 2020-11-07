@@ -3,8 +3,16 @@ import { Form, Dropdown } from 'react-bootstrap'
 import { useHistory } from "react-router-dom";
 import callBoardDataApi from '../api-board-data/BoardDataApi';
 import TitleEdit from './TitleEdit';
+import { Board } from './TazkrObjects';
 
-const BoardStatusBar = (props) => {
+interface Props {
+  board : Board;
+  boardTitle: string;
+  setBoardTitle: (title:string) => void;
+  getBoard: () => void;
+}
+
+const BoardStatusBar = (props: Props) => {
     const history = useHistory();
 
     const addColumn = async () => {
@@ -23,7 +31,7 @@ const BoardStatusBar = (props) => {
           .catch((err) => console.log(`renameBoard failed, err = ${err}`));
         }
       }
-      const handleBoardTitleKeyPress = (event) => {
+      const handleBoardTitleKeyPress = (event: any) => {
         if(event.key === 'Enter'){
           renameBoard();
         }

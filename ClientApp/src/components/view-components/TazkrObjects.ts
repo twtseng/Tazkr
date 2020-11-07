@@ -1,30 +1,33 @@
-export interface User {
+export type User = {
     Id: string;
     UserName: string;
     Email: string;
 }
-export interface Card {
-    Id: string;
-    UpdateHashCode: number;
-    Title: string;
-    Description: string;
-}
-
-export interface Column {
+export type TaskObj = {
     Id: string;
     UpdateHashCode: number;
     Title: string;
     Description: string;
     Index: number;
-    Cards: [Card];
 }
 
-export interface Board {
+export type Column = {
+    Id: string;
+    UpdateHashCode: number;
+    Title: string;
+    Description: string;
+    Index: number;
+    Cards: TaskObj[];
+}
+
+export type Board = {
     Id: string;
     UpdateHashCode: number;
     Title: string;
     CreatedDateUTC: Date;
-    Columns: [Column];
-    BoardUsers: [User];
+    CreatedBy: User;
+    Columns: Column[];
+    BoardUsers: User[];
+    PermissionLevel: "Viewer" | "User" | "Owner";
 }
 

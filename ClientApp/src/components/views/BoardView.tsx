@@ -9,23 +9,32 @@ import TaskCard from '../view-components/TaskCard';
 import BoardColumn from '../view-components/BoardColumn';
 import UsersCard from '../view-components/UsersCard';
 import BoardStatusBar from '../view-components/BoardStatusBar';
+import { Board, Column, TaskObj } from '../view-components/TazkrObjects';
+
 
 const BoardView = () => {
-  const { boardId } = useParams();
-  const initialBoardState = {
+  interface ParamTypes {
+    boardId: string
+  }
+  const { boardId } = useParams<ParamTypes>();
+  const initialBoardState:Board = {
+    Id:"",
     Columns:[], 
-    CreatedBy:{UserName:""}, 
+    CreatedBy:{UserName:"", Id:"", Email:""}, 
     BoardUsers:[],
-    PermissionLevel:"Viewer"
+    PermissionLevel:"Viewer",
+    UpdateHashCode:0,
+    CreatedDateUTC: new Date(),
+    Title:""
   };
   const [board, setBoard] = React.useState(initialBoardState);
   const [boardTitle, setBoardTitle] = React.useState("");
-  const { signalRHub } = React.useContext(AppContext);
+  //const { signalRHub } = React.useContext(AppContext);
 
   const getBoard = async () => {
     const boardData = await callBoardDataApi(`BoardData/GetBoard/${boardId}`,"GET");
-    boardData.Columns.sort((a,b) => { return a.Index - b.Index });
-    boardData.Columns.forEach(col => {
+    boardData.Columns.sort((a:Column,b:Column) => { return a.Index - b.Index });
+    boardData.Columns.forEach((col:Column) => {
       col.Cards.sort((a,b) => { return a.Index - b.Index });
     });
     setBoard(boardData);
@@ -63,9 +72,8 @@ const BoardView = () => {
           </Card.Body> 
         </Card>
       </div>
-      <Card className="col-2 bg-light p-2">
+      <Card className="col-2 bg-light p-0">
         <Card className="mb-2">
-          <Card.Header className="bg-secondary text-light">BoardTitle: {boardTitle}</Card.Header>
           <Card.Header className="bg-secondary text-light">Owner</Card.Header>
           <Card.Body>
             <small>{board.CreatedBy.UserName}</small>
