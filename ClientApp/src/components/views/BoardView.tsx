@@ -54,7 +54,8 @@ const BoardView = () => {
             <BoardStatusBar board={board} getBoard={getBoard} boardTitle={boardTitle} setBoardTitle={setBoardTitle} />
           </Card.Header>
           <Card.Body
-            className="d-flex flex-nowrap bg-light scrolling-wrapper">
+            className="d-flex flex-nowrap bg-light"
+            style={{overflowX:"scroll"}}>
             {board.Columns.map(col => 
               <BoardColumn key={col.UpdateHashCode} HashCode={col.UpdateHashCode} Title={col.Title} Index={col.Index} ColumnId={col.Id} getBoard={getBoard}>
                   {col.Cards.map((t, index) =>

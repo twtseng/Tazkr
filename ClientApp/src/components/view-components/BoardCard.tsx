@@ -40,8 +40,10 @@ const BoardCard = (props:Props) => {
           />
         </Card.Header>
         <Card.Body>
-          <small>Owner: {props.CreatedBy.UserName}</small>
-          <small>BoardId: {props.BoardId}</small>
+          <small>
+            <div>Owner</div>
+            <div>{props.CreatedBy.UserName}</div>
+          </small>
         </Card.Body>
       </Card>
     )

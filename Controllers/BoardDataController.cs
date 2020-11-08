@@ -339,14 +339,8 @@ namespace Tazkr.Controllers
             {
                 ApplicationUser user = this.GetApplicationUser();
                 Card card = _dbContext.Cards.Find(cardId);
-                if (!string.IsNullOrWhiteSpace(newName))
-                {
-                    card.Title = newName;
-                }
-                if (!string.IsNullOrWhiteSpace(newDescription))
-                {
-                    card.Description = newDescription;
-                }                
+                card.Title = newName;
+                card.Description = newDescription;             
                 _dbContext.Cards.Update(card);
                 _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.UpdateCard cardId={cardId}, newName={newName}";

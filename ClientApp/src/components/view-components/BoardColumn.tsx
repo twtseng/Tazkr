@@ -13,6 +13,7 @@ const TaskList = styled.div<TaskListStyleProp>`
     flex-grow: 1;
     background-color: ${props => (props.isDraggingOver ? 'lightgray' : 'white')};
     border-radius: 10px;
+    overflow-x: hidden;
 `;
 interface Props {
     Index : number;
@@ -67,11 +68,8 @@ const BoardColumn: FunctionComponent<Props> = (props) => {
                         </Dropdown.Menu>
                     </Dropdown>
                 </div>
-                </Card.Header> 
-                <Card.Header>
-                    HashCode: {props.HashCode}
-                </Card.Header> 
-                <Card.Body style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll"}}>
+                </Card.Header>  
+                <Card.Body style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll", overflowX:"clip"}}>
                 <div style={{minHeight:"100%", display:"flex"}}>
                     <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>
                         { (provided, snapshot) => (
