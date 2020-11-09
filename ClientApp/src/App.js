@@ -13,10 +13,22 @@ import BoardView from './components/views/BoardView';
 
 import './custom.css'
 const signalRHub = new SignalRHub();
+const fooHandler = (arg1, arg2, arg3, arg4 )=> {
+  console.log( `fooHandler: ${JSON.stringify(arg1)}`);
+}
+signalRHub.setMethod("FOO", fooHandler);
+console.log(`After calling setMethod, signalRHub: ${signalRHub.hub.connectionState}`);
+
 export default () => {
   const ensureLogin = () => {
     authService.getAccessToken()
-    .then(token => console.log(`ensureLogin getAccessToken succeeded: ${token}`))
+    .then(token => {
+      console.log(`ensureLogin getAccessToken succeeded`);
+      signalRHub.startHub(token)
+      .then(() => 
+        console.log(`Ensure login signalRHub connectionState: ${signalRHub.hub.connectionState}`)
+        );
+    })
     .catch(e => console.log(`ensureLogin error: ${e}`))
   }
   React.useEffect(()=>{

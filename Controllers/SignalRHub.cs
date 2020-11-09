@@ -43,6 +43,20 @@ namespace Tazkr.Controllers
             ApplicationUser appUser = DbContext.Users.Find(keyValues:token.Subject); 
             return appUser;       
         }
+        public override async Task OnConnectedAsync()
+        {
+            // Add your own code here.
+            // For example: in a chat application, record the association between
+            // the current connection ID and user name, and mark the user as online.
+            // After the code in this method completes, the client is informed that
+            // the connection is established; for example, in a JavaScript client,
+            // the start().done callback is executed.
+            Logger.LogInformation($"=== SignalRHub.OnConnectedAsync ===");
+            await base.OnConnectedAsync();
+            await Clients.Caller.SendAsync("ServerMessage", "FOO","This is my message from the server");
+            List<dynamic> users = this.DbContext.Users.Select(x => x.GetServerResponsePayload()).ToList();
+            await Clients.Caller.SendAsync("ServerMessage", "UpdateAppUsers", users);
+        }
         // public async Task GetBoards(string accessToken)
         // {
         //     Logger.LogInformation($"=== SignalRHub.GetBoards ===");
