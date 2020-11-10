@@ -6,7 +6,7 @@ interface Props {
     title: string;
     setTitle: (title: string) => void;
     className: string;
-    size: "sm" | "lg";
+    size?: "sm" | "lg";
 }
 
 const TitleEdit: React.FC<Props> = (props: Props) => {

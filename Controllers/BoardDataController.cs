@@ -28,6 +28,15 @@ namespace Tazkr.Controllers
             _dbContext.Users.Update(appUser);
             return appUser;       
         }
+        public Board.PermissionLevels GetUserPermissionLevelForBoard(string boardId, ApplicationUser user)
+        {
+            Board board = _dbContext.Boards
+            .Include(board => board.BoardUsers)
+            .ThenInclude(user => user.ApplicationUser)
+            .Where(board => board.Id == boardId)
+            .FirstOrDefault();
+            return board.GetPermissionLevelForUser(user);
+        }
         public BoardDataController(ILogger<BoardDataController> logger, ApplicationDbContext dbContext)
         {
             _logger = logger;
@@ -60,20 +69,9 @@ namespace Tazkr.Controllers
             dynamic boardPayload = board.GetServerResponsePayload();
 
             //Set permission level for this user
-            if (board.CreatedBy.Id == user.Id)
-            {
-                boardPayload.PermissionLevel = Board.PermissionLevels.Owner.ToString();
-            }
-            else if (board.BoardUsers.Exists(x => x.ApplicationUserId == user.Id)) 
-            {
-                boardPayload.PermissionLevel = Board.PermissionLevels.User.ToString();
-            }
-            else
-            {
-                boardPayload.PermissionLevel = Board.PermissionLevels.Viewer.ToString();
-            }
+            boardPayload.PermissionLevel = board.GetPermissionLevelForUser(user).ToString();
 
-            return board.GetServerResponsePayload();
+            return boardPayload;
         }
 
         [HttpPut("CreateBoard")]
@@ -120,7 +118,7 @@ namespace Tazkr.Controllers
             {
                 string errorString = $"BoardDataController.DeleteBoard User does not have permission to delete board:{boardId}";
                 _logger.LogInformation(errorString);
-                return BadRequest(new {status=errorString});                
+                return Unauthorized(new {status=errorString});                
             }
             else
             {
@@ -156,11 +154,17 @@ namespace Tazkr.Controllers
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
+                if (GetUserPermissionLevelForBoard(boardId, user) != Board.PermissionLevels.Owner)
+                {
+                    string errorString = $"BoardDataController.RenameBoard(boardId:{boardId}) by user {user.UserName} access denied";
+                     _logger.LogInformation(errorString);
+                    return this.Unauthorized(new {status=errorString});
+                }
                 Board board = _dbContext.Boards.Find(boardId);
+                string status = $"BoardDataController.RenameBoard(boardId:{boardId}), newName={newName}";
                 board.Title = newName;
                 _dbContext.Boards.Update(board);
                 _dbContext.SaveChangesForUser(user);
-                string status = $"BoardDataController.RenameBoard(boardId:{boardId}), newName={newName}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }

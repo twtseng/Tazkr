@@ -16,9 +16,9 @@ namespace Tazkr.Models
     public class Board : BaseEntity
     {
         public enum PermissionLevels {
-            Owner, // Full permissions on the board
-            User, // Can edit and move items but not delete
-            Viewer // Can view only and not modify data
+            Owner=1, // Full permissions on the board
+            User=2, // Can edit and move items but not delete
+            Viewer=3 // Can view only and not modify data
         }
         public string Title { get; set; }
         public string CreatedById { get; set; }
@@ -38,6 +38,22 @@ namespace Tazkr.Models
             obj.Columns = this.Columns == null ? new List<Object>() : this.Columns.Select(x => x.GetServerResponsePayload()).ToList();
             obj.BoardUsers = this.BoardUsers == null ? new List<Object>() : this.BoardUsers.Select(x => x.ApplicationUser.GetServerResponsePayload()).ToList();
             return obj;
+        }
+
+        public PermissionLevels GetPermissionLevelForUser(ApplicationUser user)
+        {
+            if (this.CreatedById == user.Id)
+            {
+                return PermissionLevels.Owner;
+            }
+            else if (this.BoardUsers.Exists(x => x.ApplicationUserId == user.Id)) 
+            {
+                return Board.PermissionLevels.User;
+            }
+            else
+            {
+               return Board.PermissionLevels.Viewer;
+            }
         }
     }
 }

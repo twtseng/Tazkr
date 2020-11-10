@@ -9,7 +9,7 @@ import TaskCard from '../view-components/TaskCard';
 import BoardColumn from '../view-components/BoardColumn';
 import UsersCard from '../view-components/UsersCard';
 import BoardStatusBar from '../view-components/BoardStatusBar';
-import { Board, Column, TaskObj } from '../view-components/TazkrObjects';
+import { Board, Column, BoardPermissionLevel } from '../view-components/TazkrObjects';
 
 
 const BoardView = () => {
@@ -22,14 +22,14 @@ const BoardView = () => {
     Columns:[], 
     CreatedBy:{UserName:"", Id:"", Email:"", LastRequestTimeUTC: new Date()}, 
     BoardUsers:[],
-    PermissionLevel:"Viewer",
+    PermissionLevel:BoardPermissionLevel.Viewer,
     UpdateHashCode:0,
     CreatedDateUTC: new Date(),
     Title:""
   };
   const [board, setBoard] = React.useState(initialBoardState);
   const [boardTitle, setBoardTitle] = React.useState("");
-  //const { signalRHub } = React.useContext(AppContext);
+  const signalRHub = React.useContext(AppContext);
 
   const getBoard = async () => {
     const boardData = await callBoardDataApi(`BoardData/GetBoard/${boardId}`,"GET");
@@ -51,7 +51,7 @@ const BoardView = () => {
       <div className="col-10 h-100"> 
         <Card className="d-flex flex-column bg-light h-100">
           <Card.Header className="bg-secondary text-light">   
-            <BoardStatusBar board={board} getBoard={getBoard} boardTitle={boardTitle} setBoardTitle={setBoardTitle} />
+            <BoardStatusBar board={board} getBoard={getBoard} boardTitle={boardTitle} setBoardTitle={setBoardTitle} permissionLevel={board.PermissionLevel} />
           </Card.Header>
           <Card.Body
             className="d-flex flex-nowrap bg-light"

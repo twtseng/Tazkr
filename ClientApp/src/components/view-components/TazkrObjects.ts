@@ -21,6 +21,12 @@ export type Column = {
     Cards: TaskObj[];
 }
 
+export enum BoardPermissionLevel {
+    Owner = "Owner",
+    Viewer = "Viewer",
+    User = "User"
+};
+
 export type Board = {
     Id: string;
     UpdateHashCode: number;
@@ -29,6 +35,6 @@ export type Board = {
     CreatedBy: User;
     Columns: Column[];
     BoardUsers: User[];
-    PermissionLevel: "Viewer" | "User" | "Owner";
+    PermissionLevel: BoardPermissionLevel;
 }
 
