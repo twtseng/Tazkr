@@ -2,14 +2,14 @@ import React from 'react';
 import {  Button, Card } from 'react-bootstrap'
 import AppContext from '../AppContext';
 import callBoardDataApi from '../api-board-data/BoardDataApi';
-import { SignalRHub, HubMethod } from '../api-board-data/SignalRHub';
+import { HubMethod } from '../api-board-data/SignalRHub';
 import BoardCard from '../view-components/BoardCard';
 import { Board, User } from '../view-components/TazkrObjects';
 
 const BoardsView = () => {
 
   const [boards, setBoards] = React.useState([]);
-  const { signalRHub } = React.useContext(AppContext);
+  const signalRHub = React.useContext(AppContext);
   const getBoards = async () => {
       const boardsData = await callBoardDataApi("BoardData/GetBoards","GET");
       boardsData.sort((a:Board,b:Board) => { return (new Date(a.CreatedDateUTC)) > (new Date(b.CreatedDateUTC)) ? 1 : -1 });
@@ -48,9 +48,11 @@ const BoardsView = () => {
       <Card className="col-2 bg-light">
         <Card.Body>
           <h6>Users</h6>
+          <small>
           {boardUsers.map((x: User) =>
-            <div>{x.UserName}</div>
+            <div key={x.Id}>{x.UserName}</div>
           )}
+          </small>
         </Card.Body>
       </Card>
     </div>

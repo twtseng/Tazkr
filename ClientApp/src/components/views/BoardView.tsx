@@ -20,7 +20,7 @@ const BoardView = () => {
   const initialBoardState:Board = {
     Id:"",
     Columns:[], 
-    CreatedBy:{UserName:"", Id:"", Email:""}, 
+    CreatedBy:{UserName:"", Id:"", Email:"", LastRequestTimeUTC: new Date()}, 
     BoardUsers:[],
     PermissionLevel:"Viewer",
     UpdateHashCode:0,

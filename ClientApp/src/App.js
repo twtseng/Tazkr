@@ -13,11 +13,6 @@ import BoardView from './components/views/BoardView';
 
 import './custom.css'
 const signalRHub = new SignalRHub();
-const fooHandler = (arg1, arg2, arg3, arg4 )=> {
-  console.log( `fooHandler: ${JSON.stringify(arg1)}`);
-}
-signalRHub.setMethod("FOO", fooHandler);
-console.log(`After calling setMethod, signalRHub: ${signalRHub.hub.connectionState}`);
 
 export default () => {
   const ensureLogin = () => {
@@ -35,7 +30,7 @@ export default () => {
     ensureLogin();
   },[])
   return (
-    <AppContext.Provider value={{signalRHub}}>
+    <AppContext.Provider value={signalRHub}>
       <Layout>
         <AuthorizeRoute exact path='/' component={BoardsView} />
         <AuthorizeRoute exact path='/boards' component={BoardsView} />

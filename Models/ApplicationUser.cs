@@ -18,6 +18,7 @@ namespace Tazkr.Models
             obj.UserName = this.UserName;
             obj.Email = this.Email;
             obj.Id = this.Id;
+            obj.LastRequestTimeUTC = this.LastRequestTimeUTC;
             return obj;
         }
     }

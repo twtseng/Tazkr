@@ -2,6 +2,7 @@ export type User = {
     Id: string;
     UserName: string;
     Email: string;
+    LastRequestTimeUTC: Date;
 }
 export type TaskObj = {
     Id: string;

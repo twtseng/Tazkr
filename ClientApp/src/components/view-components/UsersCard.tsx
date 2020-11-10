@@ -40,7 +40,7 @@ const UsersCard = (props: Props) => {
         </Card.Body>
         <Card.Body>
             {props.board.BoardUsers.map(x => (
-                <div><small>{x.UserName}</small></div>
+                <div key={x.Id}><small>{x.UserName}</small></div>
             ))}
         </Card.Body>
       </Card>
