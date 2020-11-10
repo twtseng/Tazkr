@@ -17,12 +17,11 @@ const signalRHub = new SignalRHub();
 export default () => {
   const ensureLogin = () => {
     authService.getAccessToken()
-    .then(token => {
+    .then((token:string | null) => {
       console.log(`ensureLogin getAccessToken succeeded`);
-      signalRHub.startHub(token)
-      .then(() => 
-        console.log(`Ensure login signalRHub connectionState: ${signalRHub.hub.connectionState}`)
-        );
+      if (token !== null) {
+        signalRHub.startHub(token);
+      }
     })
     .catch(e => console.log(`ensureLogin error: ${e}`))
   }
