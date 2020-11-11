@@ -9,6 +9,7 @@ import TitleEdit from './TitleEdit';
 interface Props {
     Index : number;
     CardId: string;
+    BoardId: string;
     HashCode: number;
     Description: string;
     Title: string;
@@ -30,7 +31,7 @@ const TaskCard = (props:Props) => {
     const [cardTitle, setCardTitle] = React.useState(props.Title)
     const updateCardTitle = () => {
         if (cardTitle !== props.Title) {
-            callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle })
+            callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle, Param3: null, Param4: props.BoardId })
                 .then(() => {
                     console.log("updateCardTitle completed");
                     props.getBoard();
@@ -71,6 +72,7 @@ const TaskCard = (props:Props) => {
                     showTaskDialog={showTaskDialog} 
                     closeDialog={closeDialog} 
                     getBoard={props.getBoard} 
+                    BoardId={props.BoardId}
                     />
             </DragContainer>
         )}

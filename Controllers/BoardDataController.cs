@@ -220,6 +220,12 @@ namespace Tazkr.Controllers
                 try
                 {
                     ApplicationUser user = this.GetApplicationUser();
+                    if (GetUserPermissionLevelForBoard(column.BoardId, user) != Board.PermissionLevels.Owner)
+                    {
+                        string errorString = $"BoardDataController.DeleteColumn(columnId:{columnId}) by user {user.UserName} access denied";
+                        _logger.LogInformation(errorString);
+                        return this.Unauthorized(new {status=errorString});
+                    }
                     foreach(Card card in column.Cards)
                     {
                         _dbContext.Cards.Remove(card);
@@ -247,6 +253,13 @@ namespace Tazkr.Controllers
             {
                 ApplicationUser user = this.GetApplicationUser();
                 Column column = _dbContext.Columns.Find(columnId);
+                Board.PermissionLevels permLevel = GetUserPermissionLevelForBoard(column.BoardId, user);
+                if (permLevel != Board.PermissionLevels.Owner && permLevel != Board.PermissionLevels.User)
+                {
+                    string errorString = $"BoardDataController.RenameColumn(columnId:{columnId}) by user {user.UserName} access denied";
+                    _logger.LogInformation(errorString);
+                    return this.Unauthorized(new {status=errorString});
+                }
                 column.Title = payload.Param2;
                 _dbContext.Columns.Update(column);
                 _dbContext.SaveChangesForUser(user);
@@ -266,9 +279,17 @@ namespace Tazkr.Controllers
         {
             string columnId = payload.Param1;
             string cardTitle = payload.Param2;
+            string boardId = payload.Param3;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
+                Board.PermissionLevels permLevel = GetUserPermissionLevelForBoard(boardId, user);
+                if (permLevel != Board.PermissionLevels.Owner && permLevel != Board.PermissionLevels.User)
+                {
+                    string errorString = $"BoardDataController.AddCardToColumn(columnId:{columnId}) by user {user.UserName} access denied";
+                    _logger.LogInformation(errorString);
+                    return this.Unauthorized(new {status=errorString});
+                }
                 List<Card> cards = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.Id == columnId).Cards.ToList();
                 Card card = new Card();
                 card.Title = cardTitle;
@@ -297,6 +318,13 @@ namespace Tazkr.Controllers
             {
                 ApplicationUser user = this.GetApplicationUser();
                 Column column = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.Id == columnId);
+                Board.PermissionLevels permLevel = GetUserPermissionLevelForBoard(column.BoardId, user);
+                if (permLevel != Board.PermissionLevels.Owner && permLevel != Board.PermissionLevels.User)
+                {
+                    string errorString = $"BoardDataController.MoveCardToColumnAtIndex(columnId:{columnId}) by user {user.UserName} access denied";
+                    _logger.LogInformation(errorString);
+                    return this.Unauthorized(new {status=errorString});
+                }
                 List<Card> cards = column.Cards.OrderBy(x => x.Index).ToList();
                 // First remove the target card from list (if it exists)
                 int existingIndex = -1;
@@ -339,21 +367,37 @@ namespace Tazkr.Controllers
             string cardId = payload.Param1;
             string newName = payload.Param2;
             string newDescription = payload.Param3;
+            string boardId = payload.Param4;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
+                Board.PermissionLevels permLevel = GetUserPermissionLevelForBoard(boardId, user);
+                if (permLevel != Board.PermissionLevels.Owner && permLevel != Board.PermissionLevels.User)
+                {
+                    string errorString = $"BoardDataController.UpdateCard(boardId:{boardId}) by user {user.UserName} access denied";
+                    _logger.LogInformation(errorString);
+                    return this.Unauthorized(new {status=errorString});
+                }
                 Card card = _dbContext.Cards.Find(cardId);
-                card.Title = newName;
-                card.Description = newDescription;             
+                if (payload.Param2 != null)
+                {
+                     _logger.LogInformation($"BoardDataController.UpdateCard setting Title to {payload.Param2}");
+                    card.Title = payload.Param2;
+                }
+                if (payload.Param3 != null)
+                {
+                    _logger.LogInformation($"BoardDataController.UpdateCard setting Description to {payload.Param3}");
+                    card.Description = payload.Param3;
+                }         
                 _dbContext.Cards.Update(card);
                 _dbContext.SaveChangesForUser(user);
-                string status = $"BoardDataController.UpdateCard cardId={cardId}, newName={newName}";
+                string status = $"BoardDataController.UpdateCard boardId={boardId}, newName={newName}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
-                string exceptionString = $"BoardDataController.UpdateCard cardId={cardId}, newName={newName} exception occurred: {ex.ToString()}";
+                string exceptionString = $"BoardDataController.UpdateCard boardId={boardId}, newName={newName} exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});                
             }
@@ -392,6 +436,12 @@ namespace Tazkr.Controllers
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
+                if (GetUserPermissionLevelForBoard(boardId, user) != Board.PermissionLevels.Owner)
+                {
+                    string errorString = $"BoardDataController.AddUserToBoard(boardId:{boardId}) by user {user.UserName} access denied";
+                     _logger.LogInformation(errorString);
+                    return this.Unauthorized(new {status=errorString});
+                }
                 if (_dbContext.BoardUsers.Where(x => x.BoardId == boardId && x.ApplicationUserId == userId).ToList().Count > 0)
                 {
                     string error = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId} already exists";
@@ -411,19 +461,6 @@ namespace Tazkr.Controllers
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});
             }            
-        }
-        [HttpGet("test")]
-        public IEnumerable<dynamic> Test()
-        {
-            List<dynamic> results = new List<dynamic>();
-            for(int i=0; i<10; ++i)
-            {
-                dynamic newObj = new ExpandoObject();
-                newObj.Field1 = $"Field1Value {i}";
-                newObj.Field2 = $"Field2Value {i}";
-                results.Add(newObj);
-            }
-            return results;
         }
     }
 }

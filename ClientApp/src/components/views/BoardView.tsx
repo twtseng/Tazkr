@@ -57,7 +57,7 @@ const BoardView = () => {
             className="d-flex flex-nowrap bg-light"
             style={{overflowX:"scroll"}}>
             {board.Columns.map(col => 
-              <BoardColumn key={col.UpdateHashCode} HashCode={col.UpdateHashCode} Title={col.Title} Index={col.Index} ColumnId={col.Id} getBoard={getBoard}>
+              <BoardColumn key={col.UpdateHashCode} HashCode={col.UpdateHashCode} Title={col.Title} Index={col.Index} ColumnId={col.Id} getBoard={getBoard} BoardId={boardId}>
                   {col.Cards.map((t, index) =>
                     <TaskCard 
                       key={t.UpdateHashCode}
@@ -66,7 +66,9 @@ const BoardView = () => {
                       CardId={t.Id} 
                       Index={index} 
                       Description={t.Description} 
-                      getBoard={getBoard}/>
+                      getBoard={getBoard}
+                      BoardId={boardId}
+                      />
                   )}
               </BoardColumn>
             )}

@@ -10,7 +10,7 @@ using Tazkr.Data;
 namespace Tazkr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201105233128_TazkrSchema")]
+    [Migration("20201111001019_TazkrSchema")]
     partial class TazkrSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

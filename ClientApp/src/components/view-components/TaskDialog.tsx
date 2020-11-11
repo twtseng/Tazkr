@@ -9,13 +9,14 @@ interface Props {
     Description: string;
     showTaskDialog: boolean;
     CardId: string;
+    BoardId: string;
 }
 
 const TaskDialog = (props: Props) => {
     const [cardTitle, setCardTitle] = React.useState(props.Title);
     const [cardDescription, setCardDescription] = React.useState(props.Description);
     const updateCard = () => {
-        callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle, Param3: cardDescription })
+        callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle, Param3: cardDescription, Param4: props.BoardId })
             .then(() => {
                 console.log("updateCard completed");
                 props.getBoard();

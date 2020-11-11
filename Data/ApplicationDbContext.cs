@@ -29,6 +29,10 @@ namespace Tazkr.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(user => user.BoardsCreated)
+                .WithOne(board => board.CreatedBy);
+                
             modelBuilder.Entity<BoardUser>()
                 .HasKey(boardUser => new { boardUser.ApplicationUserId, boardUser.BoardId });
         }

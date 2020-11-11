@@ -20,6 +20,7 @@ interface Props {
     ColumnId: string;
     HashCode: number;
     Title: string;
+    BoardId: string;
     getBoard: () => void;
 }
 const BoardColumn: FunctionComponent<Props> = (props) => {
@@ -38,7 +39,7 @@ const BoardColumn: FunctionComponent<Props> = (props) => {
         props.getBoard();
       }
     const addCardToColumn = () => {   
-        callBoardDataApi(`BoardData/AddCardToColumn`,"PUT",{ Param1: props.ColumnId, Param2: "New Task" })
+        callBoardDataApi(`BoardData/AddCardToColumn`,"PUT",{ Param1: props.ColumnId, Param2: "New Task", Param3: props.BoardId })
         .then(() => {
             console.log("addCardToColumn completed");
             props.getBoard();
