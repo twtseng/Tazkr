@@ -21,7 +21,7 @@ namespace Tazkr.Models
         public Priority Pri_Level { get; set; }
         public string ColumnId { get; set; }
         public Column Column { get; set; }
-        public override dynamic GetServerResponsePayload()
+        public override dynamic GetServerResponsePayload(ApplicationUser user)
         {
             dynamic obj = new ExpandoObject();
             obj.Id = this.Id;

@@ -17,14 +17,14 @@ namespace Tazkr.Models
         public string BoardId { get; set; }
         public Board Board { get; set; }
         public List<Card> Cards { get; set; }
-        public override dynamic GetServerResponsePayload()
+        public override dynamic GetServerResponsePayload(ApplicationUser user)
         {
             dynamic obj = new ExpandoObject();
             obj.Id = this.Id;
             obj.UpdateHashCode = this.UpdateHashCode;
             obj.Index = this.Index;
             obj.Title = this.Title;
-            obj.Cards = this.Cards == null ? new List<Object>() : this.Cards.Select(x => x.GetServerResponsePayload()).ToList();
+            obj.Cards = this.Cards == null ? new List<Object>() : this.Cards.Select(x => x.GetServerResponsePayload(user)).ToList();
             return obj;
         }
     }

@@ -40,8 +40,9 @@ namespace Tazkr.Models
         /// <summary>
         /// Return a JSON friendly subset of this object to the client app
         /// Used to reduce the payload and avoid JSON encoding issues such as circular references
+        /// Payload is crafted according to the permissions of the user requesting it
         /// </summary>
-        abstract public dynamic GetServerResponsePayload(); 
+        abstract public dynamic GetServerResponsePayload(ApplicationUser user); 
     }
 }
 

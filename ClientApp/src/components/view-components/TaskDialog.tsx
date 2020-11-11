@@ -28,7 +28,7 @@ const TaskDialog = (props: Props) => {
             });
     }
     const deleteCard = () => {
-        callBoardDataApi(`BoardData/DeleteCard`,"DELETE",{ Param1: props.CardId })
+        callBoardDataApi(`BoardData/DeleteCard`,"DELETE",{ Param1: props.CardId, Param2: props.BoardId })
             .then(() => {
                 console.log("deleteCard completed");
                 props.getBoard();

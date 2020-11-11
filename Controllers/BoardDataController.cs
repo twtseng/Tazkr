@@ -42,16 +42,20 @@ namespace Tazkr.Controllers
             _logger = logger;
             _dbContext = dbContext;
         }
-
+        /// <summary>
+        /// Get list of minimum board data for displaying the list of boards (no column and card data)
+        /// </summary>
         [HttpGet("GetBoards")]
         public IEnumerable<Object> GetBoards()
         {
+            ApplicationUser user = this.GetApplicationUser();
             return _dbContext.Boards
             .Include(board => board.CreatedBy)
-            .Include(board => board.Columns)
-            .ThenInclude(col => col.Cards)
-            .Select(board => board.GetServerResponsePayload()).ToList();
+            .Select(board => board.GetMinimumServerResponsePayload(user)).ToList();
         }
+        /// <summary>
+        /// Get full data for a single board
+        /// </summary>
         [HttpGet("GetBoard/{boardId}")]
         public Object GetBoard(string boardId)
         {
@@ -66,12 +70,7 @@ namespace Tazkr.Controllers
             .Where(board => board.Id == boardId)
             .FirstOrDefault();
 
-            dynamic boardPayload = board.GetServerResponsePayload();
-
-            //Set permission level for this user
-            boardPayload.PermissionLevel = board.GetPermissionLevelForUser(user).ToString();
-
-            return boardPayload;
+            return board.GetServerResponsePayload(user);
         }
 
         [HttpPut("CreateBoard")]
@@ -406,9 +405,18 @@ namespace Tazkr.Controllers
         public IActionResult DeleteCard(ClientRequestPayload payload)
         {
             string cardId = payload.Param1;
+            string boardId = payload.Param2;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
+                Board.PermissionLevels permLevel = GetUserPermissionLevelForBoard(boardId, user);
+                if (permLevel != Board.PermissionLevels.Owner)
+                //if (permLevel != Board.PermissionLevels.Owner && permLevel != Board.PermissionLevels.User)
+                {
+                    string errorString = $"BoardDataController.DeleteCard(boardId:{boardId}) by user {user.UserName} access denied";
+                    _logger.LogInformation(errorString);
+                    return this.Unauthorized(new {status=errorString});
+                }
                 Card card = _dbContext.Cards.Find(cardId);
                 _dbContext.Cards.Remove(card);
                 _dbContext.SaveChangesForUser(user);

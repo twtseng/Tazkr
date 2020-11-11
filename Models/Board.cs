@@ -27,19 +27,6 @@ namespace Tazkr.Models
         public List<BoardUser> BoardUsers { get; set; }
         public List<Column> Columns { get; set; }
 
-        public override dynamic GetServerResponsePayload()
-        {
-            dynamic obj = new ExpandoObject();
-            obj.Id = this.Id;
-            obj.UpdateHashCode = this.UpdateHashCode;
-            obj.CreatedDateUTC = this.CreatedDateUTC;
-            obj.CreatedBy = this.CreatedBy == null ? null : this.CreatedBy.GetServerResponsePayload();
-            obj.Title = this.Title;
-            obj.Columns = this.Columns == null ? new List<Object>() : this.Columns.Select(x => x.GetServerResponsePayload()).ToList();
-            obj.BoardUsers = this.BoardUsers == null ? new List<Object>() : this.BoardUsers.Select(x => x.ApplicationUser.GetServerResponsePayload()).ToList();
-            return obj;
-        }
-
         public PermissionLevels GetPermissionLevelForUser(ApplicationUser user)
         {
             if (this.CreatedById == user.Id)
@@ -54,6 +41,24 @@ namespace Tazkr.Models
             {
                return Board.PermissionLevels.Viewer;
             }
+        }
+       public dynamic GetMinimumServerResponsePayload(ApplicationUser user)
+        {
+            dynamic obj = new ExpandoObject();
+            obj.Id = this.Id;
+            obj.UpdateHashCode = this.UpdateHashCode;
+            obj.CreatedDateUTC = this.CreatedDateUTC;
+            obj.CreatedBy = this.CreatedBy == null ? null : this.CreatedBy.GetServerResponsePayload();
+            obj.Title = this.Title;
+            obj.PermissionLevel = this.GetPermissionLevelForUser(user).ToString();
+            return obj;
+        }
+        public override dynamic GetServerResponsePayload(ApplicationUser user)
+        {
+            dynamic obj = this.GetMinimumServerResponsePayload(user);
+            obj.Columns = this.Columns == null ? new List<Object>() : this.Columns.Select(x => x.GetServerResponsePayload(user)).ToList();
+            obj.BoardUsers = this.BoardUsers == null ? new List<Object>() : this.BoardUsers.Select(x => x.ApplicationUser.GetServerResponsePayload()).ToList();
+            return obj;
         }
     }
 }
