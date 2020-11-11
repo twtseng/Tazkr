@@ -32,16 +32,44 @@ const BoardsView = () => {
     <div className="col-12 d-flex">
       <div className="col-10 h-100">
         <Card className="d-flex flex-column bg-light h-100">
-          <Card.Header className="bg-secondary text-light"> 
-            <Button onClick={createBoard}>Add a Board</Button>
-          </Card.Header>
           <Card.Body>
-            <h6>Boards</h6>
-            <div className="d-flex flex-wrap justify-content-start">
-              {boards.map((x: Board) => 
-                <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} />
-              )}
-            </div>
+            <Card className="d-flex flex-column bg-light h-100">
+              <Card.Header className="bg-secondary text-light d-flex"> 
+                <h6 className="mr-4">Created by you</h6>
+                <Button onClick={createBoard}>Add a Board</Button>
+              </Card.Header>
+              <div className="d-flex flex-wrap justify-content-start">
+                {boards.map((x: Board) =>
+                  x.PermissionLevel === "Owner"
+                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} />
+                  : <></>
+                  )}
+              </div>
+            </Card>
+            <Card className="d-flex flex-column bg-light h-100">
+              <Card.Header className="bg-secondary text-light"> 
+                <h6>Editable by you</h6>
+              </Card.Header>
+              <div className="d-flex flex-wrap justify-content-start">
+                {boards.map((x: Board) =>
+                  x.PermissionLevel === "User"
+                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} />
+                  : <></>
+                  )}
+              </div>
+            </Card>
+            <Card className="d-flex flex-column bg-light h-100">
+              <Card.Header className="bg-secondary text-light"> 
+                <h6>View Only</h6>
+              </Card.Header>
+              <div className="d-flex flex-wrap justify-content-start">
+                {boards.map((x: Board) =>
+                  x.PermissionLevel === "Viewer"
+                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} />
+                  : <></>
+                  )}
+              </div>
+            </Card>
           </Card.Body>
         </Card>
       </div>

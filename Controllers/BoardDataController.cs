@@ -50,6 +50,8 @@ namespace Tazkr.Controllers
         {
             ApplicationUser user = this.GetApplicationUser();
             return _dbContext.Boards
+            .Include(board => board.BoardUsers)
+            .ThenInclude(user => user.ApplicationUser)
             .Include(board => board.CreatedBy)
             .Select(board => board.GetMinimumServerResponsePayload(user)).ToList();
         }
