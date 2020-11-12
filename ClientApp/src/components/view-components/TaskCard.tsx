@@ -5,6 +5,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import TaskDialog from './TaskDialog';
 import TitleEdit from './TitleEdit';
+import { borderRadius } from 'react-select/src/theme';
 
 interface Props {
     Index : number;
@@ -22,6 +23,7 @@ type DragContainerStyleProp = {
 const DragContainer = styled.div<DragContainerStyleProp>`
     margin-bottom: 8px;
     background-color: ${props => (props.isDragging ? "darkgray" : "white")};
+    border-radius: 5px;
 `
 
 const TaskCard = (props:Props) => {
@@ -49,7 +51,7 @@ const TaskCard = (props:Props) => {
             isDragging={snapshot.isDragging}
             >  
                 <Card
-                    style={{border:"solid 1px black", padding:"5px"}} 
+        
                     onClick={showDialog} 
                     className="clickable">                       
                     <Card.Header className="bg-secondary text-light">

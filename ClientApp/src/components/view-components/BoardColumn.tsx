@@ -11,7 +11,7 @@ type TaskListStyleProp = {
 const TaskList = styled.div<TaskListStyleProp>`
     padding: 8px;
     flex-grow: 1;
-    background-color: ${props => (props.isDraggingOver ? 'lightgray' : 'white')};
+    background-color: ${props => (props.isDraggingOver ? 'lightgray' : '#17a2b8!important')};
     border-radius: 10px;
     overflow-x: hidden;
 `;
@@ -47,7 +47,7 @@ const BoardColumn: FunctionComponent<Props> = (props) => {
         .catch((err) => console.log(`addCardToColumn failed, err = ${err}`));
     }
     return (
-        <Card className='mr-2 p-0 bg-info' style={{height: "100%", minWidth:"300px"}}> 
+        <Card className='mr-4 p-0 bg-info' style={{height: "100%", minWidth:"300px"}}> 
             <Card.Header className="bg-secondary text-light">   
                 <div className="TitleRow d-flex justify-content-between align-baseline">
                     <div className="TitleEdit align-text-bottom">
@@ -70,7 +70,10 @@ const BoardColumn: FunctionComponent<Props> = (props) => {
                     </Dropdown>
                 </div>
                 </Card.Header>  
-                <Card.Body style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll", overflowX:"clip"}}>
+                <Card.Body
+                    className="p-1"
+                    style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll", overflowX:"clip"}}
+                >
                 <div style={{minHeight:"100%", display:"flex"}}>
                     <Droppable droppableId={props.ColumnId} type={"ColumnDroppable"}>
                         { (provided, snapshot) => (

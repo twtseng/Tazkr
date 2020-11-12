@@ -21,12 +21,16 @@ const BoardsView = () => {
   }
   const [boardUsers, setBoardUsers] = React.useState([]);
   const updateAppUsers: HubMethod = (arg1:any, arg2: any, arg3: any, arg4:any )=> {
-    console.log( `UpdateAppUsers: ${JSON.stringify(arg1)}`);
-    setBoardUsers(arg1);
+    getAppUsers();
+  }
+  const getAppUsers = async () => {
+    const users = await BoardDataApi.getUsers();
+    setBoardUsers(users);
   }
   React.useEffect(() => {
     signalRHub.setMethod("UpdateAppUsers", updateAppUsers);
     getBoards();
+    getAppUsers();
   },[]);
   return (
     <div className="col-12 d-flex">
@@ -34,8 +38,8 @@ const BoardsView = () => {
         <Card className="d-flex flex-column bg-light h-100">
           <Card.Body>
             <Card className="d-flex flex-column bg-info h-100 mb-4">
-              <Card.Header className="bg-secondary text-light d-flex"> 
-                <h6 className="mr-4">Created by you</h6>
+              <Card.Header className="bg-secondary text-light d-flex justify-content-between"> 
+                <h6 className="mr-4">Owned by you</h6>
                 <Button onClick={createBoard}>Add a Board</Button>
               </Card.Header>
               <div className="d-flex flex-wrap justify-content-start">
@@ -60,7 +64,7 @@ const BoardsView = () => {
             </Card>
             <Card className="d-flex flex-column bg-info h-100 mb-4">
               <Card.Header className="bg-secondary text-light"> 
-                <h6>View Only</h6>
+                <h6>View Only (Public)</h6>
               </Card.Header>
               <div className="d-flex flex-wrap justify-content-start">
                 {boards.map((x: Board) =>
