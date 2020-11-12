@@ -32,7 +32,7 @@ const BoardView = () => {
   const signalRHub = React.useContext(AppContext);
 
   const getBoard = async () => {
-    const boardData = await callBoardDataApi(`BoardData/GetBoard/${boardId}`,"GET");
+    const boardData = await callBoardDataApi(`BoardData/Boards/${boardId}`,"GET");
     boardData.Columns.sort((a:Column,b:Column) => { return a.Index - b.Index });
     boardData.Columns.forEach((col:Column) => {
       col.Cards.sort((a,b) => { return a.Index - b.Index });

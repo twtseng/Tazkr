@@ -11,12 +11,12 @@ const BoardsView = () => {
   const [boards, setBoards] = React.useState([]);
   const signalRHub = React.useContext(AppContext);
   const getBoards = async () => {
-      const boardsData = await callBoardDataApi("BoardData/GetBoards","GET");
+      const boardsData = await callBoardDataApi("BoardData/Boards","GET");
       boardsData.sort((a:Board,b:Board) => { return (new Date(a.CreatedDateUTC)) > (new Date(b.CreatedDateUTC)) ? 1 : -1 });
       setBoards(boardsData);
   }
   const createBoard = async () => {
-    const boardsData = await callBoardDataApi("BoardData/CreateBoard","PUT", { Param1: "New Board" });
+    const boardsData = await callBoardDataApi("BoardData/Boards","POST", { Param1: "New Board" });
     getBoards();
   }
   const [boardUsers, setBoardUsers] = React.useState([]);

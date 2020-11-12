@@ -12,15 +12,15 @@ interface Props {
 const UsersCard = (props: Props) => {
     const [userOptions, setUserOptions] = React.useState([]);
     React.useEffect(()=>{
-        callBoardDataApi(`BoardData/GetUsers`,"GET",{})
+        callBoardDataApi(`BoardData/Users`,"GET",{})
         .then(results => {
             setUserOptions(results.map((x:User) => ({ value: x.Id, label: x.UserName})));
         })
-        .catch(err => console.log(`BoardData/GetUsers failed, error=${err}`))
+        .catch(err => console.log(`BoardData/Users failed, error=${err}`))
     },[]);
     
     const addUser = async (user: string) => {
-        await callBoardDataApi(`BoardData/AddUserToBoard`,"PATCH",{ Param1: props.board.Id, Param2: user});
+        await callBoardDataApi(`BoardData/Boards/${props.board.Id}/BoardUsers`,"POST",{ Param1: user});
         props.getBoard();
     }
 

@@ -16,7 +16,7 @@ const TaskDialog = (props: Props) => {
     const [cardTitle, setCardTitle] = React.useState(props.Title);
     const [cardDescription, setCardDescription] = React.useState(props.Description);
     const updateCard = () => {
-        callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle, Param3: cardDescription, Param4: props.BoardId })
+        callBoardDataApi(`BoardData/Cards/${props.CardId}`,"PATCH",{ Param1: cardTitle, Param2: cardDescription, Param3: props.BoardId })
             .then(() => {
                 console.log("updateCard completed");
                 props.getBoard();
@@ -28,7 +28,7 @@ const TaskDialog = (props: Props) => {
             });
     }
     const deleteCard = () => {
-        callBoardDataApi(`BoardData/DeleteCard`,"DELETE",{ Param1: props.CardId, Param2: props.BoardId })
+        callBoardDataApi(`BoardData/Cards/${props.CardId}`,"DELETE",{ Param1: props.BoardId })
             .then(() => {
                 console.log("deleteCard completed");
                 props.getBoard();

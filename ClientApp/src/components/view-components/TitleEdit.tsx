@@ -43,7 +43,7 @@ const TitleEdit: React.FC<Props> = (props: Props) => {
             className={props.className}
             size={props.size}
             type="text"
-            value={props.title} 
+            value={props.title !== null ? props.title : "<null>"} 
             onChange={e => props.setTitle(e.target.value)}
             onKeyPress={handleKeyPress}
             onClick={onClick}

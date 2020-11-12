@@ -45,7 +45,7 @@ namespace Tazkr.Controllers
         /// <summary>
         /// Get list of minimum board data for displaying the list of boards (no column and card data)
         /// </summary>
-        [HttpGet("GetBoards")]
+        [HttpGet("Boards")]
         public IEnumerable<Object> GetBoards()
         {
             ApplicationUser user = this.GetApplicationUser();
@@ -58,7 +58,7 @@ namespace Tazkr.Controllers
         /// <summary>
         /// Get full data for a single board
         /// </summary>
-        [HttpGet("GetBoard/{boardId}")]
+        [HttpGet("Boards/{boardId}")]
         public Object GetBoard(string boardId)
         {
             ApplicationUser user = this.GetApplicationUser();
@@ -75,7 +75,7 @@ namespace Tazkr.Controllers
             return board.GetServerResponsePayload(user);
         }
 
-        [HttpPut("CreateBoard")]
+        [HttpPost("Boards")]
         public IActionResult CreateBoard(ClientRequestPayload payload)
         {
             string boardTitle = payload.Param1;
@@ -103,10 +103,9 @@ namespace Tazkr.Controllers
                 return BadRequest(new {status=exceptionString});
             }
         }
-        [HttpDelete("DeleteBoard")]
-        public IActionResult DeleteBoard(ClientRequestPayload payload)
+        [HttpDelete("Boards/{boardId}")]
+        public IActionResult DeleteBoard(string boardId)
         {
-            string boardId = payload.Param1;
             Board board = _dbContext.Boards.Include(x => x.Columns).ThenInclude(x => x.Cards).FirstOrDefault(x => x.Id == boardId);
             ApplicationUser user = this.GetApplicationUser();
             if (board == null) 
@@ -147,11 +146,10 @@ namespace Tazkr.Controllers
                 }
             }
         }
-        [HttpPatch("RenameBoard")]
-        public IActionResult RenameBoard(ClientRequestPayload payload)        
+        [HttpPatch("Boards/{boardId}")]
+        public IActionResult RenameBoard(string boardId, ClientRequestPayload payload)        
         {
-            string boardId = payload.Param1;
-            string newName = payload.Param2;
+            string newName = payload.Param1;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
@@ -176,7 +174,7 @@ namespace Tazkr.Controllers
                 return BadRequest(new {status=exceptionString});
             }
         }
-        [HttpPatch("AddColumnToBoard")]
+        [HttpPost("Columns")]
         public IActionResult AddColumnToBoard(ClientRequestPayload payload)
         {
             string boardId = payload.Param1;
@@ -205,10 +203,9 @@ namespace Tazkr.Controllers
                 return BadRequest(new {status=exceptionString});
             }            
         }
-        [HttpDelete("DeleteColumn")]
-        public IActionResult DeleteColumn(ClientRequestPayload payload)
+        [HttpDelete("Columns/{columnId}")]
+        public IActionResult DeleteColumn(string columnId)
         {
-            string columnId = payload.Param1;
             Column column = _dbContext.Columns.Include(x => x.Cards).FirstOrDefault(x => x.Id == columnId);
             if (column == null) 
             {
@@ -245,11 +242,10 @@ namespace Tazkr.Controllers
                 }
             }
         }
-        [HttpPatch("RenameColumn")]
-        public IActionResult RenameColumn(ClientRequestPayload payload)
+        [HttpPatch("Columns/{columnId}")]
+        public IActionResult RenameColumn(string columnId, ClientRequestPayload payload)
         {
-            string columnId = payload.Param1;
-            string newName = payload.Param2;
+            string newName = payload.Param1;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
@@ -261,7 +257,7 @@ namespace Tazkr.Controllers
                     _logger.LogInformation(errorString);
                     return this.Unauthorized(new {status=errorString});
                 }
-                column.Title = payload.Param2;
+                column.Title = newName;
                 _dbContext.Columns.Update(column);
                 _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.RenameColumn columnId={columnId}, newName={newName}";
@@ -275,7 +271,7 @@ namespace Tazkr.Controllers
                 return BadRequest(new {status=exceptionString});
             }
         }
-        [HttpPut("AddCardToColumn")]
+        [HttpPost("Cards")]
         public IActionResult AddCardToColumn(ClientRequestPayload payload)
         {
             string columnId = payload.Param1;
@@ -309,12 +305,9 @@ namespace Tazkr.Controllers
                 return BadRequest(new {status=exceptionString});
             }
         }
-        [HttpPatch("MoveCardToColumnAtIndex")]
-        public IActionResult MoveCardToColumnAtIndex(ClientRequestPayload payload)
+        [HttpPut("Cards/{columnId}/{cardId}/{index}")]
+        public IActionResult MoveCardToColumnAtIndex(string columnId, string cardId, int index)
         {
-            string cardId = payload.Param1;
-            string columnId = payload.Param2;
-            int index = int.Parse(payload.Param3);
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
@@ -362,13 +355,10 @@ namespace Tazkr.Controllers
                 return BadRequest(new {status=exceptionString});
             }
         }
-        [HttpPatch("UpdateCard")]
-        public IActionResult UpdateCard(ClientRequestPayload payload)
+        [HttpPatch("Cards/{cardId}")]
+        public IActionResult UpdateCard(string cardId, ClientRequestPayload payload)
         {
-            string cardId = payload.Param1;
-            string newName = payload.Param2;
-            string newDescription = payload.Param3;
-            string boardId = payload.Param4;
+            string boardId = payload.Param3;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
@@ -380,34 +370,33 @@ namespace Tazkr.Controllers
                     return this.Unauthorized(new {status=errorString});
                 }
                 Card card = _dbContext.Cards.Find(cardId);
+                if (payload.Param1 != null)
+                {
+                     _logger.LogInformation($"BoardDataController.UpdateCard setting Title to {payload.Param1}");
+                    card.Title = payload.Param1;
+                }
                 if (payload.Param2 != null)
                 {
-                     _logger.LogInformation($"BoardDataController.UpdateCard setting Title to {payload.Param2}");
-                    card.Title = payload.Param2;
-                }
-                if (payload.Param3 != null)
-                {
-                    _logger.LogInformation($"BoardDataController.UpdateCard setting Description to {payload.Param3}");
-                    card.Description = payload.Param3;
+                    _logger.LogInformation($"BoardDataController.UpdateCard setting Description to {payload.Param2}");
+                    card.Description = payload.Param2;
                 }         
                 _dbContext.Cards.Update(card);
                 _dbContext.SaveChangesForUser(user);
-                string status = $"BoardDataController.UpdateCard boardId={boardId}, newName={newName}";
+                string status = $"BoardDataController.UpdateCard cardId={cardId}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
-                string exceptionString = $"BoardDataController.UpdateCard boardId={boardId}, newName={newName} exception occurred: {ex.ToString()}";
+                string exceptionString = $"BoardDataController.UpdateCard cardId={cardId},  exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});                
             }
         }
-        [HttpDelete("DeleteCard")]
-        public IActionResult DeleteCard(ClientRequestPayload payload)
+        [HttpDelete("Cards/{cardId}")]
+        public IActionResult DeleteCard(string cardId, ClientRequestPayload payload)
         {
-            string cardId = payload.Param1;
-            string boardId = payload.Param2;
+            string boardId = payload.Param1;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
@@ -433,16 +422,15 @@ namespace Tazkr.Controllers
                 return BadRequest(new {status=exceptionString});
             }
         }
-        [HttpGet("GetUsers")]
+        [HttpGet("Users")]
         public IEnumerable<dynamic> GetUsers()
         {
             return _dbContext.Users.Select(user => user.GetServerResponsePayload()).ToList();
         }
-        [HttpPatch("AddUserToBoard")]
-        public IActionResult AddUserToBoard(ClientRequestPayload payload)
+        [HttpPost("Boards/{boardId}/BoardUsers")]
+        public IActionResult AddUserToBoard(string boardId, ClientRequestPayload payload)
         {
-            string boardId = payload.Param1;
-            string userId = payload.Param2;
+            string userId = payload.Param1;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();

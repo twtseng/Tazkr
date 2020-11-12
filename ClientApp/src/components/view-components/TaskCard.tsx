@@ -31,7 +31,7 @@ const TaskCard = (props:Props) => {
     const [cardTitle, setCardTitle] = React.useState(props.Title)
     const updateCardTitle = () => {
         if (cardTitle !== props.Title) {
-            callBoardDataApi(`BoardData/UpdateCard`,"PATCH",{ Param1: props.CardId, Param2: cardTitle, Param3: null, Param4: props.BoardId })
+            callBoardDataApi(`BoardData/Cards/${props.CardId}`,"PATCH",{  Param1: cardTitle, Param2: null, Param3: props.BoardId })
                 .then(() => {
                     console.log("updateCardTitle completed");
                     props.getBoard();

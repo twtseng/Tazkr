@@ -2,7 +2,7 @@ import callBoardDataApi from '../api-board-data/BoardDataApi';
 import { Board, TaskObj } from '../view-components/TazkrObjects';
 
 const moveCardToColumnAtIndex = async (taskId: string, columnId: string, index: number) => {
-    await callBoardDataApi("BoardData/MoveCardToColumnAtIndex", "PATCH", {Param1: taskId, Param2: columnId, Param3: index});
+    await callBoardDataApi(`BoardData/Cards/${columnId}/${taskId}/${index}`, "PUT", {});
 }
 
 const findCardById = (inputBoard: Board, cardId: string) => {

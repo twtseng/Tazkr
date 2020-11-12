@@ -29,17 +29,17 @@ const BoardColumn: FunctionComponent<Props> = (props) => {
         console.log(`updateColumnTitle: columnTitle=[${columnTitle}] props.Title:[${props.Title}]`)
         if (columnTitle !== props.Title) {
             console.log(`updateColumnTitle updating the column in the db...`)
-            callBoardDataApi(`BoardData/RenameColumn`,"PATCH",{ Param1: props.ColumnId, Param2: columnTitle })
+            callBoardDataApi(`BoardData/Columns/${props.ColumnId}`,"PATCH",{ Param1: columnTitle })
             .then(() => { console.log("updateColumnTitle completed"); props.getBoard(); })
             .catch((err) => console.log(`updateColumnTitle failed, err = ${err}`));
         }
     }
     const deleteColumn = async () => {
-        await callBoardDataApi(`BoardData/DeleteColumn`,"DELETE",{ Param1: props.ColumnId });
+        await callBoardDataApi(`BoardData/Columns/${props.ColumnId}`,"DELETE",{});
         props.getBoard();
       }
     const addCardToColumn = () => {   
-        callBoardDataApi(`BoardData/AddCardToColumn`,"PUT",{ Param1: props.ColumnId, Param2: "New Task", Param3: props.BoardId })
+        callBoardDataApi(`BoardData/Cards`,"POST",{ Param1: props.ColumnId, Param2: "New Task", Param3: props.BoardId })
         .then(() => {
             console.log("addCardToColumn completed");
             props.getBoard();

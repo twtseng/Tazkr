@@ -19,7 +19,7 @@ const BoardCard = (props:Props) => {
       console.log(`BoardCard.renameBoard: boardTitle[${boardTitle}] props.Title[${props.Title}]`);
       if (boardTitle !== props.Title) {
         console.log(`BoardCard.renameBoard calling rename board`)
-        callBoardDataApi(`BoardData/RenameBoard`,"PATCH",{ Param1: props.BoardId, Param2: boardTitle })
+        callBoardDataApi(`BoardData/Boards/${props.BoardId}`,"PATCH",{ Param1: boardTitle })
         .then(() => { console.log("renameBoard completed"); props.getBoards() })
         .catch((err) => console.log(`renameBoard failed, err = ${err}`));
       }
