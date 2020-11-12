@@ -3,7 +3,7 @@ import { Card, Form, Dropdown } from 'react-bootstrap'
 import AppContext from '../AppContext';
 import { useParams } from "react-router-dom";
 import {DragDropContext} from 'react-beautiful-dnd';
-import callBoardDataApi from '../api-board-data/BoardDataApi';
+import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import dragEndHandler from '../dragdrop/BoardViewDragEndHandler';
 import TaskCard from '../view-components/TaskCard';
 import BoardColumn from '../view-components/BoardColumn';
@@ -32,7 +32,7 @@ const BoardView = () => {
   const signalRHub = React.useContext(AppContext);
 
   const getBoard = async () => {
-    const boardData = await callBoardDataApi(`BoardData/Boards/${boardId}`,"GET");
+    const boardData = await BoardDataApi.getBoard(boardId);
     boardData.Columns.sort((a:Column,b:Column) => { return a.Index - b.Index });
     boardData.Columns.forEach((col:Column) => {
       col.Cards.sort((a,b) => { return a.Index - b.Index });

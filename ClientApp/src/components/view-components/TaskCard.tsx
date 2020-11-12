@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
-import callBoardDataApi from '../api-board-data/BoardDataApi';
+import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import TaskDialog from './TaskDialog';
 import TitleEdit from './TitleEdit';
 
@@ -29,9 +29,9 @@ const TaskCard = (props:Props) => {
     const closeDialog = () => setShowTaskDialog(false);
     const showDialog = () => setShowTaskDialog(true);
     const [cardTitle, setCardTitle] = React.useState(props.Title)
-    const updateCardTitle = () => {
+    const renameCard = () => {
         if (cardTitle !== props.Title) {
-            callBoardDataApi(`BoardData/Cards/${props.CardId}`,"PATCH",{  Param1: cardTitle, Param2: null, Param3: props.BoardId })
+            BoardDataApi.renameCard(props.CardId, cardTitle, props.BoardId)
                 .then(() => {
                     console.log("updateCardTitle completed");
                     props.getBoard();
@@ -58,7 +58,7 @@ const TaskCard = (props:Props) => {
                             size="sm"
                             title={cardTitle} 
                             setTitle={setCardTitle}
-                            updateTitle={updateCardTitle}        
+                            updateTitle={renameCard}        
                         />
                     </Card.Header>
                     <Card.Body className="d-flex flex-wrap">

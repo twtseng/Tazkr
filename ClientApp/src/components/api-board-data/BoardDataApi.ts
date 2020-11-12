@@ -1,6 +1,6 @@
 import authService from '../api-authorization/AuthorizeService';
 
-export default async (url = '', method='GET', data = {}) => {
+const callBoardDataApi = async (url = '', method='GET', data = {}) => {
     console.log(`BoardDataApi, url[${url}] method[${method}] data[${data}]`);
     try
     {
@@ -25,4 +25,49 @@ export default async (url = '', method='GET', data = {}) => {
         console.log(`BoardDataApi failed: error=${e}`);
         return [];
     }
+}
+export const getBoards = async () => {
+    return callBoardDataApi("BoardData/Boards","GET")
+}
+export const createBoard = async (boardName: string) => {
+    return callBoardDataApi("BoardData/Boards","POST", { Param1: boardName });
+}
+export const getBoard = async (boardId: string) => {
+    return callBoardDataApi(`BoardData/Boards/${boardId}`,"GET");
+}
+export const deleteBoard = async (boardId: string) => {
+    return callBoardDataApi(`BoardData/Boards${boardId}`,"DELETE",{})
+}
+export const renameBoard = async (boardId: string, boardTitle: string) => {
+    return callBoardDataApi(`BoardData/Boards/${boardId}`,"PATCH",{ Param1: boardTitle })
+}
+export const addColumn = async (boardId: string, columnTitle: string) => {
+    return callBoardDataApi(`BoardData/Columns`,"POST",{ Param1: boardId, Param2: "New Column"});
+}
+export const renameColumn = async (columnId: string, columnTitle: string) => {
+    return callBoardDataApi(`BoardData/Columns/${columnId}`,"PATCH",{ Param1: columnTitle })
+}
+export const deleteColumn = async (columnId: string) => {
+    return callBoardDataApi(`BoardData/Columns/${columnId}`,"DELETE",{});
+}
+export const addCardToColumn = async (columnId: string, cardTitle: string, boardId: string) => {
+    return callBoardDataApi(`BoardData/Cards`,"POST",{ Param1: columnId, Param2: cardTitle, Param3: boardId })
+}
+export const updateCard = async (cardId: string, cardTitle: string|null, cardDescription: string|null, boardId: string) => {
+    return callBoardDataApi(`BoardData/Cards/${cardId}`,"PATCH",{  Param1: cardTitle, Param2: cardDescription, Param3: boardId })
+}
+export const renameCard = async (cardId: string, cardTitle: string, boardId: string) => {
+    return updateCard(cardId, cardTitle, null, boardId);
+}
+export const deleteCard = async (cardId: string, boardId: string) => {
+    return callBoardDataApi(`BoardData/Cards/${cardId}`,"DELETE",{ Param1: boardId })
+}
+export const getUsers = async () => {
+    return callBoardDataApi(`BoardData/Users`,"GET")
+}
+export const addBoardUser = async (boardId: string, userName: string) => {
+    return callBoardDataApi(`BoardData/Boards/${boardId}/BoardUsers`,"POST",{ Param1: userName});
+}
+export const moveCardToColumnAtIndex = async (taskId: string, columnId: string, index: number) => {
+    return callBoardDataApi(`BoardData/Cards/${columnId}/${taskId}/${index}`, "PUT", {});
 }

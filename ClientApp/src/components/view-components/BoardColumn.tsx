@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react'
 import { Card, Dropdown } from 'react-bootstrap'
 import {Droppable} from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import callBoardDataApi from '../api-board-data/BoardDataApi';
+import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import TitleEdit from './TitleEdit';
 
 type TaskListStyleProp = {
@@ -29,17 +29,17 @@ const BoardColumn: FunctionComponent<Props> = (props) => {
         console.log(`updateColumnTitle: columnTitle=[${columnTitle}] props.Title:[${props.Title}]`)
         if (columnTitle !== props.Title) {
             console.log(`updateColumnTitle updating the column in the db...`)
-            callBoardDataApi(`BoardData/Columns/${props.ColumnId}`,"PATCH",{ Param1: columnTitle })
+            BoardDataApi.renameColumn(props.ColumnId,columnTitle)
             .then(() => { console.log("updateColumnTitle completed"); props.getBoard(); })
             .catch((err) => console.log(`updateColumnTitle failed, err = ${err}`));
         }
     }
     const deleteColumn = async () => {
-        await callBoardDataApi(`BoardData/Columns/${props.ColumnId}`,"DELETE",{});
+        await BoardDataApi.deleteColumn(props.ColumnId);
         props.getBoard();
       }
     const addCardToColumn = () => {   
-        callBoardDataApi(`BoardData/Cards`,"POST",{ Param1: props.ColumnId, Param2: "New Task", Param3: props.BoardId })
+        BoardDataApi.addCardToColumn(props.ColumnId,  "New Task", props.BoardId )
         .then(() => {
             console.log("addCardToColumn completed");
             props.getBoard();

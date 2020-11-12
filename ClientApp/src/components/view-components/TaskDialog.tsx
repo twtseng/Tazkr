@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, FormGroup, Form, Modal } from 'react-bootstrap';
-import callBoardDataApi from '../api-board-data/BoardDataApi';
+import * as BoardDataApi from '../api-board-data/BoardDataApi';
 
 interface Props {
     getBoard: () => void;
@@ -16,7 +16,7 @@ const TaskDialog = (props: Props) => {
     const [cardTitle, setCardTitle] = React.useState(props.Title);
     const [cardDescription, setCardDescription] = React.useState(props.Description);
     const updateCard = () => {
-        callBoardDataApi(`BoardData/Cards/${props.CardId}`,"PATCH",{ Param1: cardTitle, Param2: cardDescription, Param3: props.BoardId })
+        BoardDataApi.updateCard(props.CardId,cardTitle,cardDescription,props.BoardId)
             .then(() => {
                 console.log("updateCard completed");
                 props.getBoard();
@@ -28,7 +28,7 @@ const TaskDialog = (props: Props) => {
             });
     }
     const deleteCard = () => {
-        callBoardDataApi(`BoardData/Cards/${props.CardId}`,"DELETE",{ Param1: props.BoardId })
+        BoardDataApi.deleteCard(props.CardId,props.BoardId)
             .then(() => {
                 console.log("deleteCard completed");
                 props.getBoard();

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form, Dropdown } from 'react-bootstrap'
 import { useHistory } from "react-router-dom";
-import callBoardDataApi from '../api-board-data/BoardDataApi';
+import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import TitleEdit from './TitleEdit';
 import { Board, BoardPermissionLevel } from './TazkrObjects';
 import BoardPermissionButton from './BoardPermissionButton';
@@ -18,17 +18,17 @@ const BoardStatusBar = (props: Props) => {
     const history = useHistory();
 
     const addColumn = async () => {
-      await callBoardDataApi(`BoardData/Columns`,"POST",{ Param1: props.board.Id, Param2: "New Column"});
+      await BoardDataApi.addColumn(props.board.Id, "New Column");
       props.getBoard();
     }
     const deleteBoard = async () => {
-      callBoardDataApi(`BoardData/Boards${props.board.Id}`,"DELETE",{})
+      BoardDataApi.deleteBoard(props.board.Id)
       .then(() => history.push("/boards"))
       .catch(err => alert(err))
     }
     const renameBoard = async () => {
       if (props.boardTitle !== props.board.Title) {
-        callBoardDataApi(`BoardData/Boards${props.board.Id}`,"PATCH",{ Param1: props.boardTitle })
+        BoardDataApi.renameBoard(props.board.Id, props.boardTitle)
         .then(() => console.log("renameBoard completed"))
         .catch((err) => console.log(`renameBoard failed, err = ${err}`));
       }

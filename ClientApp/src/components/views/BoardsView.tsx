@@ -1,7 +1,7 @@
 import React from 'react';
 import {  Button, Card } from 'react-bootstrap'
 import AppContext from '../AppContext';
-import callBoardDataApi from '../api-board-data/BoardDataApi';
+import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import BoardCard from '../view-components/BoardCard';
 import { Board, User } from '../view-components/TazkrObjects';
@@ -11,12 +11,12 @@ const BoardsView = () => {
   const [boards, setBoards] = React.useState([]);
   const signalRHub = React.useContext(AppContext);
   const getBoards = async () => {
-      const boardsData = await callBoardDataApi("BoardData/Boards","GET");
+      const boardsData = await BoardDataApi.getBoards();
       boardsData.sort((a:Board,b:Board) => { return (new Date(a.CreatedDateUTC)) > (new Date(b.CreatedDateUTC)) ? 1 : -1 });
       setBoards(boardsData);
   }
   const createBoard = async () => {
-    const boardsData = await callBoardDataApi("BoardData/Boards","POST", { Param1: "New Board" });
+    const boardsData = await BoardDataApi.createBoard("New Board");
     getBoards();
   }
   const [boardUsers, setBoardUsers] = React.useState([]);

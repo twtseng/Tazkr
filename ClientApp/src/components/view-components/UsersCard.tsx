@@ -1,5 +1,5 @@
 import React from 'react';
-import callBoardDataApi from '../api-board-data/BoardDataApi';
+import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { Card } from 'react-bootstrap';
 import Select from 'react-select';
 import { Board, User } from './TazkrObjects';
@@ -12,7 +12,7 @@ interface Props {
 const UsersCard = (props: Props) => {
     const [userOptions, setUserOptions] = React.useState([]);
     React.useEffect(()=>{
-        callBoardDataApi(`BoardData/Users`,"GET",{})
+        BoardDataApi.getUsers()
         .then(results => {
             setUserOptions(results.map((x:User) => ({ value: x.Id, label: x.UserName})));
         })
@@ -20,7 +20,7 @@ const UsersCard = (props: Props) => {
     },[]);
     
     const addUser = async (user: string) => {
-        await callBoardDataApi(`BoardData/Boards/${props.board.Id}/BoardUsers`,"POST",{ Param1: user});
+        await BoardDataApi.addBoardUser(props.board.Id, user);
         props.getBoard();
     }
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { useHistory } from "react-router-dom";
 import { Card } from 'react-bootstrap';
 import TitleEdit from './TitleEdit';
-import callBoardDataApi from '../api-board-data/BoardDataApi';
+import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { User } from './TazkrObjects';
 
 interface Props {
@@ -19,7 +19,7 @@ const BoardCard = (props:Props) => {
       console.log(`BoardCard.renameBoard: boardTitle[${boardTitle}] props.Title[${props.Title}]`);
       if (boardTitle !== props.Title) {
         console.log(`BoardCard.renameBoard calling rename board`)
-        callBoardDataApi(`BoardData/Boards/${props.BoardId}`,"PATCH",{ Param1: boardTitle })
+        BoardDataApi.renameBoard(props.BoardId, boardTitle)
         .then(() => { console.log("renameBoard completed"); props.getBoards() })
         .catch((err) => console.log(`renameBoard failed, err = ${err}`));
       }
