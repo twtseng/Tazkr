@@ -33,7 +33,7 @@ const BoardsView = () => {
       <div className="col-10 h-100">
         <Card className="d-flex flex-column bg-light h-100">
           <Card.Body>
-            <Card className="d-flex flex-column bg-light h-100">
+            <Card className="d-flex flex-column bg-info h-100 mb-4">
               <Card.Header className="bg-secondary text-light d-flex"> 
                 <h6 className="mr-4">Created by you</h6>
                 <Button onClick={createBoard}>Add a Board</Button>
@@ -46,7 +46,7 @@ const BoardsView = () => {
                   )}
               </div>
             </Card>
-            <Card className="d-flex flex-column bg-light h-100">
+            <Card className="d-flex flex-column bg-info h-100 mb-4">
               <Card.Header className="bg-secondary text-light"> 
                 <h6>Editable by you</h6>
               </Card.Header>
@@ -58,7 +58,7 @@ const BoardsView = () => {
                   )}
               </div>
             </Card>
-            <Card className="d-flex flex-column bg-light h-100">
+            <Card className="d-flex flex-column bg-info h-100 mb-4">
               <Card.Header className="bg-secondary text-light"> 
                 <h6>View Only</h6>
               </Card.Header>
