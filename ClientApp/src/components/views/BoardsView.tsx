@@ -5,15 +5,16 @@ import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import BoardCard from '../view-components/BoardCard';
 import { Board, User } from '../view-components/TazkrObjects';
+import authService from '../api-authorization/AuthorizeService';
 
 const BoardsView = () => {
 
   const [boards, setBoards] = React.useState([]);
   const signalRHub = React.useContext(AppContext);
   const getBoards = async () => {
-      const boardsData = await BoardDataApi.getBoards();
-      boardsData.sort((a:Board,b:Board) => { return (new Date(a.CreatedDateUTC)) > (new Date(b.CreatedDateUTC)) ? 1 : -1 });
-      setBoards(boardsData);
+    const boardsData = await BoardDataApi.getBoards();
+    boardsData.sort((a:Board,b:Board) => { return (new Date(a.CreatedDateUTC)) > (new Date(b.CreatedDateUTC)) ? 1 : -1 });
+    setBoards(boardsData);
   }
   const createBoard = async () => {
     const boardsData = await BoardDataApi.createBoard("New Board");
@@ -46,7 +47,7 @@ const BoardsView = () => {
                 {boards.map((x: Board) =>
                   x.PermissionLevel === "Owner"
                   ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
-                  : <></>
+                  : null
                   )}
               </div>
             </Card>
@@ -58,7 +59,7 @@ const BoardsView = () => {
                 {boards.map((x: Board) =>
                   x.PermissionLevel === "User"
                   ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
-                  : <></>
+                  : null
                   )}
               </div>
             </Card>
@@ -70,7 +71,7 @@ const BoardsView = () => {
                 {boards.map((x: Board) =>
                   x.PermissionLevel === "Viewer"
                   ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
-                  : <></>
+                  : null
                   )}
               </div>
             </Card>

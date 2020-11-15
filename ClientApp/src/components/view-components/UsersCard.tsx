@@ -38,7 +38,7 @@ const UsersCard = (props: Props) => {
                 options={userOptions}>
             </Select>     
         </Card.Body>
-        <Card.Body>
+        <Card.Body style={{overflowX:"hidden"}}>
             {props.board.BoardUsers.map(x => (
                 <div key={x.Id}><small>{x.UserName}</small></div>
             ))}
