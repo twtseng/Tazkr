@@ -36,5 +36,6 @@ export type Board = {
     Columns: Column[];
     BoardUsers: User[];
     PermissionLevel: BoardPermissionLevel;
+    IsPubliclyVisible: boolean;
 }
 

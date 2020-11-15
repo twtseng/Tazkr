@@ -26,6 +26,7 @@ namespace Tazkr.Models
         public ApplicationUser CreatedBy { get; set; }
         public List<BoardUser> BoardUsers { get; set; }
         public List<Column> Columns { get; set; }
+        public bool IsPubliclyVisible { get; set; } 
 
         public PermissionLevels GetPermissionLevelForUser(ApplicationUser user)
         {
@@ -51,6 +52,7 @@ namespace Tazkr.Models
             obj.CreatedBy = this.CreatedBy == null ? null : this.CreatedBy.GetServerResponsePayload();
             obj.Title = this.Title;
             obj.PermissionLevel = this.GetPermissionLevelForUser(user).ToString();
+            obj.IsPubliclyVisible = this.IsPubliclyVisible;
             return obj;
         }
         public override dynamic GetServerResponsePayload(ApplicationUser user)

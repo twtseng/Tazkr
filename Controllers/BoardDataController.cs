@@ -146,7 +146,7 @@ namespace Tazkr.Controllers
                 }
             }
         }
-        [HttpPatch("Boards/{boardId}")]
+        [HttpPut("Boards/{boardId}/Title")]
         public IActionResult RenameBoard(string boardId, ClientRequestPayload payload)        
         {
             string newName = payload.Param1;
@@ -170,6 +170,34 @@ namespace Tazkr.Controllers
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.RenameBoard(boardId:{boardId}, newName={newName}) exception occurred: {ex.ToString()}";
+                _logger.LogInformation(exceptionString);
+                return BadRequest(new {status=exceptionString});
+            }
+        }
+        [HttpPut("Boards/{boardId}/IsPubliclyVisible")]
+        public IActionResult SetBoardPublicVisibility(string boardId, ClientRequestPayload payload)        
+        {
+            try
+            {
+                bool isPubliclyVisible = bool.Parse(payload.Param1);
+                ApplicationUser user = this.GetApplicationUser();
+                if (GetUserPermissionLevelForBoard(boardId, user) != Board.PermissionLevels.Owner)
+                {
+                    string errorString = $"BoardDataController.SetBoardPublicVisibility(boardId:{boardId}) by user {user.UserName} access denied";
+                     _logger.LogInformation(errorString);
+                    return this.Unauthorized(new {status=errorString});
+                }
+                Board board = _dbContext.Boards.Find(boardId);
+                string status = $"BoardDataController.SetBoardPublicVisibility(boardId:{boardId}), isPubliclyVisible={payload.Param1}";
+                board.IsPubliclyVisible = isPubliclyVisible;
+                _dbContext.Boards.Update(board);
+                _dbContext.SaveChangesForUser(user);
+                _logger.LogInformation(status);
+                return new OkObjectResult(new {status});
+            }
+            catch (Exception ex)
+            {
+                string exceptionString = $"BoardDataController.SetBoardPublicVisibility(boardId:{boardId}, isPubliclyVisible={payload.Param1}) exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});
             }
@@ -242,7 +270,7 @@ namespace Tazkr.Controllers
                 }
             }
         }
-        [HttpPatch("Columns/{columnId}")]
+        [HttpPut("Columns/{columnId}/Title")]
         public IActionResult RenameColumn(string columnId, ClientRequestPayload payload)
         {
             string newName = payload.Param1;

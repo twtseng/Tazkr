@@ -25,7 +25,8 @@ const BoardView = () => {
     PermissionLevel:BoardPermissionLevel.Viewer,
     UpdateHashCode:0,
     CreatedDateUTC: new Date(),
-    Title:""
+    Title:"",
+    IsPubliclyVisible:false
   };
   const [board, setBoard] = React.useState(initialBoardState);
   const [boardTitle, setBoardTitle] = React.useState("");
@@ -54,7 +55,7 @@ const BoardView = () => {
             <BoardStatusBar board={board} getBoard={getBoard} boardTitle={boardTitle} setBoardTitle={setBoardTitle} permissionLevel={board.PermissionLevel} />
           </Card.Header>
           <Card.Body
-            className="d-flex flex-nowrap bg-light"
+            className="d-flex flex-nowrap bg-dark"
             style={{overflowX:"scroll"}}>
             {board.Columns.map(col => 
               <BoardColumn key={col.UpdateHashCode} HashCode={col.UpdateHashCode} Title={col.Title} Index={col.Index} ColumnId={col.Id} getBoard={getBoard} BoardId={boardId}>

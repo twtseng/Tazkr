@@ -39,13 +39,16 @@ export const deleteBoard = async (boardId: string) => {
     return callBoardDataApi(`BoardData/Boards${boardId}`,"DELETE",{})
 }
 export const renameBoard = async (boardId: string, boardTitle: string) => {
-    return callBoardDataApi(`BoardData/Boards/${boardId}`,"PATCH",{ Param1: boardTitle })
+    return callBoardDataApi(`BoardData/Boards/${boardId}/Title`,"PUT",{ Param1: boardTitle })
+}
+export const setBoardPublicVisibility = async (boardId: string, isPublic: boolean) => {
+    return callBoardDataApi(`BoardData/Boards/${boardId}/IsPubliclyVisible`, "PUT", { Param1 : isPublic});
 }
 export const addColumn = async (boardId: string, columnTitle: string) => {
     return callBoardDataApi(`BoardData/Columns`,"POST",{ Param1: boardId, Param2: "New Column"});
 }
 export const renameColumn = async (columnId: string, columnTitle: string) => {
-    return callBoardDataApi(`BoardData/Columns/${columnId}`,"PATCH",{ Param1: columnTitle })
+    return callBoardDataApi(`BoardData/Columns/${columnId}/Title`,"PUT",{ Param1: columnTitle })
 }
 export const deleteColumn = async (columnId: string) => {
     return callBoardDataApi(`BoardData/Columns/${columnId}`,"DELETE",{});

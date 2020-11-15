@@ -5,6 +5,7 @@ import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import TitleEdit from './TitleEdit';
 import { Board, BoardPermissionLevel } from './TazkrObjects';
 import BoardPermissionButton from './BoardPermissionButton';
+import BoardVisibilityDropdown from './BoardVisibilityDropdown';
 
 interface Props {
   board : Board;
@@ -45,6 +46,7 @@ const BoardStatusBar = (props: Props) => {
                 updateTitle={renameBoard}        
             />
             <BoardPermissionButton className="ml-4" permissionLevel={props.permissionLevel} />
+            <BoardVisibilityDropdown className="ml-4" boardId={props.board.Id} isPubliclyVisible={props.board.IsPubliclyVisible} getBoard={props.getBoard}/>
           </div>
           <Dropdown>
               <Dropdown.Toggle className="text-light" variant="muted">

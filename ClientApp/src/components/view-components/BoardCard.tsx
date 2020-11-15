@@ -10,6 +10,7 @@ interface Props {
   BoardId: string;
   getBoards: () => void;
   CreatedBy: User;
+  IsPublic: boolean;
 }
 
 const BoardCard = (props:Props) => {
@@ -28,7 +29,7 @@ const BoardCard = (props:Props) => {
       <Card className='clickable p-0 m-2' 
           key={props.BoardId} 
           onClick={() => history.push(`/board/${props.BoardId}`)}
-          style={{width:"220px"}}
+          style={{width:"300px"}}
       >
         <Card.Header className="bg-secondary text-light">
           <TitleEdit
@@ -41,8 +42,8 @@ const BoardCard = (props:Props) => {
         </Card.Header>
         <Card.Body>
           <small>
-            <div>Owner</div>
-            <div>{props.CreatedBy.UserName}</div>
+            <div>Owner: {props.CreatedBy.UserName}</div>
+            <div>Visibility: {props.IsPublic ? "Public" : "Private"}</div>
           </small>
         </Card.Body>
       </Card>

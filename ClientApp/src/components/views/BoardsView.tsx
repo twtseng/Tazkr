@@ -35,7 +35,7 @@ const BoardsView = () => {
   return (
     <div className="col-12 d-flex">
       <div className="col-10 h-100">
-        <Card className="d-flex flex-column bg-light h-100">
+        <Card className="d-flex flex-column bg-dark h-100">
           <Card.Body>
             <Card className="d-flex flex-column bg-info h-100 mb-4">
               <Card.Header className="bg-secondary text-light d-flex justify-content-between"> 
@@ -45,7 +45,7 @@ const BoardsView = () => {
               <div className="d-flex flex-wrap justify-content-start">
                 {boards.map((x: Board) =>
                   x.PermissionLevel === "Owner"
-                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} />
+                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
                   : <></>
                   )}
               </div>
@@ -57,7 +57,7 @@ const BoardsView = () => {
               <div className="d-flex flex-wrap justify-content-start">
                 {boards.map((x: Board) =>
                   x.PermissionLevel === "User"
-                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} />
+                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
                   : <></>
                   )}
               </div>
@@ -69,7 +69,7 @@ const BoardsView = () => {
               <div className="d-flex flex-wrap justify-content-start">
                 {boards.map((x: Board) =>
                   x.PermissionLevel === "Viewer"
-                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} />
+                  ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
                   : <></>
                   )}
               </div>
