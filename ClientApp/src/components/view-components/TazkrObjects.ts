@@ -39,3 +39,10 @@ export type Board = {
     IsPubliclyVisible: boolean;
 }
 
+export type ChatMessage = {
+    ChatId: string;
+    UpdateHashCode: number;
+    UserName : string;
+    CreatedDateUTC : Date;
+    Message : string;    
+}

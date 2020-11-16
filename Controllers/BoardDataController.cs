@@ -494,24 +494,43 @@ namespace Tazkr.Controllers
             }            
         }
         [HttpPost("Chat/{chatId}")]
-        public async Task<IActionResult> Chat(string chatId, ClientRequestPayload payload)
+        public async Task<IActionResult> AddChatMessage(string chatId, ClientRequestPayload payload)
         {
-            string chatMessage = payload.Param1;
+            string chatMessageText = payload.Param1;
             try
             {
                 ApplicationUser user = this.GetApplicationUser();
-                string status = $"BoardDataController.Chat chatId={chatId}, chatMessage={chatMessage}";
+                string status = $"BoardDataController.AddChatMessage chatId={chatId}, chatMessage={chatMessageText}";
                 _logger.LogInformation(status);
-                //await _signalRHub.Clients.Group(chatId).SendAsync("ChatMessage",chatMessage);
-                await _signalRHub.Clients.All.SendAsync("ServerMessage","ChatMessage",$"${user.UserName} {chatMessage}");
+                ChatMessage chatMessage = new ChatMessage();
+                chatMessage.ChatId = chatId;
+                chatMessage.ApplicationUserId = user.Id;
+                chatMessage.Message = chatMessageText;
+                _dbContext.ChatMessages.Add(chatMessage);
+                _dbContext.SaveChangesForUser(user);
+                await _signalRHub.Clients.Group(chatId).SendAsync("ServerMessage","NewChatMessages");
                 return new OkObjectResult(new {status});
             }
             catch (Exception ex)
             {
-                string exceptionString = $"BoardDataController.Chat chatId={chatId}, exception occurred: {ex.ToString()}";
+                string exceptionString = $"BoardDataController.AddChatMessage chatId={chatId}, exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});
             }            
+        }
+        [HttpGet("Chat/{chatId}")]
+        public IEnumerable<Object> GetChatMessages(string chatId)
+        {
+            ApplicationUser user = this.GetApplicationUser();
+            List<ChatMessage> chatMessages = _dbContext.ChatMessages
+                .Include(msg => msg.ApplicationUser)
+                .Where(msg => msg.ChatId == chatId)
+                .OrderByDescending(msg => msg.CreatedDateUTC)
+                .Take(30)  // Use a hard limit for now, to put a cap on payload returned
+                .OrderBy(msg => msg.CreatedDateUTC)
+                .ToList();
+
+            return chatMessages.Select(msg => msg.GetServerResponsePayload(user)).ToList();
         }
     }
 }

@@ -1,8 +1,10 @@
 import React from 'react'
-import { Form } from 'react-bootstrap';
+import { Card, Form } from 'react-bootstrap';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import AppContext from '../AppContext';
 import { HubMethod } from '../api-board-data/SignalRHub';
+import { ChatMessage } from './TazkrObjects';
+import {format} from 'date-fns';
 
 interface Props {
     ChatId: string;
@@ -11,33 +13,49 @@ interface Props {
 const ChatCard = (props:Props) => {
     const signalRHub = React.useContext(AppContext);
     const [chatText, setChatText] = React.useState("");
-    const [chatThread, setChatThread] = React.useState("");
-    const handleChatMessage: HubMethod = (arg1:any, arg2: any, arg3: any, arg4:any )=> {
-        setChatThread(chatThread+ " : " + arg1);
+    const [chatThread, setChatThread] = React.useState([]);
+    const refreshChatMessages = async () => {
+        const chatMessages = await BoardDataApi.getChatMessages(props.ChatId);
+        setChatThread(chatMessages);        
+    }
+    const handleNewChatMessages: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
+        await refreshChatMessages();
     }
 
+    const joinChat = async () => {
+        await signalRHub.setMethod("NewChatMessages", handleNewChatMessages);
+        await signalRHub.joinChat(props.ChatId);       
+    }
     const handleKeyPress = async (event: any) => {
         if(event.key === 'Enter'){
-            await signalRHub.setMethod("ChatMessage", handleChatMessage);
-            await signalRHub.joinChat(props.ChatId);
+            joinChat();
             await BoardDataApi.sendChatMessage(props.ChatId, chatText);
             setChatText("");
         }
     }
     React.useEffect(() => {
-        console.log(`ChatCard, useEffect calling joinChat: ${props.ChatId}`);
-        signalRHub.setMethod("ChatMessage", handleChatMessage);
-        signalRHub.joinChat(props.ChatId);
+        joinChat();
+        refreshChatMessages();
     },[]);
     return (
-        <div>
-            <Form.Group>
-                <Form.Control as="textarea" rows={3} onKeyPress={handleKeyPress} onChange={e => setChatText(e.target.value)} value={chatText}/>
-            </Form.Group>
-            <Form.Group>
-                <Form.Control as="textarea" rows={3}  onChange={e => setChatThread(e.target.value)} value={chatThread}/>
-            </Form.Group>
-        </div>
+        <Card className="mb-2 h-100">
+            <Card.Header className="bg-secondary text-light">
+                Chat
+            </Card.Header>
+            <Card.Body style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll", overflowX:"clip"}}>
+                {
+                    chatThread.map((x:ChatMessage) => 
+                        <div key={x.UpdateHashCode}>
+                            <small>
+                            <div><b>{x.UserName}</b> {format(new Date(x.CreatedDateUTC),'MM/dd/yy HH:mm')}</div>
+                            <div>{x.Message}</div>
+                            </small>
+                        </div>
+                    )
+                }
+            </Card.Body>
+            <Form.Control onKeyPress={handleKeyPress} onChange={e => setChatText(e.target.value)} value={chatText} placeholder="Add chat message"/>
+        </Card>
     )
 }
 

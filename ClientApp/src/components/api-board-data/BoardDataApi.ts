@@ -78,3 +78,6 @@ export const moveCardToColumnAtIndex = async (taskId: string, columnId: string, 
 export const sendChatMessage = async (chatId: string, chatMessage: string) => {
     return callBoardDataApi(`BoardData/Chat/${chatId}`, "POST", { Param1: chatMessage});
 }
+export const getChatMessages = async (chatId: string) => {
+    return callBoardDataApi(`BoardData/Chat/${chatId}`,"GET");
+}

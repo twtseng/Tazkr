@@ -15,6 +15,7 @@ namespace Tazkr.Data
         public DbSet<BoardUser> BoardUsers { get; set; }
         public DbSet<Column> Columns { get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
         /// <summary>
         /// cache to lookup Users by their user Id.
         /// </summary>
@@ -35,6 +36,9 @@ namespace Tazkr.Data
                 
             modelBuilder.Entity<BoardUser>()
                 .HasKey(boardUser => new { boardUser.ApplicationUserId, boardUser.BoardId });
+
+            modelBuilder.Entity<ChatMessage>()
+                .HasKey(chat => new { chat.ChatId, chat.ApplicationUserId, chat.CreatedDateUTC });    
         }
         public override int SaveChanges()
         {
