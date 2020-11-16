@@ -29,20 +29,6 @@ namespace Tazkr.Controllers
             this.Logger = logger;
             this.DbContext = dbContext;
         }
-        public void CallAction(string accessToken, string hubGroupId, string payloadString)
-        {
-            Logger.LogInformation($"SignalRHub.CallAction groupId=[{hubGroupId}] payload=[{payloadString}]");
-            ApplicationUser appUser = this.GetUserFromAccessToken(accessToken);
-            HubPayload hubPayload = JsonConvert.DeserializeObject<HubPayload>(payloadString);
-            // await _appDataManager.CallAction(this, appUser, hubGroupId, hubPayload);
-        }
-        public ApplicationUser GetUserFromAccessToken(string accessToken)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            JwtSecurityToken token = handler.ReadJwtToken(accessToken);
-            ApplicationUser appUser = DbContext.Users.Find(keyValues:token.Subject); 
-            return appUser;       
-        }
         public override async Task OnConnectedAsync()
         {
             // Add your own code here.
@@ -56,6 +42,12 @@ namespace Tazkr.Controllers
             await Clients.Caller.SendAsync("ServerMessage", "FOO","This is my message from the server");
             List<dynamic> users = this.DbContext.Users.Select(x => x.GetServerResponsePayload()).ToList();
             await Clients.Caller.SendAsync("ServerMessage", "UpdateAppUsers", users);
+        }
+        public async Task JoinChat(string chatId)
+        {
+            string connectionId = Context.ConnectionId;
+            Logger.LogInformation($"=== SignalRHub.JoinChat chatId={chatId}, connectionId={connectionId} ===");
+            await Groups.AddToGroupAsync(connectionId, chatId);
         }
         // public async Task GetBoards(string accessToken)
         // {

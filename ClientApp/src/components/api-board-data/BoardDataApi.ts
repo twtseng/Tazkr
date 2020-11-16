@@ -21,7 +21,9 @@ const callBoardDataApi = async (url = '', method='GET', data = {}) => {
         const jsonResult = await response.json(); // parses JSON response into native JavaScript objects
         return jsonResult;
     } else {
-        authService.signIn();
+        if (response.status === 401) {
+            authService.signIn();
+        }
         return [];
     }
 }
@@ -72,4 +74,7 @@ export const addBoardUser = async (boardId: string, userName: string) => {
 }
 export const moveCardToColumnAtIndex = async (taskId: string, columnId: string, index: number) => {
     return callBoardDataApi(`BoardData/Cards/${columnId}/${taskId}/${index}`, "PUT", {});
+}
+export const sendChatMessage = async (chatId: string, chatMessage: string) => {
+    return callBoardDataApi(`BoardData/Chat/${chatId}`, "POST", { Param1: chatMessage});
 }

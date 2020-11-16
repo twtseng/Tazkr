@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Dynamic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,6 +22,8 @@ namespace Tazkr.Controllers
     {
         private readonly ILogger<BoardDataController> _logger;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IHubContext<SignalRHub> _signalRHub;
+
         public ApplicationUser GetApplicationUser()
         {
             string userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -37,10 +41,11 @@ namespace Tazkr.Controllers
             .FirstOrDefault();
             return board.GetPermissionLevelForUser(user);
         }
-        public BoardDataController(ILogger<BoardDataController> logger, ApplicationDbContext dbContext)
+        public BoardDataController(ILogger<BoardDataController> logger, ApplicationDbContext dbContext, IHubContext<SignalRHub> signalRHub)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _signalRHub = signalRHub;
         }
         /// <summary>
         /// Get list of minimum board data for displaying the list of boards (no column and card data)
@@ -484,6 +489,26 @@ namespace Tazkr.Controllers
             catch (Exception ex)
             {
                 string exceptionString = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId} exception occurred: {ex.ToString()}";
+                _logger.LogInformation(exceptionString);
+                return BadRequest(new {status=exceptionString});
+            }            
+        }
+        [HttpPost("Chat/{chatId}")]
+        public async Task<IActionResult> Chat(string chatId, ClientRequestPayload payload)
+        {
+            string chatMessage = payload.Param1;
+            try
+            {
+                ApplicationUser user = this.GetApplicationUser();
+                string status = $"BoardDataController.Chat chatId={chatId}, chatMessage={chatMessage}";
+                _logger.LogInformation(status);
+                //await _signalRHub.Clients.Group(chatId).SendAsync("ChatMessage",chatMessage);
+                await _signalRHub.Clients.All.SendAsync("ServerMessage","ChatMessage",$"${user.UserName} {chatMessage}");
+                return new OkObjectResult(new {status});
+            }
+            catch (Exception ex)
+            {
+                string exceptionString = $"BoardDataController.Chat chatId={chatId}, exception occurred: {ex.ToString()}";
                 _logger.LogInformation(exceptionString);
                 return BadRequest(new {status=exceptionString});
             }            

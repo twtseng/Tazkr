@@ -4,6 +4,7 @@ import AppContext from '../AppContext';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import BoardCard from '../view-components/BoardCard';
+import ChatCard from '../view-components/ChatCard';
 import { Board, User } from '../view-components/TazkrObjects';
 import authService from '../api-authorization/AuthorizeService';
 
@@ -20,13 +21,13 @@ const BoardsView = () => {
     const boardsData = await BoardDataApi.createBoard("New Board");
     getBoards();
   }
-  const [boardUsers, setBoardUsers] = React.useState([]);
+  const [appUsers, setAppUsers] = React.useState([]);
   const updateAppUsers: HubMethod = (arg1:any, arg2: any, arg3: any, arg4:any )=> {
     getAppUsers();
   }
   const getAppUsers = async () => {
     const users = await BoardDataApi.getUsers();
-    setBoardUsers(users);
+    setAppUsers(users);
   }
   React.useEffect(() => {
     signalRHub.setMethod("UpdateAppUsers", updateAppUsers);
@@ -79,13 +80,15 @@ const BoardsView = () => {
         </Card>
       </div>
       <Card className="col-2 bg-light">
-        <Card.Body>
-          <h6>Users</h6>
-          <small>
-          {boardUsers.map((x: User) =>
-            <div key={x.Id}>{x.UserName}</div>
+        <Card.Body className="w-100">
+        <h6>Users</h6>
+        <small className="w-100 d-flex flex-column flex-nowrap" style={{overflowX:"hidden"}}>
+          {appUsers.map((x: User) =>
+            <div style={{whiteSpace:"nowrap"}} key={x.Id} >{x.UserName}</div>
           )}
           </small>
+          <h6>Chat</h6>
+            <ChatCard ChatId="TazkrApp" />
         </Card.Body>
       </Card>
     </div>
