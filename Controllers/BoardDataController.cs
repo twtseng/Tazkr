@@ -30,6 +30,7 @@ namespace Tazkr.Controllers
             ApplicationUser appUser = _dbContext.Users.Find(userId);
             appUser.LastRequestTimeUTC = DateTime.UtcNow;
             _dbContext.Users.Update(appUser);
+            _dbContext.SaveChanges();
             return appUser;       
         }
         public Board.PermissionLevels GetUserPermissionLevelForBoard(string boardId, ApplicationUser user)
@@ -54,10 +55,12 @@ namespace Tazkr.Controllers
         public IEnumerable<Object> GetBoards()
         {
             ApplicationUser user = this.GetApplicationUser();
-            return _dbContext.Boards
+            List<Board> unfilteredBoards = _dbContext.Boards
             .Include(board => board.BoardUsers)
             .ThenInclude(user => user.ApplicationUser)
             .Include(board => board.CreatedBy)
+            .ToList();
+            return unfilteredBoards.Where(board => board.GetPermissionLevelForUser(user) != Board.PermissionLevels.None)
             .Select(board => board.GetMinimumServerResponsePayload(user)).ToList();
         }
         /// <summary>
@@ -96,7 +99,7 @@ namespace Tazkr.Controllers
                 column.Title = "New Column";
                 _dbContext.Columns.Add(column);
                 _dbContext.SaveChangesForUser(user);
- 
+                _signalRHub.Clients.All.SendAsync("ServerMessage","BoardsUpdated");
                 string status = $"BoardDataController.CreateBoard(boardTitle={boardTitle}), boardId:{board.Id}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -139,6 +142,7 @@ namespace Tazkr.Controllers
                     }
                     _dbContext.Boards.Remove(board);
                     _dbContext.SaveChangesForUser(user);
+                    _signalRHub.Clients.All.SendAsync("ServerMessage","BoardsUpdated");
                     string status = $"BoardDataController.DeleteBoard Deleted board with boardId:{boardId}";
                     _logger.LogInformation(status);
                     return new OkObjectResult(new {status});
@@ -169,6 +173,7 @@ namespace Tazkr.Controllers
                 board.Title = newName;
                 _dbContext.Boards.Update(board);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.All.SendAsync("ServerMessage","BoardsUpdated");
                 _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -198,6 +203,7 @@ namespace Tazkr.Controllers
                 board.IsPubliclyVisible = isPubliclyVisible;
                 _dbContext.Boards.Update(board);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.All.SendAsync("ServerMessage","BoardsUpdated");
                 _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -468,7 +474,9 @@ namespace Tazkr.Controllers
         [HttpGet("Users")]
         public IEnumerable<dynamic> GetUsers()
         {
-            return _dbContext.Users.Select(user => user.GetServerResponsePayload()).ToList();
+            return _dbContext.Users
+                .Where(user => user.LastRequestTimeUTC > DateTime.UtcNow.AddMinutes(-2))
+                .Select(user => user.GetServerResponsePayload()).ToList();
         }
         [HttpPost("Boards/{boardId}/BoardUsers")]
         public IActionResult AddUserToBoard(string boardId, ClientRequestPayload payload)
@@ -492,6 +500,7 @@ namespace Tazkr.Controllers
                 BoardUser boardUser = new BoardUser() { BoardId=boardId, ApplicationUserId=userId };
                 _dbContext.BoardUsers.Add(boardUser);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.All.SendAsync("ServerMessage","BoardsUpdated");
                 _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 string status = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId}";
                 _logger.LogInformation(status);

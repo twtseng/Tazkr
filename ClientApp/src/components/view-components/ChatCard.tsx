@@ -19,7 +19,7 @@ const ChatCard = (props:Props) => {
         const chatMessages = await BoardDataApi.getChatMessages(props.ChatId);
         setChatThread(chatMessages);
         if (chatEndRef !== null && chatEndRef.current !== null) {
-            chatEndRef.current.scrollIntoView({ behavior: 'smooth' });  
+            chatEndRef.current.scrollIntoView({ behavior: 'auto' });  
         }
     }
     const handleNewChatMessages: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {

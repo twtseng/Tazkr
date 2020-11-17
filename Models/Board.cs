@@ -18,7 +18,8 @@ namespace Tazkr.Models
         public enum PermissionLevels {
             Owner=1, // Full permissions on the board
             User=2, // Can edit and move items but not delete
-            Viewer=3 // Can view only and not modify data
+            Viewer=3, // Can view only and not modify data
+            None=4 // User cannot view board
         }
         public string Title { get; set; }
         public string CreatedById { get; set; }
@@ -38,9 +39,13 @@ namespace Tazkr.Models
             {
                 return Board.PermissionLevels.User;
             }
-            else
+            else if (this.IsPubliclyVisible)
             {
                return Board.PermissionLevels.Viewer;
+            }
+            else
+            {
+                return Board.PermissionLevels.None;
             }
         }
        public dynamic GetMinimumServerResponsePayload(ApplicationUser user)

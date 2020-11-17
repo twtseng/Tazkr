@@ -7,7 +7,6 @@ import BoardCard from '../view-components/BoardCard';
 import ChatCard from '../view-components/ChatCard';
 import AppUsersCard from '../view-components/AppUsersCard';
 import { Board, User } from '../view-components/TazkrObjects';
-import authService from '../api-authorization/AuthorizeService';
 
 const BoardsView = () => {
 
@@ -17,6 +16,9 @@ const BoardsView = () => {
     const boardsData = await BoardDataApi.getBoards();
     boardsData.sort((a:Board,b:Board) => { return (new Date(a.CreatedDateUTC)) > (new Date(b.CreatedDateUTC)) ? 1 : -1 });
     setBoards(boardsData);
+  }
+  const updateBoards: HubMethod = (arg1:any, arg2: any, arg3: any, arg4:any )=> {
+    getBoards();
   }
   const createBoard = async () => {
     const boardsData = await BoardDataApi.createBoard("New Board");
@@ -31,7 +33,8 @@ const BoardsView = () => {
     setAppUsers(users);
   }
   React.useEffect(() => {
-    signalRHub.setMethod("UpdateAppUsers", updateAppUsers);
+    signalRHub.setMethod("AppUsersUpdated", updateAppUsers);
+    signalRHub.setMethod("BoardsUpdated", updateBoards);
     getBoards();
     getAppUsers();
   },[]);
