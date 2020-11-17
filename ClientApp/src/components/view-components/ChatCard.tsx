@@ -14,9 +14,13 @@ const ChatCard = (props:Props) => {
     const signalRHub = React.useContext(AppContext);
     const [chatText, setChatText] = React.useState("");
     const [chatThread, setChatThread] = React.useState([]);
+    const chatEndRef = React.useRef<HTMLDivElement>(null);
     const refreshChatMessages = async () => {
         const chatMessages = await BoardDataApi.getChatMessages(props.ChatId);
-        setChatThread(chatMessages);        
+        setChatThread(chatMessages);
+        if (chatEndRef !== null && chatEndRef.current !== null) {
+            chatEndRef.current.scrollIntoView({ behavior: 'smooth' });  
+        }
     }
     const handleNewChatMessages: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
         await refreshChatMessages();
@@ -37,22 +41,24 @@ const ChatCard = (props:Props) => {
         joinChat();
         refreshChatMessages();
     },[]);
+
     return (
-        <Card className="mb-2 h-100">
+        <Card className="mb-2 h-100" style={{ overflowY:"auto"}}>
             <Card.Header className="bg-secondary text-light">
                 Chat
             </Card.Header>
-            <Card.Body style={{minHeight:"200px", maxHeight:"100%", display:"block", overflowY:"scroll", overflowX:"clip"}}>
+            <Card.Body style={{ overflowY:"scroll"}}>
                 {
                     chatThread.map((x:ChatMessage) => 
                         <div key={x.UpdateHashCode}>
                             <small>
-                            <div><b>{x.UserName}</b> {format(new Date(x.CreatedDateUTC),'MM/dd/yy HH:mm')}</div>
+                            <div className="text-secondary"><b>{x.UserName}</b> {format(new Date(x.CreatedDateUTC),'MM/dd/yy HH:mm')}</div>
                             <div>{x.Message}</div>
                             </small>
                         </div>
                     )
                 }
+                <div ref={chatEndRef}></div>
             </Card.Body>
             <Form.Control onKeyPress={handleKeyPress} onChange={e => setChatText(e.target.value)} value={chatText} placeholder="Add chat message"/>
         </Card>

@@ -36,11 +36,11 @@ const BoardsView = () => {
     getAppUsers();
   },[]);
   return (
-    <div className="col-12 d-flex">
+    <div className="col-12 d-flex h-100">
       <div className="col-10 h-100">
         <Card className="d-flex flex-column bg-dark h-100">
           <Card.Body>
-            <Card className="d-flex flex-column bg-info h-100 mb-4">
+            <Card className="d-flex flex-column bg-info mb-4">
               <Card.Header className="bg-secondary text-light d-flex justify-content-between"> 
                 <h6 className="mr-4">Owned by you</h6>
                 <Button onClick={createBoard}>Add a Board</Button>
@@ -53,7 +53,7 @@ const BoardsView = () => {
                   )}
               </div>
             </Card>
-            <Card className="d-flex flex-column bg-info h-100 mb-4">
+            <Card className="d-flex flex-column bg-info mb-4">
               <Card.Header className="bg-secondary text-light"> 
                 <h6>Editable by you</h6>
               </Card.Header>
@@ -65,7 +65,7 @@ const BoardsView = () => {
                   )}
               </div>
             </Card>
-            <Card className="d-flex flex-column bg-info h-100 mb-4">
+            <Card className="d-flex flex-column bg-info mb-4">
               <Card.Header className="bg-secondary text-light"> 
                 <h6>View Only (Public)</h6>
               </Card.Header>
@@ -80,11 +80,11 @@ const BoardsView = () => {
           </Card.Body>
         </Card>
       </div>
-      <Card className="col-2 bg-light h-100">
-        <Card.Body className="w-100 h-100">
+      <Card className="col-2 bg-light p-1 h-100">
+        
           <AppUsersCard />
           <ChatCard ChatId="TazkrApp" />
-        </Card.Body>
+
       </Card>
     </div>
   );
