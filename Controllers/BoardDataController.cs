@@ -169,6 +169,7 @@ namespace Tazkr.Controllers
                 board.Title = newName;
                 _dbContext.Boards.Update(board);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }
@@ -197,6 +198,7 @@ namespace Tazkr.Controllers
                 board.IsPubliclyVisible = isPubliclyVisible;
                 _dbContext.Boards.Update(board);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }
@@ -226,6 +228,7 @@ namespace Tazkr.Controllers
                 _dbContext.Columns.Add(column);
                 _dbContext.SaveChangesForUser(user);
                 string status = $"BoardDataController.AddColumnToBoard BoardId={boardId}, Title={columnTitle}";
+                _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
             }
@@ -257,12 +260,14 @@ namespace Tazkr.Controllers
                         _logger.LogInformation(errorString);
                         return this.Unauthorized(new {status=errorString});
                     }
+                    string boardId = column.BoardId;
                     foreach(Card card in column.Cards)
                     {
                         _dbContext.Cards.Remove(card);
                     }
                     _dbContext.Columns.Remove(column);
                     _dbContext.SaveChangesForUser(user);
+                    _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                     string status = $"BoardDataController.DeleteColumn Deleted column with columnId:{columnId}";
                     _logger.LogInformation(status);
                     return new OkObjectResult(new {status});
@@ -293,6 +298,7 @@ namespace Tazkr.Controllers
                 column.Title = newName;
                 _dbContext.Columns.Update(column);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.Group(column.BoardId).SendAsync("ServerMessage","BoardUpdated");
                 string status = $"BoardDataController.RenameColumn columnId={columnId}, newName={newName}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -327,6 +333,7 @@ namespace Tazkr.Controllers
                 card.ColumnId = columnId;
                 _dbContext.Cards.Add(card);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 string status = $"BoardDataController.AddCardToColumn(columnId={columnId}), cardId:{card.Id}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -377,6 +384,7 @@ namespace Tazkr.Controllers
                 cardToMove.Index = index;
                 _dbContext.Cards.Update(cardToMove);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.Group(column.BoardId).SendAsync("ServerMessage","BoardUpdated");
                 string status = $"BoardDataController.MoveCardToColumnAtIndex cardId={cardId}, columnId={columnId}, index={index}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -415,6 +423,7 @@ namespace Tazkr.Controllers
                 }         
                 _dbContext.Cards.Update(card);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 string status = $"BoardDataController.UpdateCard cardId={cardId}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -444,6 +453,7 @@ namespace Tazkr.Controllers
                 Card card = _dbContext.Cards.Find(cardId);
                 _dbContext.Cards.Remove(card);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 string status = $"BoardDataController.DeleteCard(cardId={cardId})";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});
@@ -482,6 +492,7 @@ namespace Tazkr.Controllers
                 BoardUser boardUser = new BoardUser() { BoardId=boardId, ApplicationUserId=userId };
                 _dbContext.BoardUsers.Add(boardUser);
                 _dbContext.SaveChangesForUser(user);
+                _signalRHub.Clients.Group(boardId).SendAsync("ServerMessage","BoardUpdated");
                 string status = $"BoardDataController.AddUserToBoard BoardId={boardId}, userId={userId}";
                 _logger.LogInformation(status);
                 return new OkObjectResult(new {status});

@@ -4,6 +4,7 @@ import AppContext from '../AppContext';
 import { useParams } from "react-router-dom";
 import {DragDropContext} from 'react-beautiful-dnd';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
+import { HubMethod } from '../api-board-data/SignalRHub';
 import dragEndHandler from '../dragdrop/BoardViewDragEndHandler';
 import TaskCard from '../view-components/TaskCard';
 import BoardColumn from '../view-components/BoardColumn';
@@ -42,8 +43,12 @@ const BoardView = () => {
     setBoard(boardData);
     setBoardTitle(boardData.Title);
   }
-
+  const handleBoardUpdate: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
+    await getBoard();
+  }
   React.useEffect(() => {
+    signalRHub.setMethod("BoardUpdated", handleBoardUpdate);
+    signalRHub.joinChat(boardId);     
     getBoard();
   },[]);
   
