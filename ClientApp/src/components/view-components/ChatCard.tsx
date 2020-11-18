@@ -33,7 +33,7 @@ const ChatCard = (props:Props) => {
     const handleKeyPress = async (event: any) => {
         if(event.key === 'Enter'){
             joinChat();
-            await BoardDataApi.sendChatMessage(props.ChatId, chatText);
+            BoardDataApi.sendChatMessage(props.ChatId, chatText);
             setChatText("");
         }
     }
