@@ -36,21 +36,19 @@ const BoardStatusBar = (props: Props) => {
     }
    
     return (
-        <div className="TitleRow d-flex justify-content-between">
-          <div className="d-flex col-10">
-            <TitleEdit
-                className="col-4 text-dark bg-light font-weight-bold"
-               // size="lg"
-                title={props.boardTitle}
-                setTitle={props.setBoardTitle}
-                updateTitle={renameBoard}        
-            />
-            <BoardPermissionButton className="ml-4" permissionLevel={props.permissionLevel} />
-            <BoardVisibilityDropdown className="ml-4" boardId={props.board.Id} isPubliclyVisible={props.board.IsPubliclyVisible} getBoard={props.getBoard}/>
-          </div>
+        <div className="TitleRow d-flex flex-column flex-md-row justify-content-between">
+          <TitleEdit
+              className="col-md-4 text-dark bg-light font-weight-bold"
+              // size="lg"
+              title={props.boardTitle}
+              setTitle={props.setBoardTitle}
+              updateTitle={renameBoard}        
+          />
+          <BoardPermissionButton className="" permissionLevel={props.permissionLevel} />
+          <BoardVisibilityDropdown className="" boardId={props.board.Id} isPubliclyVisible={props.board.IsPubliclyVisible} getBoard={props.getBoard}/>
           <Dropdown>
               <Dropdown.Toggle className="text-light" variant="muted">
-                  <small>Board actions</small>
+                  Board actions
               </Dropdown.Toggle>
               <Dropdown.Menu>
               <Dropdown.Item onClick={addColumn}><small>Add Column</small></Dropdown.Item>

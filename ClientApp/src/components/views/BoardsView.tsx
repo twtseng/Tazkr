@@ -40,7 +40,7 @@ const BoardsView = () => {
   },[]);
   return (
     <div className="col-12 d-flex h-100">
-      <div className="col-10 h-100">
+      <div className="col-md-10 h-100">
         <Card className="d-flex flex-column bg-dark h-100">
           <Card.Body>
             <Card className="d-flex flex-column bg-info mb-4">
@@ -83,11 +83,9 @@ const BoardsView = () => {
           </Card.Body>
         </Card>
       </div>
-      <Card className="col-2 bg-light p-1 h-100">
-        
+      <Card className="col-2 bg-light p-1 h-100 d-none d-md-flex">
           <AppUsersCard />
           <ChatCard ChatId="TazkrApp" />
-
       </Card>
     </div>
   );

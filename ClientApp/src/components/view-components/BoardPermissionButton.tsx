@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { BoardPermissionLevel } from './TazkrObjects';
 
 interface Props {
     permissionLevel: string;
@@ -16,7 +15,7 @@ const BoardPermissionButton = (props: Props) => {
     return (
         <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{permissionDescriptions[props.permissionLevel]}</Tooltip>}>
             <span className={props.className}>
-                <Button style={{ pointerEvents: 'none' }}>
+                <Button variant="secondary" style={{ pointerEvents: 'none' }}>
                     Permission level: {props.permissionLevel}
                 </Button>
             </span>

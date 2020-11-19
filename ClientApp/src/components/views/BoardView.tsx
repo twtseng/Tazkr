@@ -55,7 +55,7 @@ const BoardView = () => {
   return (
     <DragDropContext onDragEnd={(result) => dragEndHandler(result, board, setBoard)}>
       <div className="col-12 d-flex h-100">
-        <div className="col-10 h-100"> 
+        <div className="col-md-10 h-100"> 
           <Card className="d-flex flex-column bg-light h-100">
             <Card.Header className="bg-secondary text-light">   
               <BoardStatusBar board={board} getBoard={getBoard} boardTitle={boardTitle} setBoardTitle={setBoardTitle} permissionLevel={board.PermissionLevel} />
@@ -82,7 +82,7 @@ const BoardView = () => {
             </Card.Body> 
           </Card>
         </div>
-        <Card className="col-2 bg-light p-0 h-100">
+        <Card className="col-2 bg-light p-0 h-100 d-none d-md-flex">
           <Card className="mb-2">
             <Card.Header className="bg-secondary text-light">Owner</Card.Header>
             <Card.Body>
