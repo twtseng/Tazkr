@@ -6,10 +6,10 @@ export class Layout extends Component {
 
   render () {
     return (
-      <div className="h-100" style={{paddingTop: "70px"}}>
+      <div className="h-100" style={{padding:0, paddingTop: "70px"}}>
         <NavMenu />
-          <div className="h-100">
-            <div className="col-12 h-100">
+          <div className="h-100 p-0">
+            <div className="col-12 h-100 p-0">
             {this.props.children}
             </div>
           </div>

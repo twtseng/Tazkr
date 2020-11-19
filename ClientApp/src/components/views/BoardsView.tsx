@@ -39,9 +39,9 @@ const BoardsView = () => {
     getAppUsers();
   },[]);
   return (
-    <div className="col-12 d-flex h-100">
-      <div className="col-md-10 h-100">
-        <Card className="d-flex flex-column bg-dark h-100">
+    <div className="col-12 d-flex h-100 p-0 m-0">
+      <div className="p-0 pl-md-3 pr-md-3 col-md-10 h-100">
+        <Card className="d-flex flex-column bg-dark h-100" style={{overflowY:"scroll"}}>
           <Card.Body>
             <Card className="d-flex flex-column bg-info mb-4">
               <Card.Header className="bg-secondary text-light d-flex justify-content-between"> 
