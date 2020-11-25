@@ -43,6 +43,6 @@ export type ChatMessage = {
     ChatId: string;
     UpdateHashCode: number;
     UserName : string;
-    CreatedDateUTC : Date;
+    CreatedDateUTC : string;
     Message : string;    
 }

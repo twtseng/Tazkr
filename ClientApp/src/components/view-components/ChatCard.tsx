@@ -4,7 +4,9 @@ import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import AppContext from '../AppContext';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import { ChatMessage } from './TazkrObjects';
-import {format} from 'date-fns';
+import {parseISO} from 'date-fns';
+import { format, utcToZonedTime } from 'date-fns-tz';
+import { formatToTimeZone } from 'date-fns-timezone';
 
 interface Props {
     ChatId: string;
@@ -41,6 +43,14 @@ const ChatCard = (props:Props) => {
         joinChat();
         refreshChatMessages();
     },[]);
+    const localTimeString = (utcDateString: string) :string => {
+        const utcDate = parseISO(utcDateString);
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const zonedDate = utcToZonedTime(utcDate, timeZone);
+        console.log(`utcDateString: ${utcDateString} utcDate: ${utcDate} zonedDate:${zonedDate}`)
+        //return format(zonedDate,'MM/dd/yy HH:mm')+` (${timeZone})` 
+        return formatToTimeZone(utcDate, 'M/D/YYYY HH:mm', { timeZone: timeZone }) +` [${timeZone}]` ;
+    }
 
     return (
         <Card className="mb-2 h-100" style={{ overflowY:"auto"}}>
@@ -52,7 +62,7 @@ const ChatCard = (props:Props) => {
                     chatThread.map((x:ChatMessage) => 
                         <div key={x.UpdateHashCode}>
                             <small>
-                            <div className="text-secondary"><b>{x.UserName}</b> {format(new Date(x.CreatedDateUTC),'MM/dd/yy HH:mm')}</div>
+                            <div className="text-secondary"><b>{x.UserName}</b> {localTimeString(x.CreatedDateUTC)}</div>
                             <div>{x.Message}</div>
                             </small>
                         </div>
