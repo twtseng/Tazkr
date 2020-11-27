@@ -1,33 +1,29 @@
 import React from 'react'
-import { connect } from 'react-redux';
 import * as TazkrObjects from '../view-components/TazkrObjects';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    getBoards,
+    selectBoards,
+    setBoards,
+} from '../features/boards/boardsSlice'
+import state from '../redux/store';
 
-import * as actions from '../actions';
-
-interface Props {
-    boards : TazkrObjects.Board[];
-    getBoardsAction: () => any;
-}
-
-const ReduxBoardsView = (props: Props) => {
+const ReduxBoardsView = () => {
+    const boards = useSelector(selectBoards);
+    console.log(`ReduxBoardsView: ${JSON.stringify(boards)}`)
+    const dispatch = useDispatch();
     React.useEffect(() => {
-        props.getBoardsAction();
+        dispatch(getBoards())
     },[]);
 
-    console.log(`ReduxBoardsView ${JSON.stringify(props)}`)
     return (
         <div>
-            {props.boards.map((x: TazkrObjects.Board) => <h1>{x.Title}</h1>)}
+            <button onClick={() => dispatch(setBoards([{Title:"Set boards test 1"}, {Title:"Set boards test 2"}]))}>Test setting boards</button>
+            <button onClick={() => dispatch(getBoards())}>Test getBoards</button>
+            {boards.map((x: any) => <h6>Title: {x.Title}</h6>)}
         </div>
     )
 }
 
-const mapStateToProps = (state:any) => {
-    console.log(`mapStateToProps, state=${JSON.stringify(state)}`)
-    return { boards: state.boards} ;
-}
-const mapDispatchToProps = (dispatch:any) => {
-    return { getBoardsAction: () => dispatch(actions.getBoardsAction())}
-}
-  
-export default connect(mapStateToProps, mapDispatchToProps)(ReduxBoardsView)
+export default ReduxBoardsView
+
