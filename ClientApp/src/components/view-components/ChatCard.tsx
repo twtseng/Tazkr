@@ -47,8 +47,6 @@ const ChatCard = (props:Props) => {
         const utcDate = parseISO(utcDateString);
         const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const zonedDate = utcToZonedTime(utcDate, timeZone);
-        console.log(`utcDateString: ${utcDateString} utcDate: ${utcDate} zonedDate:${zonedDate}`)
-        //return format(zonedDate,'MM/dd/yy HH:mm')+` (${timeZone})` 
         return formatToTimeZone(utcDate, 'M/D/YYYY HH:mm', { timeZone: timeZone }) +` [${timeZone}]` ;
     }
 
