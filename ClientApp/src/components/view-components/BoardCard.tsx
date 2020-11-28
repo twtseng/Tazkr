@@ -1,6 +1,6 @@
 import React from 'react'
 import { useHistory } from "react-router-dom";
-import { Card } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
 import TitleEdit from './TitleEdit';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { User } from './TazkrObjects';

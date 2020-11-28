@@ -1,9 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { useSelector, useDispatch } from 'react-redux';
-import { Board }  from '../../view-components/TazkrObjects';
+import { Board, Column }  from '../../view-components/TazkrObjects';
 import * as BoardData from '../../api-board-data/BoardDataApi';
 import { RootState, AppDispatch } from '../../redux/store';
-import { Writable } from 'stream';
 
 type SliceState = {
   board: Board | null
@@ -44,10 +43,13 @@ export const boardSlice = createSlice({
           // Moving task in same column
           state.board.Columns[fromColIndex].Cards.splice(fromIndex, 1);
           state.board.Columns[fromColIndex].Cards.splice(toIndex, 0, card);
+          state.board.Columns[fromColIndex].Cards.forEach((card, index) => card.Index = index);
         } else if (card !== null) { 
           // Moving task to new column
           state.board.Columns[fromColIndex].Cards.splice(fromIndex, 1);
+          state.board.Columns[fromColIndex].Cards.forEach((card, index) => card.Index = index);
           state.board.Columns[toColIndex].Cards.splice(toIndex, 0, card);
+          state.board.Columns[toColIndex].Cards.forEach((card, index) => card.Index = index);
         }
       }
     }
@@ -57,8 +59,12 @@ export const boardSlice = createSlice({
 export const { setBoard, moveTaskToColumn } = boardSlice.actions;
 
 export const getBoard = (boardId: string) => async (dispatch: AppDispatch) => {
-    const board = await BoardData.getBoard(boardId);
-    dispatch(setBoard(board));
+    const boardData = await BoardData.getBoard(boardId);
+    boardData.Columns.sort((a:Column,b:Column) => { return a.Index - b.Index });
+    boardData.Columns.forEach((col:Column) => {
+      col.Cards.sort((a,b) => { return a.Index - b.Index });
+    });
+    dispatch(setBoard(boardData));
 };
 
 export const selectBoard = (state:RootState) => state.board.board;

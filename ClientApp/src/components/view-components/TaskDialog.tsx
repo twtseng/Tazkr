@@ -67,16 +67,18 @@ const TaskDialog = (props: Props) => {
                     </FormGroup>
                 </Form>
             </Modal.Body>
-            <Modal.Footer>
-            <Button variant="dnage" onClick={deleteCard}>
+            <Modal.Footer className="d-flex justify-content-between">
+            <Button variant="warning" onClick={deleteCard}>
                 <small>Delete Card</small>
-            </Button>    
-            <Button variant="secondary" onClick={props.closeDialog}>
-                <small>Cancel</small>
             </Button>
-            <Button variant="primary" onClick={updateCard}>
-                <small>Save</small>
-            </Button>
+            <div>
+                <Button variant="secondary" className="mr-4" onClick={props.closeDialog}>
+                    <small>Cancel</small>
+                </Button>
+                <Button variant="primary" onClick={updateCard}>
+                    <small>Save</small>
+                </Button>
+            </div>
             </Modal.Footer>
         </Modal>
     )

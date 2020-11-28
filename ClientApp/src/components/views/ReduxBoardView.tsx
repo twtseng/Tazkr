@@ -54,7 +54,8 @@ const ReduxBoardView = () => {
         board === null 
         ? <></>
         : (
-        <DragDropContext onDragEnd={(result) => reduxDragEndHandler(result, board, updateBoard)}>
+        // <DragDropContext onDragEnd={(result) => reduxDragEndHandler(result, board, updateBoard)}>
+        <DragDropContext onDragEnd={(result) => dragCard(result)}>
         <div className="p-0 col-12 d-flex h-100">
           <div className="p-0 pl-md-3 pr-md-3 col-md-10 h-100"> 
             <Card className="d-flex flex-column bg-light h-100">
