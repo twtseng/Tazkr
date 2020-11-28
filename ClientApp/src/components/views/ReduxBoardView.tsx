@@ -7,7 +7,7 @@ import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import reduxDragEndHandler from '../dragdrop/ReduxBoardViewDragEndHandler';
-import TaskCard from '../view-components/TaskCard';
+import ReduxTaskCard from '../view-components/ReduxTaskCard';
 import BoardColumn from '../view-components/BoardColumn';
 import UsersCard from '../view-components/UsersCard';
 import BoardStatusBar from '../view-components/BoardStatusBar';
@@ -18,7 +18,8 @@ import {
     setBoard,
     getBoard,
     selectBoard,
-    moveTaskToColumn
+    moveTaskToColumn,
+    
 } from '../features/board/boardSlice'
 
 const ReduxBoardView = () => {
@@ -32,7 +33,6 @@ const ReduxBoardView = () => {
         dispatch(getBoard(boardId))
     },[]);
     const updateBoard = (updatedBoard: Board) => {
-        alert(JSON.stringify(updatedBoard));
         dispatch(setBoard(updatedBoard));
     }
     const refetchBoard = () => {
@@ -54,7 +54,7 @@ const ReduxBoardView = () => {
         board === null 
         ? <></>
         : (
-        <DragDropContext onDragEnd={(result) => dragCard(result)}>
+        <DragDropContext onDragEnd={(result) => reduxDragEndHandler(result, board, updateBoard)}>
         <div className="p-0 col-12 d-flex h-100">
           <div className="p-0 pl-md-3 pr-md-3 col-md-10 h-100"> 
             <Card className="d-flex flex-column bg-light h-100">
@@ -66,16 +66,11 @@ const ReduxBoardView = () => {
                 style={{overflowX:"scroll"}}>
                 {board.Columns.map(col => 
                   <BoardColumn key={col.UpdateHashCode} HashCode={col.UpdateHashCode} Title={col.Title} Index={col.Index} ColumnId={col.Id} getBoard={refetchBoard} BoardId={boardId}>
-                      {col.Cards.map((t, index) =>
-                        <TaskCard 
-                          key={t.UpdateHashCode}
-                          HashCode={t.UpdateHashCode}
-                          Title={t.Title} 
-                          CardId={t.Id} 
-                          Index={index} 
-                          Description={t.Description} 
-                          getBoard={refetchBoard}
-                          BoardId={boardId}
+                      {col.Cards.map((card, index) =>
+                        <ReduxTaskCard 
+                          task={card}
+                          refetchBoard={refetchBoard}
+                          key={card.UpdateHashCode}
                           />
                       )}
                   </BoardColumn>

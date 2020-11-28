@@ -25,7 +25,7 @@ const findColumnById = (inputBoard: Board, columnId: string) => {
     return null;
 }
 
-export default (result: any, board: Board, setBoard: (board: Board) => void) => {
+export default (result: any, inputboard: Board, setBoard: (board: Board) => void) => {
     const { destination, source, draggableId } = result;
     // Exit if No destination
     if (!destination) {
@@ -35,30 +35,37 @@ export default (result: any, board: Board, setBoard: (board: Board) => void) => 
     if (destination.droppableId === source.droppableId && destination.index === source.index) {
         return;
     }
+    const board = JSON.parse(JSON.stringify(inputboard));
     const startColumn = findColumnById(board, source.droppableId);
     const finishColumn = findColumnById(board, destination.droppableId);
     const card = findCardById(board, draggableId);
-    
+   
     if (startColumn !== null && finishColumn !== null  && card !== null) {
-        if (source.droppableId === destination.droppableId) {
-            // Reordering task on same column
-            const newBoard = {...board}  
-            const newCards = [...startColumn.Cards];
-            newCards.splice(source.index, 1);
-            newCards.splice(destination.index, 0, card);
-            const updateColumn = findColumnById(newBoard, destination.droppableId);
-            if (updateColumn !== null) {
-                updateColumn.Cards = newCards;
-                setBoard(newBoard);
-            }
-        } else { 
-            // Moving task to new column
-            const sourceIndex:number = parseInt(source.index)
-            const destIndex:number = parseInt(destination.index)
-            startColumn.Cards.splice(0, 1);
-            finishColumn.Cards.splice(0, 0, card);
-            setBoard(board);
-        }
-    }
-    moveCardToColumnAtIndex(draggableId, destination.droppableId, destination.index);
+      if (source.droppableId === destination.droppableId) {
+          // Reordering task on same column
+          const newBoard = {...board}  
+          const newCards = startColumn.Cards.filter(x => x.Id !== draggableId);;
+          newCards.splice(destination.index, 0, card);
+          const updateColumn = findColumnById(newBoard, destination.droppableId);
+          if (updateColumn !== null) {
+              updateColumn.Cards = newCards;
+              setBoard(newBoard);
+          }
+      } else { 
+          // Moving task to new column
+          const newBoard = {...board} 
+          const startColumnCards = startColumn.Cards.filter(x => x.Id !== draggableId);
+          const newStartColumn = findColumnById(newBoard, source.droppableId);
+          const newFinishColumn = findColumnById(newBoard, destination.droppableId);
+          if (newStartColumn !== null && newFinishColumn !== null) {
+              newStartColumn.Cards = startColumnCards;
+              const finishColumnCards = [...finishColumn.Cards];
+              finishColumnCards.splice(destination.index, 0, card);
+              
+              newFinishColumn.Cards = finishColumnCards;
+              setBoard(newBoard);
+              }
+          }
+      }
+      moveCardToColumnAtIndex(draggableId, destination.droppableId, destination.index);
 }
