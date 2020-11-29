@@ -39,7 +39,7 @@ namespace Tazkr.Controllers
             // the start().done callback is executed.
             Logger.LogInformation($"=== SignalRHub.OnConnectedAsync ===");
             await base.OnConnectedAsync();
-            await Clients.Caller.SendAsync("ServerMessage", "UpdateAppUsers");
+            await Clients.All.SendAsync("ServerMessage", "UpdateAppUsers");
         }
         public async Task JoinChat(string chatId)
         {

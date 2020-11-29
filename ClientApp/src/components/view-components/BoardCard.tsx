@@ -28,7 +28,7 @@ const BoardCard = (props:Props) => {
     return (
       <Card className='clickable p-0 m-2' 
           key={props.BoardId} 
-          onClick={() => history.push(`/reduxboard/${props.BoardId}`)}
+          onClick={() => history.push(`/board/${props.BoardId}`)}
           style={{width:"300px"}}
       >
         <Card.Header className="bg-secondary text-light">

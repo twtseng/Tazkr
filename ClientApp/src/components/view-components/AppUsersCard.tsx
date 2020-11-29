@@ -13,11 +13,11 @@ const AppUsersCard = () => {
         const users = await BoardDataApi.getUsers();
         setAppUsers(users);        
     }
-    const handleNewUsers: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
+    const updateAppUsers: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
         await refreshAppUsers();
     }
     const joinChat = async () => {
-        await signalRHub.setMethod("NewAppUsers", handleNewUsers);
+        await signalRHub.setMethod("UpdateAppUsers", updateAppUsers);
         await signalRHub.joinChat("TazkrApp");       
     }
     React.useEffect(() => {
@@ -27,7 +27,7 @@ const AppUsersCard = () => {
     return (
         <Card className="mb-2">
             <Card.Header className="bg-secondary text-light">
-                Users
+                Users online
             </Card.Header>
             <Card.Body style={{overflowX:"hidden"}}>
                 {appUsers.map((x:User) => (

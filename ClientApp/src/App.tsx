@@ -9,8 +9,6 @@ import AppContext from './components/AppContext';
 import { SignalRHub } from './components/api-board-data/SignalRHub';
 import BoardsView from './components/views/BoardsView';
 import BoardView from './components/views/BoardView';
-import ReduxBoardsView from './components/views/ReduxBoardsView';
-import ReduxBoardView from './components/views/ReduxBoardView';
 import HomeView from './components/views/HomeView';
 
 
@@ -35,8 +33,6 @@ export default () => {
     <AppContext.Provider value={signalRHub}>
       <Layout>
         <Route exact path='/' component={HomeView} />
-        <AuthorizeRoute exact path='/reduxboards' component={ReduxBoardsView} />
-        <AuthorizeRoute exact path='/reduxboard/:boardId' component={ReduxBoardView} />
         <AuthorizeRoute exact path='/boards' component={BoardsView} />
         <AuthorizeRoute exact path='/board/:boardId' component={BoardView} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />

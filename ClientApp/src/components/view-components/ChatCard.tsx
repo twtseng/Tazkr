@@ -4,15 +4,15 @@ import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import AppContext from '../AppContext';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import { ChatMessage } from './TazkrObjects';
-import {parseISO} from 'date-fns';
-import { format, utcToZonedTime } from 'date-fns-tz';
-import { formatToTimeZone } from 'date-fns-timezone';
+import * as dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 interface Props {
     ChatId: string;
 }
   
 const ChatCard = (props:Props) => {
+    dayjs.extend(utc);
     const signalRHub = React.useContext(AppContext);
     const [chatText, setChatText] = React.useState("");
     const [chatThread, setChatThread] = React.useState([]);
@@ -43,11 +43,10 @@ const ChatCard = (props:Props) => {
         joinChat();
         refreshChatMessages();
     },[]);
+    
     const localTimeString = (utcDateString: string) :string => {
-        const utcDate = parseISO(utcDateString);
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const zonedDate = utcToZonedTime(utcDate, timeZone);
-        return formatToTimeZone(utcDate, 'M/D/YYYY HH:mm', { timeZone: timeZone }) +` [${timeZone}]` ;
+        var dateJs = dayjs.utc(utcDateString);
+        return dateJs.local().format('MM-DD-YY HH:mm');
     }
 
     return (

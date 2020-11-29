@@ -41,12 +41,12 @@ export const boardSlice = createSlice({
         }
         if (fromColId === toColId && card !== null) {
           // Moving task in same column
-          state.board.Columns[fromColIndex].Cards.splice(fromIndex, 1);
+          state.board.Columns[fromColIndex].Cards = state.board.Columns[fromColIndex].Cards.filter(card => card.Id !== taskId);
           state.board.Columns[fromColIndex].Cards.splice(toIndex, 0, card);
           state.board.Columns[fromColIndex].Cards.forEach((card, index) => card.Index = index);
         } else if (card !== null) { 
           // Moving task to new column
-          state.board.Columns[fromColIndex].Cards.splice(fromIndex, 1);
+          state.board.Columns[fromColIndex].Cards = state.board.Columns[fromColIndex].Cards.filter(card => card.Id !== taskId);
           state.board.Columns[fromColIndex].Cards.forEach((card, index) => card.Index = index);
           state.board.Columns[toColIndex].Cards.splice(toIndex, 0, card);
           state.board.Columns[toColIndex].Cards.forEach((card, index) => card.Index = index);
