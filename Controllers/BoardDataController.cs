@@ -475,7 +475,7 @@ namespace Tazkr.Controllers
         public IEnumerable<dynamic> GetUsers()
         {
             return _dbContext.Users
-                .Where(user => user.LastRequestTimeUTC > DateTime.UtcNow.AddMinutes(-2))
+                .Where(user => user.LastRequestTimeUTC > DateTime.UtcNow.AddMinutes(-5))
                 .Select(user => user.GetServerResponsePayload()).ToList();
         }
         [HttpPost("Boards/{boardId}/BoardUsers")]

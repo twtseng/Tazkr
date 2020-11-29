@@ -32,7 +32,7 @@ export default () => {
   return (
     <AppContext.Provider value={signalRHub}>
       <Layout>
-        <Route exact path='/' component={HomeView} />
+        <AuthorizeRoute exact path='/' component={HomeView} />
         <AuthorizeRoute exact path='/boards' component={BoardsView} />
         <AuthorizeRoute exact path='/board/:boardId' component={BoardView} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
