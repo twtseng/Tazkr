@@ -54,7 +54,7 @@ const ChatCard = (props:Props) => {
             <Card.Header className="bg-secondary text-light">
                 Chat
             </Card.Header>
-            <Card.Body style={{ overflowY:"scroll", backgroundColor:"lightgray"}}>
+            <Card.Body style={{ overflowY:"scroll", whiteSpace:"nowrap"}}>
                 {
                     chatThread.map((x:ChatMessage) => 
                         <div key={x.UpdateHashCode}>

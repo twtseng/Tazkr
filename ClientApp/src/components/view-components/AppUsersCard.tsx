@@ -37,7 +37,7 @@ const AppUsersCard = () => {
             <Card.Header className="bg-secondary text-light">
                 Users
             </Card.Header>
-            <Card.Body style={{overflowX:"hidden", backgroundColor:"lightgray", overflowY:"scroll"}}>
+            <Card.Body style={{overflowX:"auto",overflowY:"scroll", whiteSpace:"nowrap"}}>
                 {appUsers.map((x:User) => (
                     <div key={x.Id}><span style={{verticalAlign:"middle", color: x.Online ? "lightseagreen" : "darkgray"}}>&#8226; </span>
                         <small style={{verticalAlign:"middle"}}>{x.UserName}</small>

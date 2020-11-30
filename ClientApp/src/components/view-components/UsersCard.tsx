@@ -48,7 +48,7 @@ const UsersCard = (props: Props) => {
                 options={userOptions}>
             </Select>     
         </Card.Body>
-        <Card.Body style={{overflowX:"hidden", overflowY:"scroll"}}>
+        <Card.Body style={{overflowX:"auto",overflowY:"scroll"}}>
             {users.map((x:User) => (
                 <div key={x.Id}><span style={{verticalAlign:"middle", color: x.Online ? "lightseagreen" : "darkgray"}}>&#8226; </span>
                         <small style={{verticalAlign:"middle"}}>{x.UserName}</small>
