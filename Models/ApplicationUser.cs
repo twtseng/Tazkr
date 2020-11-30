@@ -19,6 +19,7 @@ namespace Tazkr.Models
             obj.Email = this.Email;
             obj.Id = this.Id;
             obj.LastRequestTimeUTC = this.LastRequestTimeUTC;
+            obj.Online = (DateTime.UtcNow - this.LastRequestTimeUTC).TotalMinutes < 2;
             return obj;
         }
     }

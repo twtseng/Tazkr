@@ -11,7 +11,15 @@ const AppUsersCard = () => {
     const [appUsers, setAppUsers] = React.useState([]);
     const refreshAppUsers = async () => {
         const users = await BoardDataApi.getUsers();
-        setAppUsers(users);        
+        const sortedUsers = users.sort(
+            (a:User,b:User) => {
+                if (a.Online == b.Online) {
+                    return a.UserName < b.UserName ? -1 : 1;
+                } else {
+                    return a.Online ? -1 : 1;
+                }
+            });
+        setAppUsers(sortedUsers);        
     }
     const updateAppUsers: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
         await refreshAppUsers();
@@ -25,13 +33,15 @@ const AppUsersCard = () => {
         refreshAppUsers();
     },[]);
     return (
-        <Card className="mb-2">
+        <Card className="mb-2 h-25">
             <Card.Header className="bg-secondary text-light">
-                Users online
+                Users
             </Card.Header>
-            <Card.Body style={{overflowX:"hidden"}}>
+            <Card.Body style={{overflowX:"hidden", backgroundColor:"lightgray", overflowY:"scroll"}}>
                 {appUsers.map((x:User) => (
-                    <div key={x.Id}><small>{x.UserName}</small></div>
+                    <div key={x.Id}><span style={{verticalAlign:"middle", color: x.Online ? "lightseagreen" : "darkgray"}}>&#8226; </span>
+                        <small style={{verticalAlign:"middle"}}>{x.UserName}</small>
+                    </div>
                 ))}
             </Card.Body>
         </Card>

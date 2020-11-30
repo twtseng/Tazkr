@@ -11,10 +11,20 @@ interface Props {
 
 const UsersCard = (props: Props) => {
     const [userOptions, setUserOptions] = React.useState([]);
+    const [users, setUsers] = React.useState([]);
     React.useEffect(()=>{
         BoardDataApi.getUsers()
-        .then(results => {
-            setUserOptions(results.map((x:User) => ({ value: x.Id, label: x.UserName})));
+        .then(users => {
+            setUserOptions(users.map((x:User) => ({ value: x.Id, label: x.UserName})));
+            const sortedUsers = users.sort(
+                (a:User,b:User) => {
+                    if (a.Online == b.Online) {
+                        return a.UserName < b.UserName ? -1 : 1;
+                    } else {
+                        return a.Online ? -1 : 1;
+                    }
+                });
+            setUsers(sortedUsers);
         })
         .catch(err => console.log(`BoardData/Users failed, error=${err}`))
     },[]);
@@ -25,7 +35,7 @@ const UsersCard = (props: Props) => {
     }
 
     return (
-        <Card className="mb-2">
+        <Card className="mb-2 h-25">
         <Card.Header className="bg-secondary text-light">
             Board Users
         </Card.Header>
@@ -38,9 +48,11 @@ const UsersCard = (props: Props) => {
                 options={userOptions}>
             </Select>     
         </Card.Body>
-        <Card.Body style={{overflowX:"hidden"}}>
-            {props.board.BoardUsers.map(x => (
-                <div key={x.Id}><small>{x.UserName}</small></div>
+        <Card.Body style={{overflowX:"hidden", overflowY:"scroll"}}>
+            {users.map((x:User) => (
+                <div key={x.Id}><span style={{verticalAlign:"middle", color: x.Online ? "lightseagreen" : "darkgray"}}>&#8226; </span>
+                        <small style={{verticalAlign:"middle"}}>{x.UserName}</small>
+                </div>
             ))}
         </Card.Body>
       </Card>

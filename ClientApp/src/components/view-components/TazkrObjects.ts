@@ -3,6 +3,7 @@ export type User = {
     UserName: string;
     Email: string;
     LastRequestTimeUTC: Date;
+    Online: boolean;
 }
 export type TaskObj = {
     Id: string;
