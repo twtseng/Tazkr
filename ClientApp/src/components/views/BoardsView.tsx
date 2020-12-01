@@ -1,5 +1,5 @@
 import React from 'react'
-import {  Button, Card } from 'react-bootstrap'
+import { Button, Card } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import BoardCard from '../view-components/BoardCard';
@@ -7,8 +7,7 @@ import ChatCard from '../view-components/ChatCard';
 import AppUsersCard from '../view-components/AppUsersCard';
 import AppContext from '../AppContext';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
-import { Board, User } from '../view-components/TazkrObjects';
-import * as TazkrObjects from '../view-components/TazkrObjects';
+import { Board } from '../view-components/TazkrObjects';
 import {
     getBoards,
     selectBoards,

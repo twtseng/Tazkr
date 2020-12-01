@@ -1,8 +1,10 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { Card } from 'react-bootstrap';
 import Select from 'react-select';
 import { Board, User } from './TazkrObjects';
+import { getUsers, selectUsers } from '../features/users/usersSlice';
 
 interface Props {
     getBoard: () => void;
@@ -10,23 +12,15 @@ interface Props {
 }
 
 const UsersCard = (props: Props) => {
-    const [userOptions, setUserOptions] = React.useState([]);
-    const [users, setUsers] = React.useState([]);
+    const appUsers = useSelector(selectUsers);
+    const userOptions = appUsers.map((x:User) => ({ value: x.Id, label: x.UserName}));
+    const dispatch = useDispatch();
+    const refreshAppUsers = () => {
+        dispatch(getUsers()); 
+    }
+    
     React.useEffect(()=>{
-        BoardDataApi.getUsers()
-        .then(users => {
-            setUserOptions(users.map((x:User) => ({ value: x.Id, label: x.UserName})));
-            const sortedUsers = users.sort(
-                (a:User,b:User) => {
-                    if (a.Online == b.Online) {
-                        return a.UserName < b.UserName ? -1 : 1;
-                    } else {
-                        return a.Online ? -1 : 1;
-                    }
-                });
-            setUsers(sortedUsers);
-        })
-        .catch(err => console.log(`BoardData/Users failed, error=${err}`))
+        refreshAppUsers();
     },[]);
     
     const addUser = async (user: string) => {
@@ -49,7 +43,7 @@ const UsersCard = (props: Props) => {
             </Select>     
         </Card.Body>
         <Card.Body style={{overflowX:"auto",overflowY:"scroll"}}>
-            {users.map((x:User) => (
+            {props.board.BoardUsers.map((x:User) => (
                 <div key={x.Id}><span style={{verticalAlign:"middle", color: x.Online ? "lightseagreen" : "darkgray"}}>&#8226; </span>
                         <small style={{verticalAlign:"middle"}}>{x.UserName}</small>
                 </div>

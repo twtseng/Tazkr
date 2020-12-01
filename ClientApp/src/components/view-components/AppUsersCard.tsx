@@ -1,28 +1,20 @@
 import React from 'react'
-import * as BoardDataApi from '../api-board-data/BoardDataApi';
+import { useSelector, useDispatch } from 'react-redux';
 import AppContext from '../AppContext';
 import { Card } from 'react-bootstrap';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import { User } from './TazkrObjects';
+import { getUsers, selectUsers } from '../features/users/usersSlice';
 
 const AppUsersCard = () => {
-
     const signalRHub = React.useContext(AppContext);
-    const [appUsers, setAppUsers] = React.useState([]);
-    const refreshAppUsers = async () => {
-        const users = await BoardDataApi.getUsers();
-        const sortedUsers = users.sort(
-            (a:User,b:User) => {
-                if (a.Online == b.Online) {
-                    return a.UserName < b.UserName ? -1 : 1;
-                } else {
-                    return a.Online ? -1 : 1;
-                }
-            });
-        setAppUsers(sortedUsers);        
+    const users = useSelector(selectUsers);
+    const dispatch = useDispatch();
+    const refreshAppUsers = () => {
+        dispatch(getUsers()); 
     }
     const updateAppUsers: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
-        await refreshAppUsers();
+        refreshAppUsers();
     }
     const joinChat = async () => {
         await signalRHub.setMethod("UpdateAppUsers", updateAppUsers);
@@ -38,7 +30,7 @@ const AppUsersCard = () => {
                 Users
             </Card.Header>
             <Card.Body style={{overflowX:"auto",overflowY:"scroll", whiteSpace:"nowrap"}}>
-                {appUsers.map((x:User) => (
+                {users.map((x:User) => (
                     <div key={x.Id}><span style={{verticalAlign:"middle", color: x.Online ? "lightseagreen" : "darkgray"}}>&#8226; </span>
                         <small style={{verticalAlign:"middle"}}>{x.UserName}</small>
                     </div>
