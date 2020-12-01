@@ -1,20 +1,21 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Card } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import TaskDialog from './TaskDialog';
 import TitleEdit from './TitleEdit';
-import { borderRadius } from 'react-select/src/theme';
+import { TaskObj } from './TazkrObjects';
+import {
+    getBoard,
+    selectBoardMap
+} from '../features/board/boardSlice'
 
 interface Props {
-    Index : number;
-    CardId: string;
-    BoardId: string;
-    HashCode: number;
-    Description: string;
-    Title: string;
-    getBoard: () => void;
+    boardId : string;
+    task : TaskObj;
+    refetchBoard : () => void;
 }
 
 type DragContainerStyleProp = {
@@ -26,23 +27,24 @@ const DragContainer = styled.div<DragContainerStyleProp>`
     border-radius: 5px;
 `
 
-const TaskCard = (props:Props) => {
+const ReduxTaskCard = ({boardId, task, refetchBoard}:Props) => {
+    const dispatch = useDispatch();
     const [showTaskDialog, setShowTaskDialog] = React.useState(false);
     const closeDialog = () => setShowTaskDialog(false);
     const showDialog = () => setShowTaskDialog(true);
-    const [cardTitle, setCardTitle] = React.useState(props.Title)
+    const [cardTitle, setCardTitle] = React.useState(task.Title)
     const renameCard = () => {
-        if (cardTitle !== props.Title) {
-            BoardDataApi.renameCard(props.CardId, cardTitle, props.BoardId)
+        if (cardTitle !== task.Title) {
+            BoardDataApi.renameCard(task.Id, cardTitle, boardId)
                 .then(() => {
                     console.log("updateCardTitle completed");
-                    props.getBoard();
+                    dispatch(getBoard(boardId))
                 })
                 .catch((err) => console.log(`updateCardTitle failed, err = ${err}`));
         }
     }
     return (
-        <Draggable draggableId={props.CardId} index={props.Index}>
+        <Draggable draggableId={task.Id} index={task.Index}>
         {(provided, snapshot) => (
             <DragContainer
             {...provided.draggableProps}
@@ -64,17 +66,17 @@ const TaskCard = (props:Props) => {
                         />
                     </Card.Header>
                     <Card.Body className="d-flex flex-wrap">
-                        <small className="d-flex flex-wrap">{props.Description}</small>
+                        <small className="d-flex flex-wrap">{task.Description}</small>
                     </Card.Body>
                 </Card>
                 <TaskDialog
-                    CardId={props.CardId}
-                    Title={props.Title}
-                    Description={props.Description} 
+                    CardId={task.Id}
+                    Title={task.Title}
+                    Description={task.Description} 
                     showTaskDialog={showTaskDialog} 
                     closeDialog={closeDialog} 
-                    getBoard={props.getBoard} 
-                    BoardId={props.BoardId}
+                    getBoard={refetchBoard} 
+                    BoardId={boardId}
                     />
             </DragContainer>
         )}
@@ -82,4 +84,4 @@ const TaskCard = (props:Props) => {
     )
 }
 
-export default TaskCard
+export default ReduxTaskCard

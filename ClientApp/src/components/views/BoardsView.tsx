@@ -1,10 +1,11 @@
 import React from 'react'
 import {  Button, Card } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux';
-
+import { HubMethod } from '../api-board-data/SignalRHub';
 import BoardCard from '../view-components/BoardCard';
 import ChatCard from '../view-components/ChatCard';
 import AppUsersCard from '../view-components/AppUsersCard';
+import AppContext from '../AppContext';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { Board, User } from '../view-components/TazkrObjects';
 import * as TazkrObjects from '../view-components/TazkrObjects';
@@ -15,13 +16,21 @@ import {
 
 const BoardsView = () => {
     const boards = useSelector(selectBoards);
+    const signalRHub = React.useContext(AppContext);
     const dispatch = useDispatch();
+    const refreshBoards = () => {
+      dispatch(getBoards());
+    }
+    const updateBoards: HubMethod = (arg1:any, arg2: any, arg3: any, arg4:any )=> {
+      refreshBoards();
+    }
     React.useEffect(() => {
-        dispatch(getBoards())
+      signalRHub.setMethod("BoardsUpdated", updateBoards);
+      refreshBoards();
     },[]);
     const createBoard = async () => {
         const boardsData = await BoardDataApi.createBoard("New Board");
-        dispatch(getBoards());
+        refreshBoards();
     }
 
     return (

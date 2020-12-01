@@ -7,17 +7,17 @@ import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 import * as BoardDataApi from '../api-board-data/BoardDataApi';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import reduxDragEndHandler from '../dragdrop/ReduxBoardViewDragEndHandler';
-import ReduxTaskCard from '../view-components/ReduxTaskCard';
+import TaskCard from '../view-components/TaskCard';
 import BoardColumn from '../view-components/BoardColumn';
 import UsersCard from '../view-components/UsersCard';
 import BoardStatusBar from '../view-components/BoardStatusBar';
 import ChatCard from '../view-components/ChatCard';
-import { Board, Column, BoardPermissionLevel } from '../view-components/TazkrObjects';
+import { Column, TaskObj } from '../view-components/TazkrObjects';
 
 import {
     setBoard,
     getBoard,
-    selectBoard,
+    selectBoardMap,
     moveTaskToColumn,
     
 } from '../features/board/boardSlice'
@@ -27,17 +27,22 @@ const BoardView = () => {
         boardId: string
     }
     const { boardId } = useParams<ParamTypes>();
-    const board = useSelector(selectBoard);
+    const boardMap = useSelector(selectBoardMap);
     const dispatch = useDispatch();
+    const signalRHub = React.useContext(AppContext);
     React.useEffect(() => {
         dispatch(getBoard(boardId))
     },[]);
-    const updateBoard = (updatedBoard: Board) => {
-        dispatch(setBoard(updatedBoard));
-    }
     const refetchBoard = () => {
         dispatch(getBoard(boardId))
     }
+    const handleBoardUpdate: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
+      refetchBoard();
+    }
+    React.useEffect(() => {
+      signalRHub.setMethod("BoardUpdated", handleBoardUpdate);    
+      refetchBoard();
+    },[]);
     const dragCard = (result: DropResult) => {
       if (result.destination !== null) {
         const taskId:string = result.draggableId;
@@ -46,13 +51,15 @@ const BoardView = () => {
         const fromIndex:number = result.source.index;
         const toIndex:number = result.destination !== undefined ? result.destination.index : -1;
 
-        dispatch(moveTaskToColumn({taskId, fromColId, toColId, fromIndex, toIndex}))
+        dispatch(moveTaskToColumn({boardId, taskId, fromColId, toColId, toIndex}))
         BoardDataApi.moveCardToColumnAtIndex(taskId, toColId, toIndex);
       }
     }
+    const board = boardMap[boardId];
+
     return (
-        board === null 
-        ? <></>
+        board === undefined
+        ? <h6>Loading board</h6>
         : (
         // <DragDropContext onDragEnd={(result) => reduxDragEndHandler(result, board, updateBoard)}>
         <DragDropContext onDragEnd={(result) => dragCard(result)}>
@@ -65,10 +72,11 @@ const BoardView = () => {
               <Card.Body
                 className="d-flex flex-nowrap bg-dark"
                 style={{overflowX:"scroll"}}>
-                {board.Columns.map(col => 
+                {board.Columns.map((col:Column) => 
                   <BoardColumn key={col.UpdateHashCode} HashCode={col.UpdateHashCode} Title={col.Title} Index={col.Index} ColumnId={col.Id} getBoard={refetchBoard} BoardId={boardId}>
-                      {col.Cards.map((card, index) =>
-                        <ReduxTaskCard 
+                      {col.Cards.map((card: TaskObj, index:number) =>
+                        <TaskCard
+                          boardId={boardId}
                           task={card}
                           refetchBoard={refetchBoard}
                           key={card.UpdateHashCode}
