@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card } from 'react-bootstrap'
+import { Button, Card, Spinner } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux';
 import { HubMethod } from '../api-board-data/SignalRHub';
 import BoardCard from '../view-components/BoardCard';
@@ -45,8 +45,7 @@ const BoardsView = () => {
                 <div className="d-flex flex-wrap justify-content-start">
                   {boards.map((x: Board) =>
                     x.PermissionLevel === "Owner"
-                    ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
-                    : null
+                    && <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
                     )}
                 </div>
               </Card>
@@ -57,8 +56,7 @@ const BoardsView = () => {
                 <div className="d-flex flex-wrap justify-content-start">
                   {boards.map((x: Board) =>
                     x.PermissionLevel === "User"
-                    ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
-                    : null
+                    && <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
                     )}
                 </div>
               </Card>
@@ -69,8 +67,7 @@ const BoardsView = () => {
                 <div className="d-flex flex-wrap justify-content-start">
                   {boards.map((x: Board) =>
                     x.PermissionLevel === "Viewer"
-                    ? <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
-                    : null
+                    && <BoardCard key={x.UpdateHashCode} Title={x.Title} BoardId={x.Id} CreatedBy={x.CreatedBy} getBoards={getBoards} IsPublic={x.IsPubliclyVisible} />
                     )}
                 </div>
               </Card>

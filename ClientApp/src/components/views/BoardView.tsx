@@ -1,5 +1,5 @@
 import React from 'react'
-import {  Button, Card } from 'react-bootstrap'
+import {  Spinner, Card } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from "react-router-dom";
 import AppContext from '../AppContext';
@@ -15,7 +15,6 @@ import ChatCard from '../view-components/ChatCard';
 import { Column, TaskObj } from '../view-components/TazkrObjects';
 
 import {
-    setBoard,
     getBoard,
     selectBoardMap,
     moveTaskToColumn,
@@ -30,12 +29,12 @@ const BoardView = () => {
     const boardMap = useSelector(selectBoardMap);
     const dispatch = useDispatch();
     const signalRHub = React.useContext(AppContext);
-    React.useEffect(() => {
-        dispatch(getBoard(boardId))
-    },[]);
     const refetchBoard = () => {
-        dispatch(getBoard(boardId))
+      dispatch(getBoard(boardId));
     }
+    React.useEffect(() => {
+      refetchBoard();
+    },[]);
     const handleBoardUpdate: HubMethod = async (arg1:any, arg2: any, arg3: any, arg4:any )=> {
       refetchBoard();
     }
@@ -59,9 +58,8 @@ const BoardView = () => {
 
     return (
         board === undefined
-        ? <h6>Loading board</h6>
+        ? <Spinner animation="border" variant="primary" />
         : (
-        // <DragDropContext onDragEnd={(result) => reduxDragEndHandler(result, board, updateBoard)}>
         <DragDropContext onDragEnd={(result) => dragCard(result)}>
         <div className="p-0 col-12 d-flex h-100">
           <div className="p-0 pl-md-3 pr-md-3 col-md-10 h-100"> 

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { MemoryRouter } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
 import App from './App';
 
 it('renders without crashing', async () => {
@@ -11,3 +12,9 @@ it('renders without crashing', async () => {
     </MemoryRouter>, div);
   await new Promise(resolve => setTimeout(resolve, 1000));
 });
+
+test("Verify navbar-brand", async () => {
+  render(<MemoryRouter><App /></MemoryRouter>);
+  screen.getByText("Tazkr");
+  await new Promise(resolve => setTimeout(resolve, 1000));
+})
