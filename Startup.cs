@@ -112,7 +112,7 @@ namespace Tazkr
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
+                    // spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
         }

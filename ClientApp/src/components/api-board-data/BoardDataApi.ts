@@ -37,7 +37,7 @@ export const getBoard = async (boardId: string) => {
     return callBoardDataApi(`BoardData/Boards/${boardId}`,"GET");
 }
 export const deleteBoard = async (boardId: string) => {
-    return callBoardDataApi(`BoardData/Boards${boardId}`,"DELETE",{})
+    return callBoardDataApi(`BoardData/Boards/${boardId}`,"DELETE",{})
 }
 export const renameBoard = async (boardId: string, boardTitle: string) => {
     return callBoardDataApi(`BoardData/Boards/${boardId}/Title`,"PUT",{ Param1: boardTitle })
